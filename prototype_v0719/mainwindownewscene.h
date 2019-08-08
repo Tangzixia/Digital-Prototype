@@ -17,7 +17,7 @@ public:
     QList<QGraphicsItem*> Item_List;
     QPointF computeFrom(const QRectF& from, const QPointF& to);
     void computeLine(QGraphicsItem*from, QGraphicsItem*to);
-    QLineF* computeMinLength(QList<QLineF*> line_list);
+    QLineF computeMinLength(QList<QLineF> line_list);
     bool dragFlag;
 
     QList<QGraphicsItem*> connect_to_List;
