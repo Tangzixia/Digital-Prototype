@@ -102,6 +102,12 @@
     <iconset resource="res.qrc">
      <normaloff>:/img/open.png</normaloff>:/img/open.png</iconset>
    </property>
+   <property name="iconSize">
+    <size>
+     <width>48</width>
+     <height>48</height>
+    </size>
+   </property>
    <property name="autoDefault">
     <bool>false</bool>
    </property>
@@ -160,6 +166,15 @@
    <property name="icon">
     <iconset resource="res.qrc">
      <normaloff>:/img/new.png</normaloff>:/img/new.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>48</width>
+     <height>48</height>
+    </size>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
    <property name="autoDefault">
     <bool>false</bool>

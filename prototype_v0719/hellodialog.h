@@ -3,7 +3,6 @@
 #define HELLODIALOG_H
 
 
-
 #include <QDialog>
 
 namespace Ui {
@@ -27,5 +26,6 @@ private slots:
 private:
     Ui::HelloDialog *ui;
     MainWindow *main;
+
 };
 #endif // HELLODIALOG_H

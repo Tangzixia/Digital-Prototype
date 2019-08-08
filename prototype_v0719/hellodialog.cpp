@@ -1,14 +1,22 @@
 #include "hellodialog.h"
 #include "ui_hellodialog.h"
+#include "mainwindownew.h"
 
 HelloDialog::HelloDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::HelloDialog)
 {
     ui->setupUi(this);
-    //去掉窗口头部
+    //去掉页面边框和标题栏
     this->setWindowFlag(Qt::FramelessWindowHint);
-//    this->setWindowFlag(Qt::WindowMinimizeButtonHint);
+    //标题栏保留，去掉大小按钮
+//    this->setWindowFlag(Qt::WindowMinimizeButtonHint, false);
+//    this->setWindowFlag(Qt::WindowMaximizeButtonHint, false);
+//    去除所有按钮
+//    this->setWindowFlags(Qt::WindowTitleHint|Qt::CustomizeWindowHint);
+    //只剩关闭按钮
+//    this->setWindowFlag(Qt::WindowCloseButtonHint);
+
     ui->pushButton_open->setStyleSheet(
                 //正常状态样式
                 "QPushButton{"
@@ -72,5 +80,7 @@ void HelloDialog::on_pushButton_open_clicked()
 
 void HelloDialog::on_pushButton_new_clicked()
 {
-
+    MainWindowNew* mainnew = new MainWindowNew;
+    mainnew->show();
+    this->close();
 }

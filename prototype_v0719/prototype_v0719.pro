@@ -8,7 +8,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = prototype_v0712
+TARGET = prototype_v0719
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -24,25 +24,48 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++11
 
+win32:LIBS += -lOpengl32 \
+                -lglu32 \
+                -lglut
+
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
     myglwidget.cpp \
     opengl.cpp \
     hellodialog.cpp \
-    mysplashscreen.cpp
+    mysplashscreen.cpp \
+    mainwindownew.cpp \
+    draglistwidget.cpp \
+    mainwindownewscene.cpp \
+    radaritem.cpp \
+    arrowitem.cpp \
+    mainwindow_radar.cpp \
+    radarproperty.cpp \
+    radarscene.cpp
 
 HEADERS += \
         mainwindow.h \
     myglwidget.h \
     opengl.h \
     hellodialog.h \
-    mysplashscreen.h
+    mysplashscreen.h \
+    mainwindownew.h \
+    draglistwidget.h \
+    mainwindownewscene.h \
+    radaritem.h \
+    arrowitem.h \
+    mainwindow_radar.h \
+    radarproperty.h \
+    radarscene.h
 
 FORMS += \
         mainwindow.ui \
     opengl.ui \
-    hellodialog.ui
+    hellodialog.ui \
+    mainwindownew.ui \
+    mainwindow_radar.ui \
+    radarproperty.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

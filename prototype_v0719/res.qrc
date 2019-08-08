@@ -6,5 +6,7 @@
         <file>img/open.png</file>
         <file>img/start_logo.gif</file>
         <file>img/radar.jpg</file>
+        <file>img/radar.png</file>
+        <file>img/newradar.png</file>
     </qresource>
 </RCC>
