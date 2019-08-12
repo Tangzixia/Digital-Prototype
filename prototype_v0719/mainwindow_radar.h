@@ -97,6 +97,7 @@ private:
     QMenu *createColorMenu(const char *slot, QColor defaultColor);
     QIcon createColorToolButtonIcon(const QString &image, QColor color);
     QIcon createColorIcon(QColor color);
+    void saveSnapshot(int flag);
 
     QAction *exitAction;
     QAction *addAction;

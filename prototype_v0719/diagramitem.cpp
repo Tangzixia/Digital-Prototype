@@ -19,8 +19,9 @@ DiagramItem::DiagramItem(DiagramType diagramType, QMenu *contextMenu,
     myContextMenu = contextMenu;
 
     QPainterPath path;
+    //这里元素的大小和在场景中是一样的，修改了都会变。
     switch (myDiagramType) {
-        //赞不使用
+        //暂不使用
         case Comp3:
             path.moveTo(200, 50);
             path.arcTo(150, 0, 50, 50, 0, 90);
@@ -32,21 +33,21 @@ DiagramItem::DiagramItem(DiagramType diagramType, QMenu *contextMenu,
             break;
         //立着正方形
         case Comp2:
-            myPolygon << QPointF(-100, 0) << QPointF(0, 100)
-                      << QPointF(100, 0) << QPointF(0, -100)
-                      << QPointF(-100, 0);
+            myPolygon << QPointF(-50, 0) << QPointF(0, 50)
+                      << QPointF(50, 0) << QPointF(0, -50)
+                      << QPointF(-50, 0);
             break;
         //正方形
         case Comp1:
-            myPolygon << QPointF(-100, -100) << QPointF(100, -100)
-                      << QPointF(100, 100) << QPointF(-100, 100)
-                      << QPointF(-100, -100);
+            myPolygon << QPointF(-50, -50) << QPointF(50, -50)
+                      << QPointF(50, 50) << QPointF(-50, 50)
+                      << QPointF(-50, -50);
             break;
         //默认 菱形，IO
         default:
-            myPolygon << QPointF(-120, -80) << QPointF(-70, 80)
-                      << QPointF(120, 80) << QPointF(70, -80)
-                      << QPointF(-120, -80);
+            myPolygon << QPointF(-60, -40) << QPointF(-35, 40)
+                      << QPointF(60, 40) << QPointF(35, -40)
+                      << QPointF(-60, -40);
             break;
     }
     setPolygon(myPolygon);

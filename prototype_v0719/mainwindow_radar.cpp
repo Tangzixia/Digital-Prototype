@@ -56,6 +56,8 @@ MainWindow_Radar::MainWindow_Radar(QWidget *parent) :
     // 设置鼠标跟踪开启
     ui->graphicsView->setMouseTracking(true);
     ui->graphicsView->setAcceptDrops(true);
+    //设置可以使鼠标在视图上拖拽出橡皮筋框选择多个组件
+    ui->graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
     connect(scene,SIGNAL(signal_xy(double,double)),this,SLOT(xy_show(double,double)));
 
     //抓手
@@ -65,7 +67,9 @@ MainWindow_Radar::MainWindow_Radar(QWidget *parent) :
     widget->setLayout(layout);
 
     setCentralWidget(widget);
-    setWindowTitle(tr("Diagramscene"));
+    //TODO dock无法自由拖动了，只能保持固定宽度能拖出来但是不能自动贴边
+//    ui->dockCompList->setAllowedAreas(Qt::AllDockWidgetAreas);
+    setWindowTitle(tr("Radar Edit"));
     setUnifiedTitleAndToolBarOnMac(true);
 }
 
@@ -80,12 +84,7 @@ void MainWindow_Radar::closeEvent(QCloseEvent *event)
     if(ret1 == QMessageBox::Yes){
         qDebug() << tr("close radar window");
         //TODO 保存雷达配置
-        QSize mysize(scene->width(), scene->height());
-        QImage image(mysize, QImage::Format_RGB32);
-        QPainter painter(&image);
-        scene->render(&painter);
-        QString currDir = QDir::currentPath();
-        image.save(currDir+"/scene.png");
+        saveSnapshot(1);
         event->accept();
     }else{
         event->ignore();
@@ -531,6 +530,33 @@ QIcon MainWindow_Radar::createColorIcon(QColor color)
     painter.fillRect(QRect(0, 0, 20, 20), color);
 
     return QIcon(pixmap);
+}
+
+/**
+* @projectName   prototype_v0719
+* @brief         保存场景或者视图快照
+* @author        Antrn
+* @date          2019-08-12
+*/
+void MainWindow_Radar::saveSnapshot(int flag)
+{
+    QSize mysize(static_cast<int>(scene->width()), static_cast<int>(scene->height()));
+    QImage image(mysize, QImage::Format_RGB32);
+    QPainter painter(&image);
+    painter.setRenderHint(QPainter::Antialiasing);
+    switch (flag) {
+        case 1: {
+            scene->render(&painter);//也可以使用视图保存，只保存视图窗口的快照
+            break;
+        }
+        case 2: {
+            ui->graphicsView->render(&painter);//也可以使用视图保存，只保存视图窗口的快照
+            break;
+        }
+    }
+    painter.end();
+    QString currDir = QDir::currentPath();
+    image.save(currDir+"/scene.png");
 }
 void MainWindow_Radar::currentFontChanged(const QFont &)
 {
