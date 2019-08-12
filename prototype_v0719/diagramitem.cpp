@@ -20,8 +20,8 @@ DiagramItem::DiagramItem(DiagramType diagramType, QMenu *contextMenu,
 
     QPainterPath path;
     switch (myDiagramType) {
-        //立起的正方形
-        case StartEnd:
+        //赞不使用
+        case Comp3:
             path.moveTo(200, 50);
             path.arcTo(150, 0, 50, 50, 0, 90);
             path.arcTo(50, 0, 50, 50, 90, 90);
@@ -30,19 +30,19 @@ DiagramItem::DiagramItem(DiagramType diagramType, QMenu *contextMenu,
             path.lineTo(200, 25);
             myPolygon = path.toFillPolygon();
             break;
-        //正方形
-        case Conditional:
+        //立着正方形
+        case Comp2:
             myPolygon << QPointF(-100, 0) << QPointF(0, 100)
                       << QPointF(100, 0) << QPointF(0, -100)
                       << QPointF(-100, 0);
             break;
-        //菱形1
-        case Step:
+        //正方形
+        case Comp1:
             myPolygon << QPointF(-100, -100) << QPointF(100, -100)
                       << QPointF(100, 100) << QPointF(-100, 100)
                       << QPointF(-100, -100);
             break;
-        //默认 菱形2
+        //默认 菱形，IO
         default:
             myPolygon << QPointF(-120, -80) << QPointF(-70, 80)
                       << QPointF(120, 80) << QPointF(70, -80)

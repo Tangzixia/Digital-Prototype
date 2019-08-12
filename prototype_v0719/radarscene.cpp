@@ -15,7 +15,7 @@ RadarScene::RadarScene(QMenu *itemMenu, QObject *parent)
     myItemMenu = itemMenu;
     myMode = MoveItem;
     //默认Step
-    myItemType = DiagramItem::Step;
+    myItemType = DiagramItem::Comp1;
     line = nullptr;
     textItem = nullptr;
     myItemColor = Qt::white;

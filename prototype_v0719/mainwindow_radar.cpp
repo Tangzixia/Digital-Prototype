@@ -255,9 +255,9 @@ void MainWindow_Radar::createCompBox()
     connect(buttonGroup, SIGNAL(buttonClicked(int)),
             this, SLOT(buttonGroupClicked(int)));
     QGridLayout *layout = new QGridLayout;
-    layout->addWidget(createCellWidget(tr("Conditional"), DiagramItem::Conditional), 0, 0);
-    layout->addWidget(createCellWidget(tr("Process"), DiagramItem::Step),0, 1);
-    layout->addWidget(createCellWidget(tr("Input/Output"), DiagramItem::Io), 1, 0);
+    layout->addWidget(createCellWidget(tr("Component_1"), DiagramItem::Comp1), 0, 0);
+    layout->addWidget(createCellWidget(tr("Component_2"), DiagramItem::Comp2),0, 1);
+    layout->addWidget(createCellWidget(tr("Component_3"), DiagramItem::Comp4), 1, 0);
     QToolButton *textButton = new QToolButton;
     textButton->setCheckable(true);
     buttonGroup->addButton(textButton, InsertTextButton);
@@ -269,7 +269,7 @@ void MainWindow_Radar::createCompBox()
     textLayout->addWidget(new QLabel(tr("Text")), 1, 0, Qt::AlignCenter);
     QWidget *textWidget = new QWidget;
     textWidget->setLayout(textLayout);
-    layout->addWidget(textWidget, 1, 1);
+    layout->addWidget(textWidget, 2, 0);
 
     //设置行和列的比例
     layout->setRowStretch(3, 10);
