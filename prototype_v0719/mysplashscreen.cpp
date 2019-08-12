@@ -4,6 +4,12 @@
 #include <QTimer>
 #include <QDebug>
 #include "unistd.h"
+/**
+* @projectName   prototype_v0719
+* @brief         splash screen顾名思义，启动程序的启动画面。
+* @author        Antrn
+* @date          2019-08-12
+*/
 MySplashScreen::MySplashScreen(QPixmap &pixmap, int time):QSplashScreen (pixmap),
     elapseTime(time)
 {

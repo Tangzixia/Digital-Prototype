@@ -2,7 +2,12 @@
 #ifndef HELLODIALOG_H
 #define HELLODIALOG_H
 
-
+/**
+* @projectName   prototype_v0719
+* @brief         开始欢迎页面，也即是进入主程序之前的拦截界面。可以选择打开或者新建工程。
+* @author        Antrn
+* @date          2019-08-12
+*/
 #include <QDialog>
 
 namespace Ui {

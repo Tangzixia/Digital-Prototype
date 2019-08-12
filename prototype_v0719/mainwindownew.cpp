@@ -6,7 +6,12 @@
 #include <QListWidgetItem>
 
 
-
+/**
+* @projectName   prototype_v0719
+* @brief         新建工程时的主窗口。
+* @author        Antrn
+* @date          2019-08-12
+*/
 MainWindowNew::MainWindowNew(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindowNew)
@@ -48,7 +53,10 @@ MainWindowNew::MainWindowNew(QWidget *parent) :
 
     connect(graphicsScene,SIGNAL(signal_xy(double,double)),this,SLOT(xy_show(double,double)));
     this->showMaximized();
-    this->setWindowTitle(tr("新建"));
+    this->setWindowTitle(tr("新建工程"));
+    //可以设置在视图上使用鼠标拖出橡皮筋框选择图形项
+    this->ui->graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
+
 }
 
 MainWindowNew::~MainWindowNew()

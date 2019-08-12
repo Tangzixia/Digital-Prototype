@@ -1,6 +1,11 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-
+/**
+* @projectName   prototype_v0719
+* @brief         整个程序的主窗口：打开现有的工程时。
+* @author        Antrn
+* @date          2019-08-12
+*/
 #include "opengl.h"
 
 #include <QCloseEvent>

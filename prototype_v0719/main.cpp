@@ -7,6 +7,12 @@
 #include "unistd.h" //usleep()
 #include "hellodialog.h"
 #include "mysplashscreen.h"
+/**
+* @projectName   prototype_v0719
+* @brief         此程序的main函数，入口类。
+* @author        Antrn
+* @date          2019-08-12
+*/
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);

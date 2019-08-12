@@ -3,7 +3,13 @@
 
 #include <QLabel>
 #include <QSettings>
-
+#include <QWhatsThis>
+/**
+* @projectName   prototype_v0719
+* @brief         整个程序的主窗口：打开现有的工程时。
+* @author        Antrn
+* @date          2019-08-12
+*/
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -12,6 +18,9 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowTitle("主页");
     showMaximized();
     init();
+    //what's this?
+    QAction *whatAction = QWhatsThis::createAction(this);
+    ui->mainToolBar->addAction(whatAction);
 }
 
 

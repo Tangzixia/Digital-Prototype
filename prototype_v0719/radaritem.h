@@ -2,7 +2,12 @@
 #define RADARITEM_H
 #include <QGraphicsItem>
 #include <QMainWindow>
-
+/**
+* @projectName   prototype_v0719
+* @brief         整体仿真中的雷达组件类。
+* @author        Antrn
+* @date          2019-08-12
+*/
 
 class RadarItem : public QObject, public QGraphicsItem
 {

@@ -1,6 +1,12 @@
 #include "myglwidget.h"
 #include <QOpenGLWidget>
 #include <QMouseEvent>
+/**
+* @projectName   prototype_v0719
+* @brief         使用OpenGL渲染的3D金字塔棱锥模型。以后如果用到可以借鉴或者删除。
+* @author        Antrn
+* @date          2019-08-12
+*/
 myGLWidget::myGLWidget(QWidget *parent):QOpenGLWidget(parent)
 {
     xRot = 0;

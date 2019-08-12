@@ -1,6 +1,11 @@
 #ifndef OPENGL_H
 #define OPENGL_H
-
+/**
+* @projectName   prototype_v0719
+* @brief         OpenGL
+* @author        Antrn
+* @date          2019-08-12
+*/
 #include <QDialog>
 #include <QWidget>
 

@@ -5,7 +5,12 @@
 
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneDragDropEvent>
-
+/**
+* @projectName   prototype_v0719
+* @brief         新建工程的主场景，用户配置雷达或者电子对抗，用户整体仿真。
+* @author        Antrn
+* @date          2019-08-12
+*/
 MainWindowNewScene::MainWindowNewScene()
 {
 //    将begin_item设为空指针

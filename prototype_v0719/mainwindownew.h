@@ -1,6 +1,11 @@
 #ifndef MAINWINDOWNEW_H
 #define MAINWINDOWNEW_H
-
+/**
+* @projectName   prototype_v0719
+* @brief         新建工程时的主窗口。
+* @author        Antrn
+* @date          2019-08-12
+*/
 #include "mainwindownewscene.h"
 
 #include <QMainWindow>

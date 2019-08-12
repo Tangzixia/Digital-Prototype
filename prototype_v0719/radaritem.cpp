@@ -7,6 +7,12 @@
 #include <QPainter>
 #include <QGraphicsSceneMouseEvent>
 #include <QApplication>
+/**
+* @projectName   prototype_v0719
+* @brief         整体仿真中的雷达组件类。
+* @author        Antrn
+* @date          2019-08-12
+*/
 RadarItem::RadarItem(): QGraphicsItem()
 {
     setFlag(QGraphicsItem::ItemIsFocusable);
@@ -64,6 +70,7 @@ void RadarItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
     qDebug() << "鼠标点击雷达了";
     setFocus();
     setSelected(true);
+    setCursor(Qt::ClosedHandCursor);
     event->accept();
     QGraphicsItem::mousePressEvent(event);
 }

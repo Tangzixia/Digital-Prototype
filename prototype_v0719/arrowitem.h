@@ -4,7 +4,12 @@
 #include <QObject>
 #include <QGraphicsItem>
 #include <QPen>
-
+/**
+* @projectName   prototype_v0719
+* @brief         用于新建工程面板的雷达/电子对抗/其他设备之间链接的箭头类。
+* @author        Antrn
+* @date          2019-08-12
+*/
 class ArrowItem : public QObject, public QGraphicsLineItem
 {
     Q_OBJECT

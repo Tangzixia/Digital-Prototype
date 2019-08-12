@@ -1,6 +1,11 @@
 #ifndef MAINWINDOWNEWSCENE_H
 #define MAINWINDOWNEWSCENE_H
-
+/**
+* @projectName   prototype_v0719
+* @brief         新建工程的主场景，用户配置雷达或者电子对抗，用户整体仿真。
+* @author        Antrn
+* @date          2019-08-12
+*/
 #include <QGraphicsScene>
 #include <QPaintEvent>
 #include <QGraphicsItem>

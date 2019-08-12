@@ -42,7 +42,10 @@ SOURCES += \
     arrowitem.cpp \
     mainwindow_radar.cpp \
     radarproperty.cpp \
-    radarscene.cpp
+    radarscene.cpp \
+    diagramitem.cpp \
+    arrow.cpp \
+    diagramtextitem.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -57,7 +60,10 @@ HEADERS += \
     arrowitem.h \
     mainwindow_radar.h \
     radarproperty.h \
-    radarscene.h
+    radarscene.h \
+    diagramitem.h \
+    arrow.h \
+    diagramtextitem.h
 
 FORMS += \
         mainwindow.ui \

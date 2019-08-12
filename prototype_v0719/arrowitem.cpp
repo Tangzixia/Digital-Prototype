@@ -7,7 +7,12 @@
 const float ArrowItem::LINE_WIDTH = 1.5f;
 const float ArrowItem::ARROW_SIZE = 8.0f;
 static const double PI = 3.14159265358979323846264338327950288419717;
-
+/**
+* @projectName   prototype_v0719
+* @brief         用于新建工程面板的雷达/电子对抗/其他设备之间链接的箭头类。
+* @author        Antrn
+* @date          2019-08-12
+*/
 ArrowItem::ArrowItem():mValid(false)
 {
     setFlag(QGraphicsItem::ItemIsFocusable);
@@ -86,7 +91,7 @@ QRectF ArrowItem::boundingRect()const
     return rect;
 }
 
-void ArrowItem::paint(QPainter* painter,const QStyleOptionGraphicsItem* style, QWidget* widget)
+void ArrowItem::paint(QPainter* painter,const QStyleOptionGraphicsItem* , QWidget* )
 {
     if(!mValid)
         return;

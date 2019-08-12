@@ -6,6 +6,12 @@
 #include <QListWidget>
 #include <QApplication>
 
+/**
+* @projectName   prototype_v0719
+* @brief         整体工程项目左边的拖拽列表：雷达/电子对抗设备，是以list的形式表现的。
+* @author        Antrn
+* @date          2019-08-12
+*/
 class DragListWidget : public QListWidget
 {
     Q_OBJECT

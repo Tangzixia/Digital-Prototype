@@ -1,7 +1,12 @@
 #include "opengl.h"
 #include "ui_opengl.h"
 #include <QKeyEvent>
-
+/**
+* @projectName   prototype_v0719
+* @brief         OpenGL
+* @author        Antrn
+* @date          2019-08-12
+*/
 OpenGL::OpenGL(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::OpenGL)

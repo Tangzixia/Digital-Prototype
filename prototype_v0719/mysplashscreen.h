@@ -1,10 +1,14 @@
 #ifndef MYSPLASHSCREEN_H
 #define MYSPLASHSCREEN_H
 
+/**
+* @projectName   prototype_v0719
+* @brief         splash screen顾名思义，启动程序的启动画面。
+* @author        Antrn
+* @date          2019-08-12
+*/
 #include <QProgressBar>
 #include <QSplashScreen>
-
-
 
 class MySplashScreen : public QSplashScreen
 {
