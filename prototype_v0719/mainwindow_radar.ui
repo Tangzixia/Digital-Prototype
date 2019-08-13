@@ -34,6 +34,7 @@
      <string>工具&amp;T</string>
     </property>
     <addaction name="actionCom_list"/>
+    <addaction name="actionOpenXml"/>
    </widget>
    <addaction name="menu"/>
   </widget>
@@ -54,8 +55,16 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>组件列表</string>
+   </property>
+  </action>
+  <action name="actionOpenXml">
+   <property name="text">
+    <string>打开xml</string>
    </property>
   </action>
  </widget>

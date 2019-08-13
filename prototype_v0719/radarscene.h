@@ -10,6 +10,7 @@
 #include "diagramitem.h"
 #include "diagramtextitem.h"
 
+#include <QtXml>
 #include <QGraphicsScene>
 #include <QMenu>
 #include <QObject>
@@ -32,6 +33,38 @@ public:
     void setTextColor(const QColor &color);
     void setItemColor(const QColor &color);
     void setFont(const QFont &font);
+    QMenu *getItemMenu(){return myItemMenu;}
+    QDomDocument getDoc(){return doc;}
+    QList<int> idList;
+    int generateUniqueid()
+    {
+        int i,j;
+        qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
+        idList.append(qrand()%10);
+        for(i=0;i<idList.size();i++)
+        {
+            bool flag=true;
+            while(flag)
+            {
+                for(j=0;j<i;j++)
+                {
+                    if(idList[i]==idList[j])
+                    {
+                        break;
+                    }
+                }
+                if(j<i)
+                {
+                    idList[i]=rand()%10;
+                }
+                if(j==i)
+                {
+                    flag=!flag;
+                }
+            }
+        }
+        return idList.back();
+    }
 
 public slots:
     void setMode(Mode mode);
@@ -64,6 +97,11 @@ private:
     QColor myTextColor;
     QColor myItemColor;
     QColor myLineColor;
+
+    //存储场景数据
+    QDomDocument doc;
+    QDomElement Arrs;
+    QDomElement Items;
 };
 
 #endif // RADARSCENE_H

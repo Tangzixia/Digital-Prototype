@@ -22,10 +22,10 @@ public:
     QRectF boundingRect() const override;
     QPainterPath shape() const override;
     void setColor(const QColor &color) { myColor = color; }
-
+    QString getColor(){return myColor.name();}
     DiagramItem *startItem() const { return myStartItem; }
     DiagramItem *endItem() const { return myEndItem; }
-
+    int itemId;
     void updatePosition();
 
 protected:

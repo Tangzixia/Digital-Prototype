@@ -3,12 +3,15 @@
 
 #include <QTextCursor>
 #include <QGraphicsSceneMouseEvent>
+#include <QMetaEnum>
+#include "diagramitem.h"
 /**
 * @projectName   prototype_v0719
 * @brief         编辑雷达页面的自定义场景类，上面绘制设计雷达的组件链接。
 * @author        Antrn
 * @date          2019-08-12
 */
+//Q_DECLARE_METATYPE(DiagramItem)
 RadarScene::RadarScene(QMenu *itemMenu, QObject *parent)
     : QGraphicsScene(parent)
 {
@@ -21,6 +24,22 @@ RadarScene::RadarScene(QMenu *itemMenu, QObject *parent)
     myItemColor = Qt::white;
     myTextColor = Qt::black;
     myLineColor = Qt::black;
+
+    //添加处理指令即xml头部说明和场景的属性
+    QDomProcessingInstruction instruction = doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
+    doc.appendChild(instruction);
+    QDomElement root = doc.createElement("components");
+    doc.appendChild(root);
+    QDomAttr scene_w = doc.createAttribute("width");
+    QDomAttr scene_h = doc.createAttribute("height");
+    scene_w.setValue(QString::number(width()));
+    scene_h.setValue(QString::number(height()));
+    root.setAttributeNode(scene_w);
+    root.setAttributeNode(scene_h);
+    Arrs = doc.createElement("Arrs");
+    root.appendChild(Arrs);
+    Items = doc.createElement("Items");
+    root.appendChild(Items);
 }
 
 void RadarScene::setLineColor(const QColor &color)
@@ -101,19 +120,52 @@ void RadarScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 
     DiagramItem *item;
     switch (myMode) {
-        case InsertItem:
+        case InsertItem:{
             item = new DiagramItem(myItemType, myItemMenu);
             item->setBrush(myItemColor);
+            item->itemId = generateUniqueid();
             addItem(item);
             item->setPos(mouseEvent->scenePos());
             emit itemInserted(item);
+//            使用下面这两行使得Enum转String怎么都不行
+//            QMetaEnum m = QMetaEnum::fromType<DiagramItem::DiagramType>();
+//            QDomElement comp = doc.createElement(m.valueToKey(myItemType));
+            QDomElement comp;
+            switch (myItemType) {
+                case DiagramItem::DiagramType::Comp1:
+                    comp = doc.createElement("comp_1");
+                    break;
+                case DiagramItem::DiagramType::Comp2:
+                    comp = doc.createElement("comp_2");
+                    break;
+                case DiagramItem::DiagramType::Comp4:
+                    comp = doc.createElement("comp_4");
+                    break;
+                default:
+                    break;
+            }
+            QDomElement color = doc.createElement("color");
+            QDomAttr posx = doc.createAttribute("pos_x");
+            QDomAttr posy = doc.createAttribute("pos_y");
+            QDomAttr id = doc.createAttribute("id");
+            posx.setValue(QString::number(mouseEvent->scenePos().x()));
+            posy.setValue(QString::number(mouseEvent->scenePos().y()));
+            id.setValue(QString::number(item->itemId));
+            comp.setAttributeNode(posx);
+            comp.setAttributeNode(posy);
+            comp.setAttributeNode(id);
+            QDomText c = doc.createTextNode(itemColor().name());
+            color.appendChild(c);
+            comp.appendChild(color);
+            Items.appendChild(comp);
             break;
-
+        }
         case InsertLine:
             line = new QGraphicsLineItem(QLineF(mouseEvent->scenePos(),
                                         mouseEvent->scenePos()));
             line->setPen(QPen(myLineColor, 2));
             addItem(line);
+
             break;
         case InsertText:
             textItem = new DiagramTextItem();
@@ -156,10 +208,10 @@ void RadarScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
         if (startItems.count() && startItems.first() == line)
             startItems.removeFirst();
         QList<QGraphicsItem *> endItems = items(line->line().p2());
-        //防止重复划线
+        //防止点线段
         if (endItems.count() && endItems.first() == line)
             endItems.removeFirst();
-        //删除过程中出现的线段，改为绘制箭头
+        //删除press时新建的线段
         removeItem(line);
         delete line;
 
@@ -171,11 +223,28 @@ void RadarScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
             DiagramItem *endItem = qgraphicsitem_cast<DiagramItem *>(endItems.first());
             Arrow *arrow = new Arrow(startItem, endItem);
             arrow->setColor(myLineColor);
+            arrow->itemId = generateUniqueid();
             startItem->addArrow(arrow);
             endItem->addArrow(arrow);
             arrow->setZValue(-1000.0);
             addItem(arrow);
             arrow->updatePosition();
+
+            QDomElement arr = doc.createElement("arrow");
+            QDomElement color = doc.createElement("color");
+            QDomAttr start = doc.createAttribute("start_item_id");
+            QDomAttr end = doc.createAttribute("end_item_id");
+            QDomAttr id = doc.createAttribute("id");
+            start.setValue(QString::number(startItem->itemId));
+            end.setValue(QString::number(endItem->itemId));
+            id.setValue(QString::number(arrow->itemId));
+            arr.setAttributeNode(start);
+            arr.setAttributeNode(end);
+            arr.setAttributeNode(id);
+            QDomText c = doc.createTextNode(myLineColor.name());
+            color.appendChild(c);
+            arr.appendChild(color);
+            Arrs.appendChild(arr);
         }
     }
     line = nullptr;

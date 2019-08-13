@@ -18,7 +18,7 @@ MainWindowNew::MainWindowNew(QWidget *parent) :
 {
     ui->setupUi(this);
 
-
+    //this->setAttribute(Qt::WA_DeleteOnClose);
     graphicsScene=new MainWindowNewScene;
     // xy坐标标签
     label_xy=new QLabel(this);

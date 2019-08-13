@@ -1,6 +1,7 @@
 #ifndef DIAGRAMITEM_H
 #define DIAGRAMITEM_H
 
+#include <QDateTime>
 #include <QGraphicsItem>
 class Arrow;
 
@@ -10,22 +11,28 @@ class Arrow;
 * @author        Antrn
 * @date          2019-08-12
 */
+
 class DiagramItem : public QGraphicsPolygonItem
 {
+//    Q_OBJECT
 public:
     enum { Type = UserType + 15 };
 
     enum DiagramType { Comp1, Comp2, Comp3, Comp4 };
 
+//    Q_ENUM(DiagramType)
+    DiagramType diagramType() const { return myDiagramType; }
+
     DiagramItem(DiagramType diagramType, QMenu *contextMenu, QGraphicsItem *parent = nullptr);
+//    DiagramItem(const DiagramItem&);
 
     void removeArrow(Arrow *arrow);
     void removeArrows();
-    DiagramType diagramType() const { return myDiagramType; }
     QPolygonF polygon() const { return myPolygon; }
     void addArrow(Arrow *arrow);
     QPixmap image() const;
     int type() const override { return Type;}
+    int itemId;
 
 protected:
     //WARN 暂时不能定义下面这几个，即使什么都不写也会有问题
@@ -44,6 +51,7 @@ private:
     QMenu *myContextMenu;
     //存储箭头
     QList<Arrow *> arrows;
+
 };
 
 #endif // DIAGRAMITEM_H

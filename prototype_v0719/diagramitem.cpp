@@ -12,6 +12,7 @@
 * @author        Antrn
 * @date          2019-08-12
 */
+
 DiagramItem::DiagramItem(DiagramType diagramType, QMenu *contextMenu,
              QGraphicsItem *parent): QGraphicsPolygonItem(parent)
 {
@@ -58,6 +59,12 @@ DiagramItem::DiagramItem(DiagramType diagramType, QMenu *contextMenu,
     //坐标变化
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
 }
+
+//DiagramItem::DiagramItem(const DiagramItem &)
+//{
+
+//}
+
 void DiagramItem::removeArrow(Arrow *arrow)
 {
     int index = arrows.indexOf(arrow);

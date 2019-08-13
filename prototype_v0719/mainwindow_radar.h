@@ -56,6 +56,8 @@ private slots:
      void lineButtonTriggered();
      void handleFontChange();
      void itemSelected(QGraphicsItem *item);
+     void on_actionOpenXml_triggered();
+
 
 private:
     Ui::MainWindow_Radar *ui;

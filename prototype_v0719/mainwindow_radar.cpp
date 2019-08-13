@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <QToolBar>
 #include <QDir>
+#include <QFileDialog>
 #include "arrow.h"
 
 const int InsertTextButton = 10;
@@ -78,16 +79,66 @@ MainWindow_Radar::~MainWindow_Radar()
     delete ui;
 }
 
+// BUG WARNING 退出的时候应该让用户选择是否保存当前场景，默认保存场景到my.xml好像有点不合理
+// 先判断是否退出钱保存？是，则保存退出；否，则直接退出。
 void MainWindow_Radar::closeEvent(QCloseEvent *event)
 {
     int ret1 = QMessageBox::question(this, tr("确认"), tr("确定退出雷达编辑?"), QMessageBox::Yes, QMessageBox::No);
     if(ret1 == QMessageBox::Yes){
         qDebug() << tr("close radar window");
-        //TODO 保存雷达配置
-        saveSnapshot(1);
+        QDomElement rootElem = scene->getDoc().documentElement();
+        rootElem.setAttribute("width", scene->width());
+        rootElem.setAttribute("height", scene->height());
+        //[更新color
+        DiagramItem *d;
+        Arrow *a;
+        for (int i=0; i<scene->items().size(); i++) {
+            //转换为DiagramItem成功，只算item，排除箭头
+            if((d = dynamic_cast<DiagramItem*>(scene->items().at(i)))){
+//                qDebug() << d->brush().color().name();
+                // BUG [light] elementById()报错说没有实现
+//                if(d->brush().color().name() != scene->getDoc().elementById(QString::number(d->itemId)).firstChild().toElement().text()){
+//                    scene->getDoc().elementById(QString::number(d->itemId)).firstChild().setNodeValue(d->brush().color().name());
+//                }
+                QDomNodeList list = scene->getDoc().elementsByTagName("components").at(0).childNodes();
+                for (int k=0; k<list.count(); k++) {
+                    QDomElement e = list.at(k).toElement();
+//                    qDebug() << e.attribute("id") << "; " << QString::number(d->itemId);
+                    //找到id对应的元素
+                    if(e.attribute("id").compare(QString::number(d->itemId))==0){
+//                        e.firstChild().setNodeValue(d->brush().color().name());
+//                        qDebug() << d->brush().color().name();
+//                        qDebug() << e.elementsByTagName("color").at(0).toElement().text();
+                        e.elementsByTagName("color").at(0).toElement().firstChild().setNodeValue(d->brush().color().name());
+                    }
+                }
+            }
+
+            if((a = dynamic_cast<Arrow *>(scene->items().at(i)))){
+                QDomNodeList list = scene->getDoc().elementsByTagName("components").at(0).childNodes();
+                for (int k=0; k<list.count(); k++) {
+                    QDomElement e = list.at(k).toElement();
+                    //找到id对应的元素
+                    if(e.attribute("id").compare(QString::number(a->itemId))==0){
+                        e.elementsByTagName("color").at(0).toElement().firstChild().setNodeValue(a->getColor());
+                    }
+                }
+            }
+        }
+        //]更新color
+        // NOTE 保存雷达组件数据
+        QFile file(QDir::currentPath() + "/my.xml");
+        if(!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) return;
+        QTextStream out(&file);
+        scene->getDoc().save(out, 4);
+        file.close();
+        // TODO是否需要快照应该由用户决定，后期需要完善
+        saveSnapshot(1); //保存场景快照
+        saveSnapshot(2); //保存视图快照
         event->accept();
     }else{
-        event->ignore();
+        // 直接退出
+        event->accept();
     }
 
 }
@@ -538,25 +589,32 @@ QIcon MainWindow_Radar::createColorIcon(QColor color)
 * @author        Antrn
 * @date          2019-08-12
 */
+// TODO 这里也是将保存的图片直接保存到默认文件夹，也就是当前工程文件夹下，后期需要改动
 void MainWindow_Radar::saveSnapshot(int flag)
 {
-    QSize mysize(static_cast<int>(scene->width()), static_cast<int>(scene->height()));
-    QImage image(mysize, QImage::Format_RGB32);
-    QPainter painter(&image);
-    painter.setRenderHint(QPainter::Antialiasing);
+    QString currDir = QDir::currentPath();
     switch (flag) {
         case 1: {
+            QSize mysize(static_cast<int>(scene->width()), static_cast<int>(scene->height()));
+            QImage image(mysize, QImage::Format_RGB32);
+            QPainter painter(&image);
+            painter.setRenderHint(QPainter::Antialiasing);
             scene->render(&painter);//也可以使用视图保存，只保存视图窗口的快照
+            painter.end();
+            image.save(currDir+"/scene.png");
             break;
         }
         case 2: {
+            QSize mysize(static_cast<int>(ui->graphicsView->width()), static_cast<int>(ui->graphicsView->height()));
+            QImage image(mysize, QImage::Format_RGB32);
+            QPainter painter(&image);
+            painter.setRenderHint(QPainter::Antialiasing);
             ui->graphicsView->render(&painter);//也可以使用视图保存，只保存视图窗口的快照
+            painter.end();
+            image.save(currDir+"/view.png");
             break;
         }
     }
-    painter.end();
-    QString currDir = QDir::currentPath();
-    image.save(currDir+"/scene.png");
 }
 void MainWindow_Radar::currentFontChanged(const QFont &)
 {
@@ -617,4 +675,68 @@ void MainWindow_Radar::fillButtonTriggered()
 void MainWindow_Radar::lineButtonTriggered()
 {
     scene->setLineColor(qvariant_cast<QColor>(lineAction->data()));
+}
+
+/**
+* @projectName   prototype_v0719
+* @brief         读取xml
+* @author        Antrn
+* @date          2019-08-13
+*/
+// WARNING BUG 有一个大bug，当按照此函数读取xml进来之后，再退出会清空xml
+void MainWindow_Radar::on_actionOpenXml_triggered()
+{
+    // TODO 打开xml文件读取
+    const QString fileName = QFileDialog::getOpenFileName(this, tr("打开xml"), QString(QDir::currentPath()), tr("xml files (*.xml)"));
+    QDomDocument doc;
+    if(!fileName.isEmpty()){
+        QFile file(fileName);
+        if(!file.open(QIODevice::ReadOnly)) return;
+        if(!doc.setContent(&file)){
+            file.close();
+            qDebug() << "打开失败";
+            return;
+        }
+        file.close();
+        //根元素component
+        QDomElement docElem = doc.documentElement();
+        int wid,hei;
+        wid = docElem.attribute("width").toInt();
+        hei = docElem.attribute("height").toInt();
+        scene->setSceneRect(QRectF(0, 0, wid, hei));
+        // 第一个孩子是Arrs或者Items
+        QDomNode n = docElem.firstChild();
+        QList<int> idList;
+        while(!n.isNull()){
+            // Items
+            if(n.toElement().tagName().compare(QString("Items")) == 0){
+                QDomNode m = n.firstChild();
+                while(!m.isNull()){
+                    qDebug() << m.nodeName();
+                    if(m.isElement()){
+                        //每个元素item
+                        QDomElement e = m.toElement();
+                        idList.append(e.attribute("id").toInt());
+                        int posx = e.attribute("pos_x").toInt();
+                        int poxy = e.attribute("pos_y").toInt();
+                        QString s = e.elementsByTagName("color").at(0).toElement().text();
+                        QColor colour(s);
+                        // FIXME type写死了
+                        DiagramItem::DiagramType type = DiagramItem::Comp1;
+                        DiagramItem *item_ = new DiagramItem(type, scene->getItemMenu());
+                        item_->setPos(QPoint(posx, poxy));
+                        item_->setBrush(colour);
+                        scene->addItem(item_);
+                        emit itemInserted(item_);
+                    }
+                    m = m.nextSibling();
+                }
+            }else{
+                // TODO 是Arrs的时候怎么操作
+            }
+            n = n.nextSibling();
+        }
+    }else {
+        // TODO 什么操作
+    }
 }
