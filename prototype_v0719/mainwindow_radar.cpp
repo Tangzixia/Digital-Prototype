@@ -79,19 +79,37 @@ MainWindow_Radar::~MainWindow_Radar()
     delete ui;
 }
 
+DiagramItem *MainWindow_Radar::getDiagramItemById(int item_id)
+{
+    QList<QGraphicsItem *> items = scene->items();
+    DiagramItem *im = nullptr;
+    for (int i=0; i<items.size(); i++) {
+        if((im = dynamic_cast<DiagramItem*>(items.at(i)))){
+            if(item_id == im->itemId){
+                //qDebug() << "找到了";
+               return im;
+            }
+        }
+    }
+    // 如果没找到，理论上不会。。。
+    return nullptr;
+}
+
 // BUG WARNING 退出的时候应该让用户选择是否保存当前场景，默认保存场景到my.xml好像有点不合理
 // 先判断是否退出钱保存？是，则保存退出；否，则直接退出。
 void MainWindow_Radar::closeEvent(QCloseEvent *event)
 {
-    int ret1 = QMessageBox::question(this, tr("确认"), tr("确定退出雷达编辑?"), QMessageBox::Yes, QMessageBox::No);
+    int ret1 = QMessageBox::question(this, tr("确认"), tr("确定退出雷达编辑前保存场景?"), QMessageBox::Yes, QMessageBox::No);
     if(ret1 == QMessageBox::Yes){
-        qDebug() << tr("close radar window");
+        qDebug() << tr("to close radar window");
+        // 根元素
         QDomElement rootElem = scene->getDoc().documentElement();
         rootElem.setAttribute("width", scene->width());
         rootElem.setAttribute("height", scene->height());
-        //[更新color
+        //[更新箭头和组件的color
         DiagramItem *d;
         Arrow *a;
+        // 遍历场景中的items
         for (int i=0; i<scene->items().size(); i++) {
             //转换为DiagramItem成功，只算item，排除箭头
             if((d = dynamic_cast<DiagramItem*>(scene->items().at(i)))){
@@ -100,7 +118,7 @@ void MainWindow_Radar::closeEvent(QCloseEvent *event)
 //                if(d->brush().color().name() != scene->getDoc().elementById(QString::number(d->itemId)).firstChild().toElement().text()){
 //                    scene->getDoc().elementById(QString::number(d->itemId)).firstChild().setNodeValue(d->brush().color().name());
 //                }
-                QDomNodeList list = scene->getDoc().elementsByTagName("components").at(0).childNodes();
+                QDomNodeList list = scene->getDoc().elementsByTagName("Items").at(0).childNodes();
                 for (int k=0; k<list.count(); k++) {
                     QDomElement e = list.at(k).toElement();
 //                    qDebug() << e.attribute("id") << "; " << QString::number(d->itemId);
@@ -113,9 +131,9 @@ void MainWindow_Radar::closeEvent(QCloseEvent *event)
                     }
                 }
             }
-
+            // 如果是箭头
             if((a = dynamic_cast<Arrow *>(scene->items().at(i)))){
-                QDomNodeList list = scene->getDoc().elementsByTagName("components").at(0).childNodes();
+                QDomNodeList list = scene->getDoc().elementsByTagName("Arrs").at(0).childNodes();
                 for (int k=0; k<list.count(); k++) {
                     QDomElement e = list.at(k).toElement();
                     //找到id对应的元素
@@ -705,38 +723,91 @@ void MainWindow_Radar::on_actionOpenXml_triggered()
         hei = docElem.attribute("height").toInt();
         scene->setSceneRect(QRectF(0, 0, wid, hei));
         // 第一个孩子是Arrs或者Items
-        QDomNode n = docElem.firstChild();
-        QList<int> idList;
-        while(!n.isNull()){
-            // Items
-            if(n.toElement().tagName().compare(QString("Items")) == 0){
-                QDomNode m = n.firstChild();
+//        QDomNode n = docElem.firstChild();
+        QDomNode itemNode = doc.elementsByTagName("Items").at(0);
+//        while(!n.isNull()){
+//            // Items
+//            if(n.toElement().tagName().compare(QString("Items")) == 0){
+                int id;
+                // 子孩子就是标签名为comp_1...
+                QDomNode m = itemNode.firstChild();
                 while(!m.isNull()){
-                    qDebug() << m.nodeName();
+                    std::string tagName = m.nodeName().toStdString();
                     if(m.isElement()){
-                        //每个元素item
+                        // 每个元素item
                         QDomElement e = m.toElement();
-                        idList.append(e.attribute("id").toInt());
-                        int posx = e.attribute("pos_x").toInt();
-                        int poxy = e.attribute("pos_y").toInt();
+                        id = e.attribute("id").toInt();
+                        qreal posx = e.attribute("pos_x").toInt();
+                        qreal poxy = e.attribute("pos_y").toInt();
                         QString s = e.elementsByTagName("color").at(0).toElement().text();
                         QColor colour(s);
-                        // FIXME type写死了
-                        DiagramItem::DiagramType type = DiagramItem::Comp1;
+                        // BUG 暂时不用，依旧不行
+//                        QMetaEnum metaEnum = QMetaEnum::fromType<DiagramItem::DiagramType>();
+//                        const char* c = tagName.toUtf8().data();
+//                        DiagramItem::DiagramType type = DiagramItem::DiagramType(metaEnum.keysToValue(c));
+                        // NOTE FIXME 只能先用if/else了，switch也不能用
+                        DiagramItem::DiagramType type=DiagramItem::DiagramType::Comp1;
+                        if(tagName == "comp_1"){
+                            type = DiagramItem::DiagramType::Comp1;
+                        }else if(tagName == "comp_2"){
+
+                            type = DiagramItem::DiagramType::Comp2;
+                        }else if(tagName == "comp_3"){
+                            type = DiagramItem::DiagramType::Comp3;
+                        }else {
+                            type = DiagramItem::DiagramType::Comp4;
+                        }
                         DiagramItem *item_ = new DiagramItem(type, scene->getItemMenu());
-                        item_->setPos(QPoint(posx, poxy));
+                        QPointF pos(posx, poxy);
+                        item_->setPos(pos);
                         item_->setBrush(colour);
+                        item_->itemId = id; //id不变
                         scene->addItem(item_);
                         emit itemInserted(item_);
+                        //更新xml
+                        scene->modifyXmlItems(pos, item_);
                     }
                     m = m.nextSibling();
                 }
-            }else{
-                // TODO 是Arrs的时候怎么操作
-            }
-            n = n.nextSibling();
-        }
+//            }else if(n.toElement().tagName().compare(QString("Arrs")) == 0){
+                // 大的标签是Arrs的时候
+                QDomNode arrowNode = doc.elementsByTagName("Arrs").at(0);
+                // 就是arrow了，因为箭头就一种
+                QDomNode m1 = arrowNode.firstChild();
+                int start_item_id, end_item_id, arrow_id;
+
+                // 遍历所有的箭头
+                while(!m1.isNull()){
+                    if(m1.isElement()){
+                        // 每个元素item
+                        QDomElement e = m1.toElement();
+                        arrow_id = e.attribute("id").toInt();
+                        start_item_id = e.attribute("start_item_id").toInt();
+                        end_item_id = e.attribute("end_item_id").toInt();
+                        QString cs = e.elementsByTagName("color").at(0).toElement().text();
+                        //qDebug() << "箭头颜色： " << cs;
+                        QColor line_colour(cs);
+
+                        DiagramItem *startItem = getDiagramItemById(start_item_id);
+                        DiagramItem *endItem = getDiagramItemById(end_item_id);
+                        Arrow *arrow = new Arrow(startItem, endItem);
+                        arrow->setColor(line_colour);
+                        arrow->itemId = arrow_id; // id不变
+                        startItem->addArrow(arrow);
+                        endItem->addArrow(arrow);
+                        arrow->setZValue(-1000.0);
+                        scene->addItem(arrow);
+                        arrow->updatePosition();
+
+                        scene->modifyXmlArrows(arrow, startItem, endItem);
+
+                    }
+                    m1 = m1.nextSibling();
+                }
+//            }
+//            n = n.nextSibling();
+//        }
     }else {
-        // TODO 什么操作
+        // TODO 文件名为空，啥也没选，提示
     }
 }

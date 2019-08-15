@@ -28,6 +28,7 @@ class MainWindow_Radar : public QMainWindow
 public:
     explicit MainWindow_Radar(QWidget *parent = nullptr);
     ~MainWindow_Radar();
+    DiagramItem *getDiagramItemById(int item_id);
 
 protected:
      void closeEvent(QCloseEvent *event);

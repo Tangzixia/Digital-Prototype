@@ -85,6 +85,61 @@ void RadarScene::setFont(const QFont &font)
     }
 }
 
+void RadarScene::modifyXmlItems(QPointF pos, DiagramItem *item)
+{
+
+    // 使用下面这两行使得Enum转String怎么都不行
+    // QMetaEnum m = QMetaEnum::fromType<DiagramItem::DiagramType>();
+    // QDomElement comp = doc.createElement(m.valueToKey(myItemType));
+    QDomElement comp;
+    switch (myItemType) {
+        case DiagramItem::DiagramType::Comp1:
+            comp = doc.createElement("comp_1");
+            break;
+        case DiagramItem::DiagramType::Comp2:
+            comp = doc.createElement("comp_2");
+            break;
+        case DiagramItem::DiagramType::Comp4:
+            comp = doc.createElement("comp_4");
+            break;
+        default:
+            break;
+    }
+    QDomElement color = doc.createElement("color");
+    QDomAttr posx = doc.createAttribute("pos_x");
+    QDomAttr posy = doc.createAttribute("pos_y");
+    QDomAttr id = doc.createAttribute("id");
+    posx.setValue(QString::number(pos.x()));
+    posy.setValue(QString::number(pos.y()));
+    id.setValue(QString::number(item->itemId));
+    comp.setAttributeNode(posx);
+    comp.setAttributeNode(posy);
+    comp.setAttributeNode(id);
+    QDomText c = doc.createTextNode(itemColor().name());
+    color.appendChild(c);
+    comp.appendChild(color);
+    Items.appendChild(comp);
+}
+
+void RadarScene::modifyXmlArrows(Arrow *arrow, DiagramItem *startItem, DiagramItem *endItem)
+{
+    QDomElement arr = doc.createElement("arrow");
+    QDomElement color = doc.createElement("color");
+    QDomAttr start = doc.createAttribute("start_item_id");
+    QDomAttr end = doc.createAttribute("end_item_id");
+    QDomAttr id = doc.createAttribute("id");
+    start.setValue(QString::number(startItem->itemId));
+    end.setValue(QString::number(endItem->itemId));
+    id.setValue(QString::number(arrow->itemId));
+    arr.setAttributeNode(start);
+    arr.setAttributeNode(end);
+    arr.setAttributeNode(id);
+    QDomText c = doc.createTextNode(myLineColor.name());
+    color.appendChild(c);
+    arr.appendChild(color);
+    Arrs.appendChild(arr);
+}
+
 
 void RadarScene::setMode(Mode mode)
 {
@@ -127,37 +182,7 @@ void RadarScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
             addItem(item);
             item->setPos(mouseEvent->scenePos());
             emit itemInserted(item);
-//            使用下面这两行使得Enum转String怎么都不行
-//            QMetaEnum m = QMetaEnum::fromType<DiagramItem::DiagramType>();
-//            QDomElement comp = doc.createElement(m.valueToKey(myItemType));
-            QDomElement comp;
-            switch (myItemType) {
-                case DiagramItem::DiagramType::Comp1:
-                    comp = doc.createElement("comp_1");
-                    break;
-                case DiagramItem::DiagramType::Comp2:
-                    comp = doc.createElement("comp_2");
-                    break;
-                case DiagramItem::DiagramType::Comp4:
-                    comp = doc.createElement("comp_4");
-                    break;
-                default:
-                    break;
-            }
-            QDomElement color = doc.createElement("color");
-            QDomAttr posx = doc.createAttribute("pos_x");
-            QDomAttr posy = doc.createAttribute("pos_y");
-            QDomAttr id = doc.createAttribute("id");
-            posx.setValue(QString::number(mouseEvent->scenePos().x()));
-            posy.setValue(QString::number(mouseEvent->scenePos().y()));
-            id.setValue(QString::number(item->itemId));
-            comp.setAttributeNode(posx);
-            comp.setAttributeNode(posy);
-            comp.setAttributeNode(id);
-            QDomText c = doc.createTextNode(itemColor().name());
-            color.appendChild(c);
-            comp.appendChild(color);
-            Items.appendChild(comp);
+            modifyXmlItems(mouseEvent->scenePos(), item);
             break;
         }
         case InsertLine:
@@ -165,7 +190,6 @@ void RadarScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
                                         mouseEvent->scenePos()));
             line->setPen(QPen(myLineColor, 2));
             addItem(line);
-
             break;
         case InsertText:
             textItem = new DiagramTextItem();
@@ -230,21 +254,7 @@ void RadarScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
             addItem(arrow);
             arrow->updatePosition();
 
-            QDomElement arr = doc.createElement("arrow");
-            QDomElement color = doc.createElement("color");
-            QDomAttr start = doc.createAttribute("start_item_id");
-            QDomAttr end = doc.createAttribute("end_item_id");
-            QDomAttr id = doc.createAttribute("id");
-            start.setValue(QString::number(startItem->itemId));
-            end.setValue(QString::number(endItem->itemId));
-            id.setValue(QString::number(arrow->itemId));
-            arr.setAttributeNode(start);
-            arr.setAttributeNode(end);
-            arr.setAttributeNode(id);
-            QDomText c = doc.createTextNode(myLineColor.name());
-            color.appendChild(c);
-            arr.appendChild(color);
-            Arrs.appendChild(arr);
+            modifyXmlArrows(arrow, startItem, endItem);
         }
     }
     line = nullptr;
