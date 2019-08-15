@@ -57,7 +57,7 @@ void RadarItem::show_property()
     p->exec();
 }
 
-// FIXME 设置使得在雷达页面未关闭之前不能关闭主窗口。
+//BUG 设置使得在雷达页面未关闭之前不能关闭主窗口。
 void RadarItem::edit_radar()
 {
     MainWindow_Radar *main_radar = new MainWindow_Radar;

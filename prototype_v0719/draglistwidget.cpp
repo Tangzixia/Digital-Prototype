@@ -15,7 +15,7 @@ DragListWidget::DragListWidget(QWidget *parent) : QListWidget(parent)
 
     //icon图标显示
     setViewMode(QListView::ListMode);
-    //TODO 设置ICON大小
+    //、设置ICON大小
     setIconSize(QSize(50, 50));
 
     this->setDropIndicatorShown(true);

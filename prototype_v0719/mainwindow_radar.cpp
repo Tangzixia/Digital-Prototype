@@ -9,7 +9,9 @@
 #include <QToolBar>
 #include <QDir>
 #include <QFileDialog>
+#include <QDesktopServices>
 #include "arrow.h"
+#include <iostream>
 
 const int InsertTextButton = 10;
 /**
@@ -23,7 +25,7 @@ MainWindow_Radar::MainWindow_Radar(QWidget *parent) :
     ui(new Ui::MainWindow_Radar)
 {
     ui->setupUi(this);
-    //TODO ?
+    //TODO 用法不清楚
     this->setAttribute(Qt::WA_DeleteOnClose);
     //最大窗口
     showMaximized();
@@ -68,7 +70,7 @@ MainWindow_Radar::MainWindow_Radar(QWidget *parent) :
     widget->setLayout(layout);
 
     setCentralWidget(widget);
-    //TODO dock无法自由拖动了，只能保持固定宽度能拖出来但是不能自动贴边
+    //FIXME dock无法自由拖动了，只能保持固定宽度能拖出来但是不能自动贴边
 //    ui->dockCompList->setAllowedAreas(Qt::AllDockWidgetAreas);
     setWindowTitle(tr("Radar Edit"));
     setUnifiedTitleAndToolBarOnMac(true);
@@ -95,6 +97,45 @@ DiagramItem *MainWindow_Radar::getDiagramItemById(int item_id)
     return nullptr;
 }
 
+// 删除doc中的箭头和图形项
+void MainWindow_Radar::deleteItemArrowById(int id)
+{
+    QDomNode itemNode = scene->getDoc().elementsByTagName("Items").at(0);
+    QDomNodeList nodeList = itemNode.childNodes();
+    for (int i=0; i<nodeList.size(); i++) {
+        if(nodeList.at(i).isElement()){
+            QDomElement elem = nodeList.at(i).toElement();
+            if(elem.attribute("id") == QString::number(id)){
+                itemNode.removeChild(nodeList.at(i));
+                // 将id列表中的那个id删除
+                scene->idList.removeOne(id);
+                qDebug() << "找到图形项，已删除,id=" << id;
+                break;
+            }
+        }
+    }
+
+    QDomNode arrowNode = scene->getDoc().elementsByTagName("Arrs").at(0);
+    /**
+     * 注意这里面不能先定义变量QDomNodeList arrowList = arrowNode.childNodes()；，然后下面使用arrowList，
+     * 因为当你删除一个标签节点之后，总长度size变了，每次都要重新获取size，而且找到一次之后index从0开始继续遍历
+     **/
+    for (int j=0; j<arrowNode.childNodes().size(); j++) {
+        if(arrowNode.childNodes().at(j).isElement()){
+            QDomElement elem2 = arrowNode.childNodes().at(j).toElement();
+            int arrowId = elem2.attribute("id").toInt();
+            qDebug() << "start_item_id: " << elem2.attribute("start_item_id") << "end_item_id" << elem2.attribute("end_item_id");
+            if(elem2.attribute("start_item_id") == QString::number(id) || elem2.attribute("end_item_id") == QString::number(id)){
+                arrowNode.removeChild(arrowNode.childNodes().at(j));
+                // 将id列表中的那个id删除
+                scene->idList.removeOne(arrowId);
+                qDebug() << "找到箭头，已删除,id=" << arrowId;
+                j=0;
+            }
+        }
+    }
+}
+
 // 退出的时候应该让用户选择是否保存当前场景
 // FIXME 默认保存场景到my.xml好像有点不合理，应该可以自己选择路径
 // 先判断是否退出钱保存？是，则保存退出；否，则直接退出。
@@ -115,7 +156,7 @@ void MainWindow_Radar::closeEvent(QCloseEvent *event)
             //转换为DiagramItem成功，只算item，排除箭头
             if((d = dynamic_cast<DiagramItem*>(scene->items().at(i)))){
 //                qDebug() << d->brush().color().name();
-                // BUG [light] elementById()报错说没有实现
+                // WARNING elementById()报错说没有实现
 //                if(d->brush().color().name() != scene->getDoc().elementById(QString::number(d->itemId)).firstChild().toElement().text()){
 //                    scene->getDoc().elementById(QString::number(d->itemId)).firstChild().setNodeValue(d->brush().color().name());
 //                }
@@ -145,7 +186,7 @@ void MainWindow_Radar::closeEvent(QCloseEvent *event)
             }
         }
         //]更新color
-        // NOTE 保存雷达组件数据
+        // 保存雷达组件数据
         QFile file(QDir::currentPath() + "/my.xml");
         if(!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) return;
         QTextStream out(&file);
@@ -230,10 +271,14 @@ void MainWindow_Radar::deleteItem()
             delete item;
         }
     }
-
+    DiagramItem *item_ = nullptr;
     foreach (QGraphicsItem *item, scene->selectedItems()) {
-         if (item->type() == DiagramItem::Type)
-             qgraphicsitem_cast<DiagramItem *>(item)->removeArrows();
+         if (item->type() == DiagramItem::Type){
+              item_ = qgraphicsitem_cast<DiagramItem *>(item);
+              item_->removeArrows();
+              // 删除doc中的此图形项对应的标签
+              deleteItemArrowById(item_->itemId);
+         }
          scene->removeItem(item);
          delete item;
     }
@@ -608,10 +653,13 @@ QIcon MainWindow_Radar::createColorIcon(QColor color)
 * @author        Antrn
 * @date          2019-08-12
 */
-// TODO 这里也是将保存的图片直接保存到默认文件夹，也就是当前工程文件夹下，后期需要改动
+// TODO 这里也是将保存的图片直接保存到默认文件夹，也就是当前工程文件夹/安装文件夹下，后期需要改动
 void MainWindow_Radar::saveSnapshot(int flag)
 {
+    // 当前路径
     QString currDir = QDir::currentPath();
+    // 桌面路径
+    QString deskTop =  QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     switch (flag) {
         case 1: {
             QSize mysize(static_cast<int>(scene->width()), static_cast<int>(scene->height()));
@@ -620,7 +668,15 @@ void MainWindow_Radar::saveSnapshot(int flag)
             painter.setRenderHint(QPainter::Antialiasing);
             scene->render(&painter);//也可以使用视图保存，只保存视图窗口的快照
             painter.end();
-            image.save(currDir+"/scene.png");
+//            QString dir_str = currDir+"/snapshots/";
+            // 检查目录是否存在，若不存在则新建
+//            QDir dir;
+//            if (!dir.exists(dir_str))
+//            {
+//                dir.mkpath(dir_str);
+//            }
+            QString dir_str = deskTop+"/snapshots/";
+            image.save(dir_str+"scene.png");
             break;
         }
         case 2: {
@@ -630,7 +686,15 @@ void MainWindow_Radar::saveSnapshot(int flag)
             painter.setRenderHint(QPainter::Antialiasing);
             ui->graphicsView->render(&painter);//也可以使用视图保存，只保存视图窗口的快照
             painter.end();
-            image.save(currDir+"/view.png");
+//            QString dir_str = currDir+"/snapshots/";
+            // 检查目录是否存在，若不存在则新建
+//            QDir dir;
+//            if (!dir.exists(dir_str))
+//            {
+//                dir.mkpath(dir_str);
+//            }
+            QString dir_str = deskTop+"/snapshots/";
+            image.save(dir_str+"view.png");
             break;
         }
     }
@@ -702,10 +766,9 @@ void MainWindow_Radar::lineButtonTriggered()
 * @author        Antrn
 * @date          2019-08-13
 */
-// WARNING BUG 有一个大bug，当按照此函数读取xml进来之后，再退出会清空xml
 void MainWindow_Radar::on_actionOpenXml_triggered()
 {
-    // TODO 打开xml文件读取
+    // 打开xml文件读取
     const QString fileName = QFileDialog::getOpenFileName(this, tr("打开xml"), QString(QDir::currentPath()), tr("xml files (*.xml)"));
     QDomDocument doc;
     if(!fileName.isEmpty()){
@@ -742,11 +805,11 @@ void MainWindow_Radar::on_actionOpenXml_triggered()
                 qreal poxy = e.attribute("pos_y").toInt();
                 QString s = e.elementsByTagName("color").at(0).toElement().text();
                 QColor colour(s);
-                // BUG 暂时不用，依旧不行
+                // WARNING 暂时不用，依旧不行
 //                        QMetaEnum metaEnum = QMetaEnum::fromType<DiagramItem::DiagramType>();
 //                        const char* c = tagName.toUtf8().data();
 //                        DiagramItem::DiagramType type = DiagramItem::DiagramType(metaEnum.keysToValue(c));
-                // NOTE FIXME 只能先用if/else了，switch也不能用
+                // FIXME 只能先用if/else了，switch也不能用
                 DiagramItem::DiagramType type;
                 qDebug() << "组件名: " << QString::fromStdString(tagName);
                 if(tagName == "comp_1"){
@@ -770,8 +833,6 @@ void MainWindow_Radar::on_actionOpenXml_triggered()
                 emit itemInserted(item_);
                 //更新xml
                 scene->modifyXmlItems(pos, item_);
-            }else{
-                // TODO what?
             }
             m = m.nextSibling();
         }

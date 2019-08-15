@@ -80,6 +80,8 @@ void DiagramItem::removeArrows()
     foreach (Arrow *arrow, arrows) {
         arrow->startItem()->removeArrow(arrow);
         arrow->endItem()->removeArrow(arrow);
+//        RadarScene *sce = dynamic_cast<RadarScene*>(this->scene());
+//        sce->idList.removeOne(arrow->itemId);
         scene()->removeItem(arrow);
         delete arrow;
     }
@@ -110,7 +112,7 @@ QPixmap DiagramItem::image() const
 //void DiagramItem::mousePressEvent(QGraphicsSceneMouseEvent *)
 //{
 //    setFocus();
-    //TODO 当移动的时候改变光标
+    // 当移动的时候改变光标
 //    setCursor(Qt::ClosedHandCursor);
 //}
 

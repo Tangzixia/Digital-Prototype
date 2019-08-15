@@ -29,6 +29,7 @@ public:
     explicit MainWindow_Radar(QWidget *parent = nullptr);
     ~MainWindow_Radar();
     DiagramItem *getDiagramItemById(int item_id);
+    void deleteItemArrowById(int id);
 
 protected:
      void closeEvent(QCloseEvent *event);
