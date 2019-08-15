@@ -1,10 +1,12 @@
 #include "diagramitem.h"
 #include "arrow.h"
+#include "radarscene.h"
 #include<QGraphicsScene>
 #include <QPainter>
 #include <QMenu>
 #include <QGraphicsSceneContextMenuEvent>
 #include <QKeyEvent>
+#include <QDebug>
 #include <QGraphicsBlurEffect>
 /**
 * @projectName   prototype_v0719
@@ -151,6 +153,14 @@ QVariant DiagramItem::itemChange(GraphicsItemChange change, const QVariant &valu
 {
     //检测位置发生变化
     if (change == QGraphicsItem::ItemPositionChange) {
+        if(this->init_pos_set != 0){
+//            qDebug() << "现在的位置： " << this->pos();
+            // 获取最新位置，更新doc
+            RadarScene *scene = dynamic_cast<RadarScene *>(this->scene());
+            scene->updateXmlItemsPos(this->pos(), this);
+        }else{
+            init_pos_set = 1;
+        }
         foreach (Arrow *arrow, arrows) {
             arrow->updatePosition();
         }

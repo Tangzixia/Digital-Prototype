@@ -35,7 +35,9 @@ public:
     void setFont(const QFont &font);
 
     void modifyXmlItems(QPointF pos, DiagramItem *item);
+    void updateXmlItemsPos(QPointF pos, DiagramItem *item);
     void modifyXmlArrows(Arrow *arrow, DiagramItem *startItem, DiagramItem *endItem);
+
     QMenu *getItemMenu(){return myItemMenu;}
     QDomDocument getDoc(){return doc;}
     QList<int> idList;

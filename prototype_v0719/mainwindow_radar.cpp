@@ -95,7 +95,8 @@ DiagramItem *MainWindow_Radar::getDiagramItemById(int item_id)
     return nullptr;
 }
 
-// BUG WARNING 退出的时候应该让用户选择是否保存当前场景，默认保存场景到my.xml好像有点不合理
+// 退出的时候应该让用户选择是否保存当前场景
+// FIXME 默认保存场景到my.xml好像有点不合理，应该可以自己选择路径
 // 先判断是否退出钱保存？是，则保存退出；否，则直接退出。
 void MainWindow_Radar::closeEvent(QCloseEvent *event)
 {
@@ -728,82 +729,89 @@ void MainWindow_Radar::on_actionOpenXml_triggered()
 //        while(!n.isNull()){
 //            // Items
 //            if(n.toElement().tagName().compare(QString("Items")) == 0){
-                int id;
-                // 子孩子就是标签名为comp_1...
-                QDomNode m = itemNode.firstChild();
-                while(!m.isNull()){
-                    std::string tagName = m.nodeName().toStdString();
-                    if(m.isElement()){
-                        // 每个元素item
-                        QDomElement e = m.toElement();
-                        id = e.attribute("id").toInt();
-                        qreal posx = e.attribute("pos_x").toInt();
-                        qreal poxy = e.attribute("pos_y").toInt();
-                        QString s = e.elementsByTagName("color").at(0).toElement().text();
-                        QColor colour(s);
-                        // BUG 暂时不用，依旧不行
+        int id;
+        // 子孩子就是标签名为comp_1...
+        QDomNode m = itemNode.firstChild();
+        while(!m.isNull()){
+            std::string tagName = m.nodeName().toStdString();
+            if(m.isElement()){
+                // 每个元素item
+                QDomElement e = m.toElement();
+                id = e.attribute("id").toInt();
+                qreal posx = e.attribute("pos_x").toInt();
+                qreal poxy = e.attribute("pos_y").toInt();
+                QString s = e.elementsByTagName("color").at(0).toElement().text();
+                QColor colour(s);
+                // BUG 暂时不用，依旧不行
 //                        QMetaEnum metaEnum = QMetaEnum::fromType<DiagramItem::DiagramType>();
 //                        const char* c = tagName.toUtf8().data();
 //                        DiagramItem::DiagramType type = DiagramItem::DiagramType(metaEnum.keysToValue(c));
-                        // NOTE FIXME 只能先用if/else了，switch也不能用
-                        DiagramItem::DiagramType type=DiagramItem::DiagramType::Comp1;
-                        if(tagName == "comp_1"){
-                            type = DiagramItem::DiagramType::Comp1;
-                        }else if(tagName == "comp_2"){
+                // NOTE FIXME 只能先用if/else了，switch也不能用
+                DiagramItem::DiagramType type;
+                qDebug() << "组件名: " << QString::fromStdString(tagName);
+                if(tagName == "comp_1"){
+                    type = DiagramItem::DiagramType::Comp1;
+                }else if(tagName == "comp_2"){
 
-                            type = DiagramItem::DiagramType::Comp2;
-                        }else if(tagName == "comp_3"){
-                            type = DiagramItem::DiagramType::Comp3;
-                        }else {
-                            type = DiagramItem::DiagramType::Comp4;
-                        }
-                        DiagramItem *item_ = new DiagramItem(type, scene->getItemMenu());
-                        QPointF pos(posx, poxy);
-                        item_->setPos(pos);
-                        item_->setBrush(colour);
-                        item_->itemId = id; //id不变
-                        scene->addItem(item_);
-                        emit itemInserted(item_);
-                        //更新xml
-                        scene->modifyXmlItems(pos, item_);
-                    }
-                    m = m.nextSibling();
+                    type = DiagramItem::DiagramType::Comp2;
+                }else if(tagName == "comp_3"){
+                    type = DiagramItem::DiagramType::Comp3;
+                }else {
+                    type = DiagramItem::DiagramType::Comp4;
                 }
+                DiagramItem *item_ = new DiagramItem(type, scene->getItemMenu());
+                QPointF pos(posx, poxy);
+                item_->setPos(pos);
+                item_->setBrush(colour);
+                item_->itemId = id; //id不变
+                scene->idList.append(id);
+                qDebug() << "scene的id列表" << scene->idList;
+                scene->addItem(item_);
+                emit itemInserted(item_);
+                //更新xml
+                scene->modifyXmlItems(pos, item_);
+            }else{
+                // TODO what?
+            }
+            m = m.nextSibling();
+        }
 //            }else if(n.toElement().tagName().compare(QString("Arrs")) == 0){
                 // 大的标签是Arrs的时候
-                QDomNode arrowNode = doc.elementsByTagName("Arrs").at(0);
-                // 就是arrow了，因为箭头就一种
-                QDomNode m1 = arrowNode.firstChild();
-                int start_item_id, end_item_id, arrow_id;
+        QDomNode arrowNode = doc.elementsByTagName("Arrs").at(0);
+        // 就是arrow了，因为箭头就一种
+        QDomNode m1 = arrowNode.firstChild();
+        int start_item_id, end_item_id, arrow_id;
 
-                // 遍历所有的箭头
-                while(!m1.isNull()){
-                    if(m1.isElement()){
-                        // 每个元素item
-                        QDomElement e = m1.toElement();
-                        arrow_id = e.attribute("id").toInt();
-                        start_item_id = e.attribute("start_item_id").toInt();
-                        end_item_id = e.attribute("end_item_id").toInt();
-                        QString cs = e.elementsByTagName("color").at(0).toElement().text();
-                        //qDebug() << "箭头颜色： " << cs;
-                        QColor line_colour(cs);
+        // 遍历所有的箭头
+        while(!m1.isNull()){
+            if(m1.isElement()){
+                // 每个元素item
+                QDomElement e = m1.toElement();
+                arrow_id = e.attribute("id").toInt();
+                start_item_id = e.attribute("start_item_id").toInt();
+                end_item_id = e.attribute("end_item_id").toInt();
+                QString cs = e.elementsByTagName("color").at(0).toElement().text();
+                //qDebug() << "箭头颜色： " << cs;
+                QColor line_colour(cs);
 
-                        DiagramItem *startItem = getDiagramItemById(start_item_id);
-                        DiagramItem *endItem = getDiagramItemById(end_item_id);
-                        Arrow *arrow = new Arrow(startItem, endItem);
-                        arrow->setColor(line_colour);
-                        arrow->itemId = arrow_id; // id不变
-                        startItem->addArrow(arrow);
-                        endItem->addArrow(arrow);
-                        arrow->setZValue(-1000.0);
-                        scene->addItem(arrow);
-                        arrow->updatePosition();
+                DiagramItem *startItem = getDiagramItemById(start_item_id);
+                DiagramItem *endItem = getDiagramItemById(end_item_id);
+                Arrow *arrow = new Arrow(startItem, endItem);
+                arrow->setColor(line_colour);
+                arrow->itemId = arrow_id; // id不变
+                scene->idList.append(arrow_id);
+                qDebug() << "scene的id列表" << scene->idList;
+                startItem->addArrow(arrow);
+                endItem->addArrow(arrow);
+                arrow->setZValue(-1000.0);
+                scene->addItem(arrow);
+                arrow->updatePosition();
 
-                        scene->modifyXmlArrows(arrow, startItem, endItem);
+                scene->modifyXmlArrows(arrow, startItem, endItem);
 
-                    }
-                    m1 = m1.nextSibling();
-                }
+            }
+            m1 = m1.nextSibling();
+        }
 //            }
 //            n = n.nextSibling();
 //        }

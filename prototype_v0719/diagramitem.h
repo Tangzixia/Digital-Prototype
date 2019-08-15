@@ -3,6 +3,7 @@
 
 #include <QDateTime>
 #include <QGraphicsItem>
+#include <QObject>
 class Arrow;
 
 /**
@@ -34,6 +35,8 @@ public:
     int type() const override { return Type;}
     int itemId;
 
+    int init_pos_set=0;
+
 protected:
     //WARN 暂时不能定义下面这几个，即使什么都不写也会有问题
 //    void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
@@ -42,6 +45,7 @@ protected:
 //    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
+
 
 private:
     DiagramType myDiagramType;

@@ -1,6 +1,6 @@
 #include "radarscene.h"
 #include "arrow.h"
-
+#include <QDebug>
 #include <QTextCursor>
 #include <QGraphicsSceneMouseEvent>
 #include <QMetaEnum>
@@ -92,7 +92,7 @@ void RadarScene::modifyXmlItems(QPointF pos, DiagramItem *item)
     // QMetaEnum m = QMetaEnum::fromType<DiagramItem::DiagramType>();
     // QDomElement comp = doc.createElement(m.valueToKey(myItemType));
     QDomElement comp;
-    switch (myItemType) {
+    switch (item->diagramType()) {
         case DiagramItem::DiagramType::Comp1:
             comp = doc.createElement("comp_1");
             break;
@@ -119,6 +119,26 @@ void RadarScene::modifyXmlItems(QPointF pos, DiagramItem *item)
     color.appendChild(c);
     comp.appendChild(color);
     Items.appendChild(comp);
+}
+
+void RadarScene::updateXmlItemsPos(QPointF pos, DiagramItem *item)
+{
+    QDomNode node = doc.elementsByTagName("Items").at(0).firstChild();
+    QDomElement elem;
+    // 遍历items标签找到
+    while(!node.isNull()){
+        if(node.isElement()){
+             elem = node.toElement();
+             if(elem.attribute("id").compare(QString::number(item->itemId))==0){
+                 elem.setAttribute("pos_x", pos.x());
+                 elem.setAttribute("pos_y", pos.y());
+//                 qDebug() << doc.toString();
+                 return;
+             }
+        }
+        node = node.nextSibling();
+    }
+    qDebug() << "[warning] 未找到匹配的id=" << item->itemId;
 }
 
 void RadarScene::modifyXmlArrows(Arrow *arrow, DiagramItem *startItem, DiagramItem *endItem)
