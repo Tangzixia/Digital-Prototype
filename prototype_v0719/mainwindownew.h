@@ -32,6 +32,8 @@ protected:
 private slots:
     void xy_show(double x,double y);
 
+    void on_actionabout_DPSP_triggered();
+
 private:
     Ui::MainWindowNew *ui;
     QRect rect;

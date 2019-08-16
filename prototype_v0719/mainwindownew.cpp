@@ -4,6 +4,7 @@
 
 #include <QtDebug>
 #include <QListWidgetItem>
+#include <QMessageBox>
 
 
 /**
@@ -86,5 +87,9 @@ void MainWindowNew::xy_show(double x,double y)
     label_xy->setText(str);
 }
 
-
-
+void MainWindowNew::on_actionabout_DPSP_triggered()
+{
+    QMessageBox::about(this, tr("About DPSP"),
+                             tr("The <b>DPSP(Digital-Prototype-Simulation-Platform)</b>"
+                                " is an engineering level simulation tool for radar and electronic countermeasures equipment.."));
+}

@@ -46,7 +46,8 @@ SOURCES += \
     radarscene.cpp \
     diagramitem.cpp \
     arrow.cpp \
-    diagramtextitem.cpp
+    diagramtextitem.cpp \
+    compproperty.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -64,7 +65,8 @@ HEADERS += \
     radarscene.h \
     diagramitem.h \
     arrow.h \
-    diagramtextitem.h
+    diagramtextitem.h \
+    compproperty.h
 
 FORMS += \
         mainwindow.ui \
@@ -72,7 +74,8 @@ FORMS += \
     hellodialog.ui \
     mainwindownew.ui \
     mainwindow_radar.ui \
-    radarproperty.ui
+    radarproperty.ui \
+    compproperty.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

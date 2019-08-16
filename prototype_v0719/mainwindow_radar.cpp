@@ -11,6 +11,7 @@
 #include <QFileDialog>
 #include <QDesktopServices>
 #include "arrow.h"
+#include "compproperty.h"
 #include <iostream>
 
 const int InsertTextButton = 10;
@@ -141,7 +142,7 @@ void MainWindow_Radar::deleteItemArrowById(int id)
 // 先判断是否退出钱保存？是，则保存退出；否，则直接退出。
 void MainWindow_Radar::closeEvent(QCloseEvent *event)
 {
-    int ret1 = QMessageBox::question(this, tr("确认"), tr("确定退出雷达编辑前保存场景?"), QMessageBox::Yes, QMessageBox::No);
+    int ret1 = QMessageBox::question(this, tr("确认"), tr("确定退出前保存场景到桌面?"), QMessageBox::Yes, QMessageBox::No);
     if(ret1 == QMessageBox::Yes){
         qDebug() << tr("to close radar window");
         // 根元素
@@ -215,11 +216,6 @@ void MainWindow_Radar::on_actionCom_list_triggered()
 
 void MainWindow_Radar::xy_show(double x, double y)
 {
-    //x-=9;
-    //y-=9;
-    //(9,9,xx,xx)要减去9
-    //qDebug() << ui->graphicsView->geometry();
-    //qDebug() << this->graphicsScene->width() << " ; " << this->graphicsScene->height() ;
     QString str=QString("x=%1,y=%2").arg(QString::number(x)).arg(QString::number(y));
     label_xy->setText(str);
 }
@@ -320,6 +316,17 @@ void MainWindow_Radar::sendToBack()
     }
     //只把selectedItem设置为最高的z-index
     selectedItem->setZValue(zValue);
+}
+
+void MainWindow_Radar::showItemProperties()
+{
+    foreach (QGraphicsItem *item, scene->selectedItems()) {
+        if (item->type() == DiagramItem::Type) {
+            qDebug() << "Show Component Property";
+            CompProperty *p = new CompProperty();
+            p->exec();
+        }
+    }
 }
 
 void MainWindow_Radar::itemInserted(DiagramItem *item)
@@ -436,6 +443,11 @@ void MainWindow_Radar::createActions()
     deleteAction->setStatusTip(tr("Delete item from diagram"));
     connect(deleteAction, SIGNAL(triggered()), this, SLOT(deleteItem()));
 
+    propertyAction = new QAction(QIcon(":/img/property.png"), tr("Property"), this);
+    propertyAction->setShortcut(tr("Property"));
+    propertyAction->setStatusTip(tr("Show item's properties"));
+    connect(propertyAction, &QAction::triggered, this, &MainWindow_Radar::showItemProperties);
+
     exitAction = new QAction(QIcon(":/img/exit.png"), tr("E&xit"), this);
     exitAction->setShortcuts(QKeySequence::Quit);
     exitAction->setStatusTip(tr("Quit radar edit window"));
@@ -466,6 +478,7 @@ void MainWindow_Radar::createMenus()
 
     itemMenu = menuBar()->addMenu(tr("&Item"));
     itemMenu->addAction(deleteAction);
+    itemMenu->addAction(propertyAction);
     itemMenu->addSeparator();
     itemMenu->addAction(toFrontAction);
     itemMenu->addAction(sendBackAction);
@@ -668,14 +681,15 @@ void MainWindow_Radar::saveSnapshot(int flag)
             painter.setRenderHint(QPainter::Antialiasing);
             scene->render(&painter);//也可以使用视图保存，只保存视图窗口的快照
             painter.end();
+
+            QString dir_str = deskTop+"/snapshots/";
 //            QString dir_str = currDir+"/snapshots/";
             // 检查目录是否存在，若不存在则新建
-//            QDir dir;
-//            if (!dir.exists(dir_str))
-//            {
-//                dir.mkpath(dir_str);
-//            }
-            QString dir_str = deskTop+"/snapshots/";
+            QDir dir;
+            if (!dir.exists(dir_str))
+            {
+                dir.mkpath(dir_str);
+            }
             image.save(dir_str+"scene.png");
             break;
         }
@@ -686,14 +700,15 @@ void MainWindow_Radar::saveSnapshot(int flag)
             painter.setRenderHint(QPainter::Antialiasing);
             ui->graphicsView->render(&painter);//也可以使用视图保存，只保存视图窗口的快照
             painter.end();
+
+            QString dir_str = deskTop+"/snapshots/";
 //            QString dir_str = currDir+"/snapshots/";
             // 检查目录是否存在，若不存在则新建
-//            QDir dir;
-//            if (!dir.exists(dir_str))
-//            {
-//                dir.mkpath(dir_str);
-//            }
-            QString dir_str = deskTop+"/snapshots/";
+            QDir dir;
+            if (!dir.exists(dir_str))
+            {
+                dir.mkpath(dir_str);
+            }
             image.save(dir_str+"view.png");
             break;
         }

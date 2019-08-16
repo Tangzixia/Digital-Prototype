@@ -39,7 +39,7 @@
          <x>0</x>
          <y>0</y>
          <width>129</width>
-         <height>426</height>
+         <height>435</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -135,7 +135,7 @@
      <x>0</x>
      <y>0</y>
      <width>810</width>
-     <height>28</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menufile">
@@ -160,10 +160,18 @@
      <string>help</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menuabout">
+    <property name="title">
+     <string>about</string>
+    </property>
+    <addaction name="actionabout_DPSP"/>
+    <addaction name="actionabout_us"/>
+   </widget>
    <addaction name="menufile"/>
    <addaction name="menuedit"/>
    <addaction name="menusetting"/>
    <addaction name="menuhelp"/>
+   <addaction name="menuabout"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionnewFile">
@@ -174,6 +182,16 @@
   <action name="actionsaveFile">
    <property name="text">
     <string>saveFile</string>
+   </property>
+  </action>
+  <action name="actionabout_DPSP">
+   <property name="text">
+    <string>about DPSP</string>
+   </property>
+  </action>
+  <action name="actionabout_us">
+   <property name="text">
+    <string>about us</string>
    </property>
   </action>
  </widget>

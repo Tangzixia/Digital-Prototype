@@ -23,5 +23,6 @@
         <file>img/sendtoback.png</file>
         <file>img/textpointer.png</file>
         <file>img/underline.png</file>
+        <file>img/property.png</file>
     </qresource>
 </RCC>

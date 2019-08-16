@@ -69,7 +69,10 @@ void RadarScene::setItemColor(const QColor &color)
     myItemColor = color;
     if (isItemChange(DiagramItem::Type)) {
         DiagramItem *item = qgraphicsitem_cast<DiagramItem *>(selectedItems().first());
+        // 填充
         item->setBrush(myItemColor);
+        // 描边
+//        item->setPen(QPen(myItemColor));
     }
 }
 
@@ -197,6 +200,7 @@ void RadarScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     switch (myMode) {
         case InsertItem:{
             item = new DiagramItem(myItemType, myItemMenu);
+//            item->(myItemColor);
             item->setBrush(myItemColor);
             item->itemId = generateUniqueid();
             addItem(item);
