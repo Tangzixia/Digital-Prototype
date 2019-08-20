@@ -39,7 +39,7 @@
          <x>0</x>
          <y>0</y>
          <width>129</width>
-         <height>435</height>
+         <height>431</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -96,7 +96,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="RivalListButton">
+           <widget class="QPushButton" name="ECMListButton">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -107,6 +107,9 @@
              <string>对抗</string>
             </property>
            </widget>
+          </item>
+          <item>
+           <widget class="ECMDragListWidget" name="ECMListWidget"/>
           </item>
          </layout>
         </item>
@@ -135,7 +138,7 @@
      <x>0</x>
      <y>0</y>
      <width>810</width>
-     <height>21</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menufile">
@@ -199,7 +202,12 @@
   <customwidget>
    <class>DragListWidget</class>
    <extends>QListWidget</extends>
-   <header location="global">draglistwidget.h</header>
+   <header>draglistwidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ECMDragListWidget</class>
+   <extends>QListWidget</extends>
+   <header location="global">ecmdraglistwidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

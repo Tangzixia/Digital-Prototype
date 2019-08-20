@@ -2,6 +2,7 @@
 #include "draglistwidget.h"
 #include "mainwindownewscene.h"
 #include "radaritem.h"
+#include "ecmitem.h"
 
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneDragDropEvent>
@@ -319,6 +320,34 @@ void MainWindowNewScene::dropEvent(QGraphicsSceneDragDropEvent *event)
                 for(int i = 0;i<graphicsLineItem_List.length();i++){
                     ArrowItem*linetemp = graphicsLineItem_List.at(i);
                     if(linetemp->getEndItem()==radar||linetemp->getBeginItem()==radar){
+                        delete_line_List.append(linetemp);
+                    }
+                }
+                for(int i = 0;i<delete_line_List.length();i++){
+                    this->removeItem(delete_line_List.at(i));
+                    graphicsLineItem_List.removeOne(delete_line_List.at(i));
+                }
+                delete_line_List.clear();
+            });
+        }
+        else if(str == "duikang"){
+            ECMItem *ecm = new ECMItem;
+            // 设置初始位置
+            ecm->setPos(event->scenePos().x()-35, event->scenePos().y() -35);
+            qDebug()<<"放下位置: " <<event->scenePos();
+            this->addItem(ecm);
+            Item_List.append(ecm);
+
+            connect(ecm, &ECMItem::destroyed, [=](){
+                this->removeItem(ecm);
+                Item_List.removeOne(ecm);
+//                删除对应的连线
+                delete_line_List.clear();
+                connect_to_List.clear();
+                connect_from_List.clear();
+                for(int i = 0;i<graphicsLineItem_List.length();i++){
+                    ArrowItem*linetemp = graphicsLineItem_List.at(i);
+                    if(linetemp->getEndItem()==ecm||linetemp->getBeginItem()==ecm){
                         delete_line_List.append(linetemp);
                     }
                 }

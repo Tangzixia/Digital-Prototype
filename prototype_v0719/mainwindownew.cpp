@@ -39,6 +39,20 @@ MainWindowNew::MainWindowNew(QWidget *parent) :
         }
     });
 
+
+    //    设置对抗组件类表初始状态隐藏
+        ui->ECMListWidget->setVisible(false);
+    //    对抗组件列表按钮绑定事件
+        connect(ui->ECMListButton,&QPushButton::clicked,this,[=](){
+            bool flag2 = this->ui->ECMListWidget->isHidden();
+            if(flag2){
+                this->ui->ECMListWidget->setVisible(true);
+            }
+            else{
+                this->ui->ECMListWidget->setVisible(false);
+            }
+        });
+
 //    当listwidget additem的时候通知父组件重绘（并没有卵用）
     connect(ui->RadarListWidget,&DragListWidget::repaintWidget,this,[=](){
 //        this->ui->scrollAreaWidgetContents->repaint();

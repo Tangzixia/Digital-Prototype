@@ -24,5 +24,6 @@
         <file>img/textpointer.png</file>
         <file>img/underline.png</file>
         <file>img/property.png</file>
+        <file>img/ecmdemo.jpg</file>
     </qresource>
 </RCC>

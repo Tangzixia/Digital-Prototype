@@ -47,7 +47,9 @@ SOURCES += \
     diagramitem.cpp \
     arrow.cpp \
     diagramtextitem.cpp \
-    compproperty.cpp
+    compproperty.cpp \
+    ecmdraglistwidget.cpp \
+    ecmitem.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -66,7 +68,9 @@ HEADERS += \
     diagramitem.h \
     arrow.h \
     diagramtextitem.h \
-    compproperty.h
+    compproperty.h \
+    ecmdraglistwidget.h \
+    ecmitem.h
 
 FORMS += \
         mainwindow.ui \
