@@ -5,7 +5,6 @@
 #-------------------------------------------------
 
 QT       += core gui
-QT       += xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -47,9 +46,7 @@ SOURCES += \
     diagramitem.cpp \
     arrow.cpp \
     diagramtextitem.cpp \
-    compproperty.cpp \
-    ecmdraglistwidget.cpp \
-    ecmitem.cpp
+    compproperty.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -68,9 +65,7 @@ HEADERS += \
     diagramitem.h \
     arrow.h \
     diagramtextitem.h \
-    compproperty.h \
-    ecmdraglistwidget.h \
-    ecmitem.h
+    compproperty.h
 
 FORMS += \
         mainwindow.ui \
