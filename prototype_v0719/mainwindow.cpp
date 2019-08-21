@@ -8,17 +8,17 @@
 * @projectName   prototype_v0719
 * @brief         整个程序的主窗口：打开现有的工程时。
 * @author        Antrn
-* @date          2019-08-12
+* @date          2019-08-21
 */
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    setWindowTitle("主页");
+    setWindowTitle("打开工程面板");
     showMaximized();
     init();
-    //what's this?
+    // what's this?
     QAction *whatAction = QWhatsThis::createAction(this);
     ui->mainToolBar->addAction(whatAction);
 }
@@ -60,9 +60,15 @@ void MainWindow::writeSettings()
 //关闭主窗口时的动作，保存应用设置
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    //先关闭其他子窗口
+    // TODO 先关闭其他子窗口
 
-    //保存设置
+    // TODO 保存设置
     writeSettings();
     event->accept();
+}
+
+void MainWindow::on_actionexit_triggered()
+{
+    // 软件退出
+    qApp->closeAllWindows();
 }

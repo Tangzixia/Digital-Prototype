@@ -28,6 +28,8 @@ public:
 private slots:
 
     void on_actionOpenGL_triggered();
+    void on_actionexit_triggered();
+
 
 private:
     Ui::MainWindow *ui;
