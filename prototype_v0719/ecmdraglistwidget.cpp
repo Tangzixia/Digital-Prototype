@@ -21,8 +21,8 @@ ECMDragListWidget::ECMDragListWidget(QWidget *parent) : QListWidget(parent)
 //    加入新建电子对抗按钮项
     this->addItem("新建电子对抗");
     addECMButton = this->item(0);
-    addECMButton->setTextAlignment(1);
-    addECMButton->setBackgroundColor(QColor(211,211,211));
+    addECMButton->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+//    addECMButton->setBackgroundColor(QColor(211,211,211));
     addECMButton->setFlags(Qt::NoItemFlags);
     addECMButton->setIcon(QIcon(":/img/newradar.png"));
 

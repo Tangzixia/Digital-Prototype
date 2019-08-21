@@ -7,7 +7,6 @@
         <file>img/start_logo.gif</file>
         <file>img/radar.jpg</file>
         <file>img/radar.png</file>
-        <file>img/newradar.png</file>
         <file>img/background1.png</file>
         <file>img/background2.png</file>
         <file>img/background3.png</file>
@@ -25,5 +24,6 @@
         <file>img/underline.png</file>
         <file>img/property.png</file>
         <file>img/ecmdemo.jpg</file>
+        <file>img/newradar.png</file>
     </qresource>
 </RCC>

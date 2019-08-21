@@ -24,10 +24,10 @@ DragListWidget::DragListWidget(QWidget *parent) : QListWidget(parent)
     this->setAttribute(Qt::WA_PendingMoveEvent);
 
 //    加入新建雷达按钮项
-    this->addItem("新建雷达");
+    this->addItem(tr("新建雷达"));
     addRadarButton = this->item(0);
-    addRadarButton->setTextAlignment(1);
-    addRadarButton->setBackgroundColor(QColor(211,211,211));
+    addRadarButton->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+//    addRadarButton->setBackgroundColor(QColor(211,211,211));
     addRadarButton->setFlags(Qt::NoItemFlags);
     addRadarButton->setIcon(QIcon(":/img/newradar.png"));
 

@@ -88,7 +88,9 @@ void ECMItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     QMenu *menu = new QMenu;
     menu->addAction(tr("删除"), this, SLOT(delete_item()));
+    // FIXME 此处和雷达共用属性窗口
     menu->addAction(tr("属性"), this, SLOT(show_property()));
+    // FIXME 此处和雷达共用编辑窗口
     menu->addAction(tr("编辑"), this, SLOT(edit_radar()));
     menu->exec(event->screenPos());
     delete menu;
