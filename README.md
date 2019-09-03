@@ -9,5 +9,7 @@ In order to facilitate our development.
 
 (2) Every project participant, whoever it is, should submit code to other branches, such as "maowenjie" rather than "master".
 
+(3) It is strongly recommended that "Pull requests", "Projects" and "Issues" be used for collaborative communication among developers.
+
 # About
 723-201906-...
