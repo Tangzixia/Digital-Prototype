@@ -1,0 +1,29 @@
+<RCC>
+    <qresource prefix="/">
+        <file>img/startup.gif</file>
+        <file>img/lixian.jpg</file>
+        <file>img/new.png</file>
+        <file>img/open.png</file>
+        <file>img/start_logo.gif</file>
+        <file>img/radar.jpg</file>
+        <file>img/radar.png</file>
+        <file>img/background1.png</file>
+        <file>img/background2.png</file>
+        <file>img/background3.png</file>
+        <file>img/background4.png</file>
+        <file>img/bold.png</file>
+        <file>img/bringtofront.png</file>
+        <file>img/delete.png</file>
+        <file>img/floodfill.png</file>
+        <file>img/italic.png</file>
+        <file>img/linecolor.png</file>
+        <file>img/linepointer.png</file>
+        <file>img/pointer.png</file>
+        <file>img/sendtoback.png</file>
+        <file>img/textpointer.png</file>
+        <file>img/underline.png</file>
+        <file>img/property.png</file>
+        <file>img/ecmdemo.jpg</file>
+        <file>img/newradar.png</file>
+    </qresource>
+</RCC>
