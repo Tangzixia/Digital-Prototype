@@ -25,5 +25,8 @@
         <file>img/property.png</file>
         <file>img/ecmdemo.jpg</file>
         <file>img/newradar.png</file>
+        <file>img/FDPC.ico</file>
+        <file>img/CFAR.ico</file>
+        <file>img/MTD.ico</file>
     </qresource>
 </RCC>

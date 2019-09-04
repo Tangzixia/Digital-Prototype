@@ -15,6 +15,8 @@
 * @date          2019-08-12
 */
 
+
+
 DiagramItem::DiagramItem(DiagramType diagramType, QMenu *contextMenu,
              QGraphicsItem *parent): QGraphicsPolygonItem(parent)
 {
@@ -42,9 +44,18 @@ DiagramItem::DiagramItem(DiagramType diagramType, QMenu *contextMenu,
             break;
         //正方形
         case Comp1:
-            myPolygon << QPointF(-50, -50) << QPointF(50, -50)
-                      << QPointF(50, 50) << QPointF(-50, 50)
-                      << QPointF(-50, -50);
+            path.moveTo(-50, -50);
+            path.addText(QPointF(0,0),QFont("Helvetica", 20),QString("hhh"));
+            path.moveTo(50, -50);
+//            path.lineTo(50, -50);
+            path.lineTo(50, 50);
+            path.lineTo(-50, 50);
+            path.lineTo(-50, -50);
+
+//            myPolygon << QPointF(-50, -50) << QPointF(50, -50)
+//                      << QPointF(50, 50) << QPointF(-50, 50)
+//                      << QPointF(-50, -50);
+            myPolygon = path.toFillPolygon();
             break;
         //默认 菱形，IO
         default:
@@ -54,6 +65,7 @@ DiagramItem::DiagramItem(DiagramType diagramType, QMenu *contextMenu,
             break;
     }
     setPolygon(myPolygon);
+
     setFlag(QGraphicsItem::ItemIsFocusable, true);
     setFlag(QGraphicsItem::ItemIsMovable, true);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
@@ -62,9 +74,16 @@ DiagramItem::DiagramItem(DiagramType diagramType, QMenu *contextMenu,
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
 }
 
-//DiagramItem::DiagramItem(const DiagramItem &)
+//QRectF DiagramItem::boundingRect()
 //{
+//    qreal adjust=0.5;
+//    return QRectF(0-adjust,0-adjust,100+adjust,100+adjust);
+//}
 
+//void DiagramItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
+//{
+//    painter->drawRect(0,0,100,100);
+//    painter->drawPixmap(0,0,48,48, QPixmap(":/img/radar.png"));
 //}
 
 void DiagramItem::removeArrow(Arrow *arrow)
@@ -95,11 +114,27 @@ void DiagramItem::addArrow(Arrow *arrow)
 QPixmap DiagramItem::image() const
 {
     QPixmap pixmap(250, 250);
-    pixmap.fill(Qt::transparent);
+//    pixmap.fill(Qt::transparent);
+    QString iconName;
+    switch (diagramType()) {
+        case DiagramItem::DiagramType::Comp1 :
+            iconName = "FDPC";
+            break;
+        case DiagramItem::DiagramType::Comp2 :
+            iconName = "CFAR";
+            break;
+        case DiagramItem::DiagramType::Comp4 :
+            iconName = "MTD";
+            break;
+        default:
+            break;
+    }
+    QString itemIcon = ":/img/" +iconName+".ico";
+    pixmap.convertFromImage(QImage(itemIcon));
     QPainter painter(&pixmap);
     painter.setPen(QPen(Qt::black, 8));
     painter.translate(125, 125);
-    painter.drawPolyline(myPolygon);
+//    painter.drawPolyline(myPolygon);
     painter.setRenderHint(QPainter::Antialiasing, true);
     return pixmap;
 }
@@ -167,6 +202,6 @@ QVariant DiagramItem::itemChange(GraphicsItemChange change, const QVariant &valu
             arrow->updatePosition();
         }
     }
-
+//    update();
     return value;
 }

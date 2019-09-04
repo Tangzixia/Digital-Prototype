@@ -50,7 +50,8 @@ SOURCES += \
     compproperty.cpp \
     ecmdraglistwidget.cpp \
     ecmitem.cpp \
-    clickablelabel.cpp
+    clickablelabel.cpp \
+    realtimecurve.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -72,7 +73,8 @@ HEADERS += \
     compproperty.h \
     ecmdraglistwidget.h \
     ecmitem.h \
-    clickablelabel.h
+    clickablelabel.h \
+    realtimecurve.h
 
 FORMS += \
         mainwindow.ui \
@@ -81,7 +83,8 @@ FORMS += \
     mainwindownew.ui \
     mainwindow_radar.ui \
     radarproperty.ui \
-    compproperty.ui
+    compproperty.ui \
+    realtimecurve.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

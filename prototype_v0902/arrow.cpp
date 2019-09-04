@@ -13,7 +13,7 @@ const qreal Pi = 3.14;
 */
 
 /*
-* TODO 选中箭头，按键盘delete可以删除箭头或者item组件
+* 选中箭头，可以删除箭头或者item组件
 */
 
 Arrow::Arrow(DiagramItem *startItem, DiagramItem *endItem, QGraphicsItem *parent)

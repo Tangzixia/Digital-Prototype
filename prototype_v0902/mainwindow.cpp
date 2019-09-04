@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
+#include "realtimecurve.h"
 #include <QLabel>
 #include <QSettings>
 #include <QWhatsThis>
@@ -71,4 +71,10 @@ void MainWindow::on_actionexit_triggered()
 {
     // 软件退出
     qApp->closeAllWindows();
+}
+
+void MainWindow::on_actionCurve_triggered()
+{
+    RealTimeCurve *rtc = new RealTimeCurve;
+    rtc->show();
 }

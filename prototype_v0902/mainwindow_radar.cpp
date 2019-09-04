@@ -450,9 +450,9 @@ void MainWindow_Radar::createCompBox()
             this, SLOT(buttonGroupClicked(int)));
     QGridLayout *layout = new QGridLayout;
     // TODO 支持点击修改组件名
-    layout->addWidget(createCellWidget(tr("脉冲压缩（FDPC）"), DiagramItem::Comp1), 0, 0); // Component_1
-    layout->addWidget(createCellWidget(tr("恒虚警率（CFAR）"), DiagramItem::Comp2),0, 1); // Component_2
-    layout->addWidget(createCellWidget(tr("动目标检测（MTD）"), DiagramItem::Comp4), 1, 0); // Component_3
+    layout->addWidget(createCellWidget(tr("脉冲压缩"), DiagramItem::Comp1), 0, 0); // Component_1
+    layout->addWidget(createCellWidget(tr("恒虚警率"), DiagramItem::Comp2),0, 1); // Component_2
+    layout->addWidget(createCellWidget(tr("动目标检测"), DiagramItem::Comp4), 1, 0); // Component_4
     // 文字按钮，在场景添加文字，暂时保留
     QToolButton *textButton = new QToolButton;
     textButton->setCheckable(true);
@@ -746,7 +746,7 @@ QIcon MainWindow_Radar::createColorIcon(QColor color)
 * @author        Antrn
 * @date          2019-08-12
 */
-// TODO 这里也是将保存的图片直接保存到默认文件夹，也就是当前工程文件夹/安装文件夹下，后期需要改动
+// NOTE 这里也是将保存的图片直接保存到默认文件夹，也就是当前桌面文件夹下，后期需要改动
 void MainWindow_Radar::saveSnapshot(int flag)
 {
     // 当前路径

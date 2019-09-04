@@ -31,6 +31,7 @@
      <string>查看</string>
     </property>
     <addaction name="actionOpenGL"/>
+    <addaction name="actionCurve"/>
    </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">
@@ -210,6 +211,11 @@
   <action name="actionexit">
    <property name="text">
     <string>退出</string>
+   </property>
+  </action>
+  <action name="actionCurve">
+   <property name="text">
+    <string>动态曲线</string>
    </property>
   </action>
  </widget>
