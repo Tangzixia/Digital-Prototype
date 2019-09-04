@@ -94,7 +94,7 @@ void ECMDragListWidget::startDrag(Qt::DropActions /*supportedActions*/)
     if (drag->exec(Qt::MoveAction) == Qt::CopyAction){
         //删除掉当前组件
 //        delete takeItem(row(item));
-        //TODO  未来保留组件库的元素
+        // TODO  未来保留组件库的元素
         qDebug() << "复制动作";
     }
 }

@@ -58,7 +58,7 @@ void RadarItem::show_property()
 }
 
 // BUG 设置使得在雷达页面未关闭之前不能关闭主窗口。
-// FIXME 使得每个新打开的页面都和唯一一个雷达/电子对抗绑定，如果对于某个雷达已经配置好，下次编辑直接可以看到雷达里面的组件（场景）
+// 使得每个新打开的页面都和唯一一个雷达/电子对抗绑定，如果对于某个雷达已经配置好，下次编辑直接可以看到雷达里面的组件（场景）
 void RadarItem::edit_radar()
 {
     MainWindow_Radar *main_radar = new MainWindow_Radar(getRadar_id());

@@ -34,12 +34,14 @@ public:
     QPixmap image() const;
     int type() const override { return Type;}
     int itemId;
-
+    QString iconName;
     int init_pos_set=0;
+//    QRectF boundingRect();
+//    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
 
 protected:
     //WARN 暂时不能定义下面这几个，即使什么都不写也会有问题
-//    void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
+    //    void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
 //    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
 //    void KeyPressEvent(QKeyEvent *event);
 //    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
