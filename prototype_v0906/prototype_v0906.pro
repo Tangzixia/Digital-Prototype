@@ -63,7 +63,8 @@ SOURCES += \
     EccmPrototype\ecmdraglistwidget.cpp \
     EccmPrototype\ecmitem.cpp \
     Tool\clickablelabel.cpp \
-    Tool\realtimecurve.cpp
+    Tool\realtimecurve.cpp \
+    Tool/qudong.cpp
 
 HEADERS += \
         Main\mainwindow.h \
@@ -86,7 +87,8 @@ HEADERS += \
     EccmPrototype\ecmdraglistwidget.h \
     EccmPrototype\ecmitem.h \
     Tool\clickablelabel.h \
-    Tool\realtimecurve.h
+    Tool\realtimecurve.h \
+    Tool/qudong.h
 
 FORMS += \
         Main\mainwindow.ui \

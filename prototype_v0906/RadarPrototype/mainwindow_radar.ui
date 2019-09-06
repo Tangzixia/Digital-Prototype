@@ -43,6 +43,7 @@
     <addaction name="actionCom_list"/>
     <addaction name="actionOpenXml"/>
     <addaction name="actionsave"/>
+    <addaction name="actionRunRadar"/>
    </widget>
    <addaction name="menu"/>
   </widget>
@@ -76,6 +77,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionsave"/>
+   <addaction name="actionRunRadar"/>
   </widget>
   <action name="actionCom_list">
    <property name="checkable">
@@ -94,12 +96,27 @@
    </property>
   </action>
   <action name="actionsave">
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/save.png</normaloff>:/img/save.png</iconset>
+   </property>
    <property name="text">
     <string>保存为xml</string>
    </property>
   </action>
+  <action name="actionRunRadar">
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/runXml.png</normaloff>:/img/runXml.png</iconset>
+   </property>
+   <property name="text">
+    <string>运行</string>
+   </property>
+  </action>
   <zorder>dockCompList</zorder>
  </widget>
- <resources/>
+ <resources>
+  <include location="../Res/res.qrc"/>
+ </resources>
  <connections/>
 </ui>

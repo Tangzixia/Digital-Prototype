@@ -28,5 +28,7 @@
         <file>img/FDPC.ico</file>
         <file>img/CFAR.ico</file>
         <file>img/MTD.ico</file>
+        <file>img/save.png</file>
+        <file>img/runXml.png</file>
     </qresource>
 </RCC>

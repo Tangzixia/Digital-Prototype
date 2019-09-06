@@ -53,5 +53,12 @@ void readData(const char* filePath,fftw_complex* complex_array,int index,int len
     delete(real_part_temp);
     delete(imaginary_part_temp);
     fclose(fp);
-}
-
+}/*
+int main(){
+    fftw_complex* echoArray = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * 4096);
+    readData("./Echoes.txt",echoArray,0,4096,1);
+    int i;
+    for (i = 0;i < 4096;i++){
+        printf("%f+%fi ",echoArray[i][0],echoArray[i][1]);
+    }
+}*/

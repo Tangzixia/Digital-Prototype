@@ -50,6 +50,12 @@ MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
     connect(scene, SIGNAL(itemSelected(QGraphicsItem*)),
             this, SLOT(itemSelected(QGraphicsItem*)));
     createToolbars();
+    connect(ui->actionRunRadar,SIGNAL(triggered()),scene,SLOT(startRunCode()));
+//    connect(ui->action_Stop,SIGNAL(triggered()),graphicsScene,SLOT(stopSimulation()));
+    connect(scene,SIGNAL(startRun()),this,SLOT(On_start()));
+    connect(scene,SIGNAL(overRun()),this,SLOT(On_over()));
+    connect(scene,SIGNAL(rateSignal(float)),this,SLOT(On_rateSignal(float)));
+
 
 //    QGridLayout *layout = new QGridLayout;
 //    layout->addWidget(ui->dockCompList);
@@ -281,6 +287,7 @@ void MainWindow_Radar::save2XmlFile(){
     // TODO是否需要快照应该由用户决定，后期需要完善
     // saveSnapshot(1); //保存场景快照
     // saveSnapshot(2); //保存视图快照
+    isSave = true;
 }
 
 void MainWindow_Radar::on_actionCom_list_triggered()
@@ -594,6 +601,17 @@ void MainWindow_Radar::createMenus()
     itemMenu->addSeparator();
     itemMenu->addAction(toFrontAction);
     itemMenu->addAction(sendBackAction);
+
+    // 进度条
+    progressBar=new QProgressBar(this);
+    progressBar->setMinimum(0);
+    progressBar->setMaximum(100);
+    progressBar->setValue(0);
+    // 运行时间
+    label_time=new QLabel(tr("Running： "),this);
+    // 把时间标签加在状态栏中
+    ui->statusbar->addPermanentWidget(label_time);
+    ui->statusbar->addPermanentWidget(progressBar);
 }
 
 void MainWindow_Radar::createToolbars()
@@ -1038,3 +1056,29 @@ void MainWindow_Radar::on_actionsave_triggered()
 {
     save2XmlFile();
 }
+
+
+// 当已经开始运行的时候
+void MainWindow_Radar::On_start()
+{
+    // 关闭几个按钮和动作
+    ui->actionRunRadar->setEnabled(false);
+    // 打开停止按钮和动作
+//    ui->action_Stop->setEnabled(true);
+    // 进度条为0
+    progressBar->setValue(0);
+}
+
+// 当运行结束的时候
+void MainWindow_Radar::On_over()
+{
+//    ui->action_Stop->setEnabled(false);
+    ui->actionRunRadar->setEnabled(true);
+}
+
+// 当对信号进行评估进度的时候，实时设置进度条的值
+void MainWindow_Radar::On_rateSignal(float rate)
+{
+    progressBar->setValue(int(rate));
+}
+

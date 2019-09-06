@@ -5,6 +5,7 @@
 #include <QFontComboBox>
 #include <QLabel>
 #include <QMainWindow>
+#include <QProgressBar>
 #include <QToolBox>
 #include <QToolButton>
 
@@ -71,8 +72,11 @@ private slots:
      void itemSelected(QGraphicsItem *item);
      void on_actionOpenXml_triggered();
 
-
      void on_actionsave_triggered();
+
+     void On_start();
+     void On_over();
+     void On_rateSignal(float rate);
 
 private:
     QString equip_id;
@@ -102,6 +106,9 @@ private:
     QToolButton *fontColorToolButton;
     QToolButton *fillColorToolButton;
     QToolButton *lineColorToolButton;
+
+    QLabel *label_time;
+    QProgressBar *progressBar;
 
     void createCompBox();
     void createActions();

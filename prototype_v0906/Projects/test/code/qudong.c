@@ -17,5 +17,5 @@ void run(char *fileName, char * outName){
 }
 
 int main(){
-    run("radar_test.cpp", "./test.out");
+    run("radar_test.cpp", "./radar_test.out");
 }

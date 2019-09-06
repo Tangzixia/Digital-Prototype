@@ -75,12 +75,17 @@ public slots:
     void setMode(Mode mode);
     void setItemType(DiagramItem::DiagramType type);
     void editorLostFocus(DiagramTextItem *item);
+    void startRunCode();
 
 signals:
     void signal_xy(double x,double y);
     void itemInserted(DiagramItem *item);
     void textInserted(QGraphicsTextItem *item);
     void itemSelected(QGraphicsItem *item);
+
+    void startRun();
+    void rateSignal(float rate);
+    void overRun();
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) override;

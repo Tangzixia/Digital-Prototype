@@ -4,6 +4,7 @@
 #include <QTextCursor>
 #include <QGraphicsSceneMouseEvent>
 #include <QMetaEnum>
+#include <qudong.h>
 #include "diagramitem.h"
 #include "mainwindow_radar.h"
 /**
@@ -190,6 +191,16 @@ void RadarScene::editorLostFocus(DiagramTextItem *item)
         //计划删除此对象
         item->deleteLater();
     }
+}
+
+void RadarScene::startRunCode()
+{
+    emit startRun();
+    // TODO 执行代码程序
+    // run generated code
+    QuDong::startRun("/home/a913/Qt_project/20190906/prototype_v0906/Projects/test/code/radar_test.cpp", "./radar_test.out");
+    emit rateSignal(100);
+    emit overRun();
 }
 
 void RadarScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
