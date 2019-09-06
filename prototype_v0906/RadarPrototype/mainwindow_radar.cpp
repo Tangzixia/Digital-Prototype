@@ -22,6 +22,8 @@ const int InsertTextButton = 10;
 * @author        Antrn
 * @date          2019-08-12
 */
+bool MainWindow_Radar::isSave = true;
+
 MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
     QMainWindow(parent),
     equip_id(id),
@@ -49,10 +51,10 @@ MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
             this, SLOT(itemSelected(QGraphicsItem*)));
     createToolbars();
 
-    QHBoxLayout *layout = new QHBoxLayout;
-    layout->addWidget(ui->dockCompList);
+//    QGridLayout *layout = new QGridLayout;
+//    layout->addWidget(ui->dockCompList);
     ui->graphicsView->setScene(scene);
-    layout->addWidget(ui->graphicsView);
+//    layout->addWidget(ui->graphicsView);
 
 
     // xy坐标标签
@@ -69,10 +71,10 @@ MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
     //抓手
     //ui->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag );
 
-    QWidget *widget = new QWidget;
-    widget->setLayout(layout);
+//    QWidget *widget = new QWidget;
+//    widget->setLayout(layout);
 
-    setCentralWidget(widget);
+//    setCentralWidget(widget);
     // FIXME dock无法自由拖动了，只能保持固定宽度能拖出来但是不能自动贴边
 //    ui->dockCompList->setAllowedAreas(Qt::AllDockWidgetAreas);
     setWindowTitle(tr("Radar Edit"));
@@ -171,6 +173,9 @@ void MainWindow_Radar::autoloadXmlById(QString id)
             filepath+="/"+fname;
             qDebug() << "找到xml!" << filepath;
             readXmlConf(filepath);
+            isSave = true;
+            qDebug() << "自动读取，不算是手动保存的操作，所以恢复已保存状态";
+            ui->actionOpenXml->setEnabled(false);
             break;
         }
     }
@@ -197,72 +202,85 @@ QFileInfoList MainWindow_Radar::getFileList(QString path)
 // 先判断是否退出钱保存？是，则保存退出；否，则直接退出。
 void MainWindow_Radar::closeEvent(QCloseEvent *event)
 {
-    int ret1 = QMessageBox::question(this, tr("确认"), tr("确定退出前保存场景到桌面?"), QMessageBox::Yes, QMessageBox::No);
-    if(ret1 == QMessageBox::Yes){
-        ui->statusbar->showMessage("正在保存场景...", 3000);
-        qDebug() << tr("to close radar window");
-        // 根元素
-        QDomElement rootElem = scene->getDoc().documentElement();
-        rootElem.setAttribute("width", scene->width());
-        rootElem.setAttribute("height", scene->height());
-        //[更新箭头和组件的color
-        DiagramItem *d;
-        Arrow *a;
-        // 遍历场景中的items
-        for (int i=0; i<scene->items().size(); i++) {
-            //转换为DiagramItem成功，只算item，排除箭头
-            if((d = dynamic_cast<DiagramItem*>(scene->items().at(i)))){
-//                qDebug() << d->brush().color().name();
-                // WARNING elementById()报错说没有实现
-//                if(d->brush().color().name() != scene->getDoc().elementById(QString::number(d->itemId)).firstChild().toElement().text()){
-//                    scene->getDoc().elementById(QString::number(d->itemId)).firstChild().setNodeValue(d->brush().color().name());
-//                }
-                QDomNodeList list = scene->getDoc().elementsByTagName("Items").at(0).childNodes();
-                for (int k=0; k<list.count(); k++) {
-                    QDomElement e = list.at(k).toElement();
-//                    qDebug() << e.attribute("id") << "; " << QString::number(d->itemId);
-                    //找到id对应的元素
-                    if(e.attribute("id").compare(QString::number(d->itemId))==0){
-//                        e.firstChild().setNodeValue(d->brush().color().name());
-//                        qDebug() << d->brush().color().name();
-//                        qDebug() << e.elementsByTagName("color").at(0).toElement().text();
-                        e.elementsByTagName("color").at(0).toElement().firstChild().setNodeValue(d->brush().color().name());
-                    }
-                }
-            }
-            // 如果是箭头
-            if((a = dynamic_cast<Arrow *>(scene->items().at(i)))){
-                QDomNodeList list = scene->getDoc().elementsByTagName("Arrs").at(0).childNodes();
-                for (int k=0; k<list.count(); k++) {
-                    QDomElement e = list.at(k).toElement();
-                    //找到id对应的元素
-                    if(e.attribute("id").compare(QString::number(a->itemId))==0){
-                        e.elementsByTagName("color").at(0).toElement().firstChild().setNodeValue(a->getColor());
-                    }
-                }
-            }
+    if(isSave == false){
+        int ret1 = QMessageBox::question(this, tr("确认"), tr("确定退出前保存场景到桌面?"), QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel);
+        if(ret1 == QMessageBox::Yes){
+            save2XmlFile();
+            isSave = true;
+            qDebug() << "1111";
+            event->accept();
+        }else if(ret1 == QMessageBox::No){
+            qDebug() << "do not save";
+            // 直接退出
+            event->accept();
+        }else {
+            // 拒绝关闭
+            qDebug() << "拒绝关闭!!!";
+            event->ignore();
         }
-        //]更新color
-        // 保存雷达组件数据
-        QString dirp = QDir::currentPath() + "/xmls/";
-        QDir dir(dirp);
-        if(!dir.exists()){
-            dir.mkdir(dirp);
-        }
-        QFile file(dirp+getEquip_id()+".xml");
-        if(!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) return;
-        QTextStream out(&file);
-        scene->getDoc().save(out, 4);
-        file.close();
-        // TODO是否需要快照应该由用户决定，后期需要完善
-        saveSnapshot(1); //保存场景快照
-        saveSnapshot(2); //保存视图快照
-        event->accept();
     }else{
-        // 直接退出
         event->accept();
     }
-
+}
+void MainWindow_Radar::save2XmlFile(){
+    ui->statusbar->showMessage("正在保存场景...", 3000);
+    qDebug() << tr("to close radar window");
+    // 根元素
+    QDomElement rootElem = scene->getDoc().documentElement();
+    rootElem.setAttribute("width", scene->width());
+    rootElem.setAttribute("height", scene->height());
+    //[更新箭头和组件的color
+    DiagramItem *d;
+    Arrow *a;
+    // 遍历场景中的items
+    for (int i=0; i<scene->items().size(); i++) {
+        //转换为DiagramItem成功，只算item，排除箭头
+        if((d = dynamic_cast<DiagramItem*>(scene->items().at(i)))){
+    //                qDebug() << d->brush().color().name();
+            // WARNING elementById()报错说没有实现
+    //                if(d->brush().color().name() != scene->getDoc().elementById(QString::number(d->itemId)).firstChild().toElement().text()){
+    //                    scene->getDoc().elementById(QString::number(d->itemId)).firstChild().setNodeValue(d->brush().color().name());
+    //                }
+            QDomNodeList list = scene->getDoc().elementsByTagName("Items").at(0).childNodes();
+            for (int k=0; k<list.count(); k++) {
+                QDomElement e = list.at(k).toElement();
+    //                    qDebug() << e.attribute("id") << "; " << QString::number(d->itemId);
+                //找到id对应的元素
+                if(e.attribute("id").compare(QString::number(d->itemId))==0){
+    //                        e.firstChild().setNodeValue(d->brush().color().name());
+    //                        qDebug() << d->brush().color().name();
+    //                        qDebug() << e.elementsByTagName("color").at(0).toElement().text();
+                    e.elementsByTagName("color").at(0).toElement().firstChild().setNodeValue(d->brush().color().name());
+                }
+            }
+        }
+        // 如果是箭头
+        if((a = dynamic_cast<Arrow *>(scene->items().at(i)))){
+            QDomNodeList list = scene->getDoc().elementsByTagName("Arrs").at(0).childNodes();
+            for (int k=0; k<list.count(); k++) {
+                QDomElement e = list.at(k).toElement();
+                //找到id对应的元素
+                if(e.attribute("id").compare(QString::number(a->itemId))==0){
+                    e.elementsByTagName("color").at(0).toElement().firstChild().setNodeValue(a->getColor());
+                }
+            }
+        }
+    }
+    //]更新color
+    // 保存雷达组件数据
+    QString dirp = QDir::currentPath() + "/xmls/";
+    QDir dir(dirp);
+    if(!dir.exists()){
+        dir.mkdir(dirp);
+    }
+    QFile file(dirp+getEquip_id()+".xml");
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) return;
+    QTextStream out(&file);
+    scene->getDoc().save(out, 4);
+    file.close();
+    // TODO是否需要快照应该由用户决定，后期需要完善
+    // saveSnapshot(1); //保存场景快照
+    // saveSnapshot(2); //保存视图快照
 }
 
 void MainWindow_Radar::on_actionCom_list_triggered()
@@ -319,28 +337,34 @@ void MainWindow_Radar::buttonGroupClicked(int id)
 
 void MainWindow_Radar::deleteItem()
 {
-    foreach (QGraphicsItem *item, scene->selectedItems()) {
-        if (item->type() == Arrow::Type) {
-            scene->removeItem(item);
-            Arrow *arrow = qgraphicsitem_cast<Arrow *>(item);
-            arrow->startItem()->removeArrow(arrow);
-            arrow->endItem()->removeArrow(arrow);
+    if(scene->selectedItems().isEmpty()){
+        qDebug() << "没有要删除的选择对象";
+    }else{
+        isSave = false;
+        qDebug() << "1112";
+        foreach (QGraphicsItem *item, scene->selectedItems()) {
+            if (item->type() == Arrow::Type) {
+                scene->removeItem(item);
+                Arrow *arrow = qgraphicsitem_cast<Arrow *>(item);
+                arrow->startItem()->removeArrow(arrow);
+                arrow->endItem()->removeArrow(arrow);
 
-            // 删除doc中的此图形项对应的标签
-            deleteArrowById(arrow->itemId);
-            delete item;
+                // 删除doc中的此图形项对应的标签
+                deleteArrowById(arrow->itemId);
+                delete item;
+            }
         }
-    }
-    DiagramItem *item_ = nullptr;
-    foreach (QGraphicsItem *item, scene->selectedItems()) {
-         if (item->type() == DiagramItem::Type){
-              item_ = qgraphicsitem_cast<DiagramItem *>(item);
-              item_->removeArrows();
-              // 删除doc中的此图形项对应的标签
-              deleteItemArrowById(item_->itemId);
-         }
-         scene->removeItem(item);
-         delete item;
+        DiagramItem *item_ = nullptr;
+        foreach (QGraphicsItem *item, scene->selectedItems()) {
+             if (item->type() == DiagramItem::Type){
+                  item_ = qgraphicsitem_cast<DiagramItem *>(item);
+                  item_->removeArrows();
+                  // 删除doc中的此图形项对应的标签
+                  deleteItemArrowById(item_->itemId);
+             }
+             scene->removeItem(item);
+             delete item;
+        }
     }
 }
 
@@ -363,6 +387,8 @@ void MainWindow_Radar::bringToFront()
             zValue = item->zValue() + 0.1;
     }
     selectedItem->setZValue(zValue);
+    isSave = false;
+    qDebug() << "1113";
 }
 
 void MainWindow_Radar::sendToBack()
@@ -381,6 +407,8 @@ void MainWindow_Radar::sendToBack()
     }
     //只把selectedItem设置为最高的z-index
     selectedItem->setZValue(zValue);
+    isSave = false;
+    qDebug() << "1114";
 }
 
 void MainWindow_Radar::showItemProperties()
@@ -397,6 +425,8 @@ void MainWindow_Radar::showItemProperties()
 
 void MainWindow_Radar::itemInserted(DiagramItem *item)
 {
+    isSave = false;
+    qDebug() << "1115";
     //当有图形项插入到场景中的时候，应该将指针组改为移动指针
     pointerTypeGroup->button(int(RadarScene::MoveItem))->setChecked(true);
     scene->setMode(RadarScene::Mode(pointerTypeGroup->checkedId()));
@@ -406,6 +436,8 @@ void MainWindow_Radar::itemInserted(DiagramItem *item)
 
 void MainWindow_Radar::textInserted(QGraphicsTextItem *)
 {
+    isSave = false;
+    qDebug() << "1116";
     //取消选中状态
     buttonGroup->button(InsertTextButton)->setChecked(false);
     scene->setMode(RadarScene::Mode(pointerTypeGroup->checkedId()));
@@ -534,19 +566,19 @@ void MainWindow_Radar::createActions()
     connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
 
     boldAction = new QAction(tr("Bold"), this);
-    boldAction->setCheckable(true);
+    boldAction->setCheckable(false);
     QPixmap pixmap(":/img/bold.png");
     boldAction->setIcon(QIcon(pixmap));
     boldAction->setShortcut(tr("Ctrl+B"));
     connect(boldAction, SIGNAL(triggered()), this, SLOT(handleFontChange()));
 
     italicAction = new QAction(QIcon(":/img/italic.png"), tr("Italic"), this);
-    italicAction->setCheckable(true);
+    italicAction->setCheckable(false);
     italicAction->setShortcut(tr("Ctrl+I"));
     connect(italicAction, SIGNAL(triggered()), this, SLOT(handleFontChange()));
 
     underlineAction = new QAction(QIcon(":/img/underline.png"), tr("Underline"), this);
-    underlineAction->setCheckable(true);
+    underlineAction->setCheckable(false);
     underlineAction->setShortcut(tr("Ctrl+U"));
     connect(underlineAction, SIGNAL(triggered()), this, SLOT(handleFontChange()));
 }
@@ -613,6 +645,8 @@ void MainWindow_Radar::createToolbars()
             this, SLOT(lineButtonTriggered()));
 
     textToolBar = addToolBar(tr("Font"));
+    // 默认不显示
+    textToolBar->setHidden(true);
     textToolBar->addWidget(fontCombo);
     textToolBar->addWidget(fontSizeCombo);
     textToolBar->addAction(boldAction);
@@ -620,6 +654,8 @@ void MainWindow_Radar::createToolbars()
     textToolBar->addAction(underlineAction);
 
     colorToolBar = addToolBar(tr("Color"));
+    // 默认不显示
+    colorToolBar->setHidden(true);
     colorToolBar->addWidget(fontColorToolButton);
     colorToolBar->addWidget(fillColorToolButton);
     colorToolBar->addWidget(lineColorToolButton);
@@ -649,9 +685,12 @@ void MainWindow_Radar::createToolbars()
             this, SLOT(sceneScaleChanged(QString)));
 
     pointerToolbar = addToolBar(tr("Pointer type"));
+//    // 默认不显示
+//    pointerToolbar->setHidden(true);
     pointerToolbar->addWidget(pointerButton);
     pointerToolbar->addWidget(linePointerButton);
     pointerToolbar->addWidget(sceneScaleCombo);
+
 }
 
 QWidget *MainWindow_Radar::createBackgroundCellWidget(const QString &text, const QString &image)
@@ -806,6 +845,8 @@ void MainWindow_Radar::fontSizeChanged(const QString &)
 
 void MainWindow_Radar::sceneScaleChanged(const QString &scale)
 {
+    isSave = false;
+    qDebug() << "1117";
     double newScale = scale.left(scale.indexOf(tr("%"))).toDouble() / 100.0;
     QMatrix oldMatrix = ui->graphicsView->matrix();
     ui->graphicsView->resetMatrix();
@@ -824,6 +865,8 @@ void MainWindow_Radar::textColorChanged()
 
 void MainWindow_Radar::itemColorChanged()
 {
+    isSave = false;
+    qDebug() << "1118";
     fillAction = qobject_cast<QAction *>(sender());
     fillColorToolButton->setIcon(createColorToolButtonIcon(
                                      ":/img/floodfill.png",
@@ -833,6 +876,8 @@ void MainWindow_Radar::itemColorChanged()
 
 void MainWindow_Radar::lineColorChanged()
 {
+    isSave = false;
+    qDebug() << "1119";
     lineAction = qobject_cast<QAction *>(sender());
     lineColorToolButton->setIcon(createColorToolButtonIcon(
                                      ":/img/linecolor.png",
@@ -987,4 +1032,9 @@ void MainWindow_Radar::readXmlConf(QString xmlname)
     }else {
         // TODO 文件名为空，啥也没选，提示
     }
+}
+
+void MainWindow_Radar::on_actionsave_triggered()
+{
+    save2XmlFile();
 }

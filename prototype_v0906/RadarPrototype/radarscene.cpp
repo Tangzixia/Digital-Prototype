@@ -5,6 +5,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QMetaEnum>
 #include "diagramitem.h"
+#include "mainwindow_radar.h"
 /**
 * @projectName   prototype_v0719
 * @brief         编辑雷达页面的自定义场景类，上面绘制设计雷达的组件链接。
@@ -135,6 +136,7 @@ void RadarScene::updateXmlItemsPos(QPointF pos, DiagramItem *item)
              if(elem.attribute("id").compare(QString::number(item->itemId))==0){
                  elem.setAttribute("pos_x", pos.x());
                  elem.setAttribute("pos_y", pos.y());
+                 MainWindow_Radar::isSave = false;
 //                 qDebug() << doc.toString();
                  return;
              }

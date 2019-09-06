@@ -32,6 +32,10 @@ private slots:
 
     void on_actionCurve_triggered();
 
+    void on_actionToolsBar_triggered();
+
+    void on_actionEquip_triggered();
+
 
 private:
     Ui::MainWindow *ui;

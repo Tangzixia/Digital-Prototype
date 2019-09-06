@@ -6,7 +6,7 @@
 #include <QWhatsThis>
 /**
 * @projectName   prototype_v0719
-* @brief         整个程序的主窗口：打开现有的工程时。
+* @brief         整个程序的主窗口： 打开现有的工程时。
 * @author        Antrn
 * @date          2019-08-21
 */
@@ -77,4 +77,24 @@ void MainWindow::on_actionCurve_triggered()
 {
     RealTimeCurve *rtc = new RealTimeCurve;
     rtc->show();
+}
+
+void MainWindow::on_actionToolsBar_triggered()
+{
+    //显示工具栏
+    if(ui->mainToolBar->isHidden()){
+        ui->mainToolBar->show();
+    }else{
+        ui->mainToolBar->hide();
+    }
+}
+
+void MainWindow::on_actionEquip_triggered()
+{
+    //显示装备栏
+    if(ui->dockWidget->isVisible()){
+        ui->dockWidget->close();
+    }else{
+        ui->dockWidget->show();
+    }
 }

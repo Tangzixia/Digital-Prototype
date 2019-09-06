@@ -45,7 +45,7 @@ DiagramItem::DiagramItem(DiagramType diagramType, QMenu *contextMenu,
         //正方形
         case Comp1:
             path.moveTo(-50, -50);
-            path.addText(QPointF(0,0),QFont("Helvetica", 20),QString("hhh"));
+//            path.addText(QPointF(0,0),QFont("Helvetica", 20),QString("hhh"));
             path.moveTo(50, -50);
 //            path.lineTo(50, -50);
             path.lineTo(50, 50);
