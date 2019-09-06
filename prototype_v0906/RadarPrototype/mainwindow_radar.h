@@ -37,6 +37,9 @@ public:
     QString getEquip_id() const;
     void setEquip_id(const QString &value);
     void readXmlConf(QString xmlname);
+    void save2XmlFile();
+    //默认程序一打开就是已经保存好的状态
+    static bool isSave;
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -68,6 +71,8 @@ private slots:
      void itemSelected(QGraphicsItem *item);
      void on_actionOpenXml_triggered();
 
+
+     void on_actionsave_triggered();
 
 private:
     QString equip_id;
