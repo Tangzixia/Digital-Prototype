@@ -64,7 +64,9 @@ SOURCES += \
     EccmPrototype\ecmitem.cpp \
     Tool\clickablelabel.cpp \
     Tool\realtimecurve.cpp \
-    Tool/qudong.cpp
+    Tool/qudong.cpp \
+    EccmPrototype/ecmproperty.cpp \
+    Tool/runcompconf.cpp
 
 HEADERS += \
         Main\mainwindow.h \
@@ -88,7 +90,9 @@ HEADERS += \
     EccmPrototype\ecmitem.h \
     Tool\clickablelabel.h \
     Tool\realtimecurve.h \
-    Tool/qudong.h
+    Tool/qudong.h \
+    EccmPrototype/ecmproperty.h \
+    Tool/runcompconf.h
 
 FORMS += \
         Main\mainwindow.ui \
@@ -98,7 +102,9 @@ FORMS += \
     RadarPrototype\mainwindow_radar.ui \
     RadarPrototype\radarproperty.ui \
     Tool\compproperty.ui \
-    Tool\realtimecurve.ui
+    Tool\realtimecurve.ui \
+    EccmPrototype/ecmproperty.ui \
+    Tool/runcompconf.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -106,4 +112,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
-    Res\res.qrc
+    Res/res.qrc

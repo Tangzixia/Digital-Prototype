@@ -1,12 +1,12 @@
 #include "ecmitem.h"
 #include "mainwindow_radar.h"
-#include "radarproperty.h"
 #include <QDebug>
 #include <QGraphicsSceneDragDropEvent>
 #include <QMenu>
 #include <QPainter>
 #include <QGraphicsSceneMouseEvent>
 #include <QApplication>
+#include "ecmproperty.h"
 
 /**
 * @projectName   prototype_v0719
@@ -56,8 +56,8 @@ void ECMItem::delete_item()
 void ECMItem::show_property()
 {
     qDebug() << "show Property";
-    RadarProperty *p = new RadarProperty();
-    p->exec();
+    EcmProperty *ep = new EcmProperty();
+    ep->exec();
 }
 
 void ECMItem::edit_radar()

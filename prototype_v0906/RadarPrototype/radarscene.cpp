@@ -5,6 +5,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QMetaEnum>
 #include <qudong.h>
+#include <runcompconf.h>
 #include "diagramitem.h"
 #include "mainwindow_radar.h"
 /**
@@ -198,7 +199,9 @@ void RadarScene::startRunCode()
     emit startRun();
     // TODO 执行代码程序
     // run generated code
-    QuDong::startRun("/home/a913/Qt_project/20190906/prototype_v0906/Projects/test/code/radar_test.cpp", "./radar_test.out");
+    RunCompConf *run = new RunCompConf();
+    run->exec();
+//    QuDong::startRun("/home/a913/Qt_project/20190906/prototype_v0906/Projects/test/code/radar_test.cpp", "./radar_test.out");
     emit rateSignal(100);
     emit overRun();
 }
@@ -257,6 +260,7 @@ void RadarScene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
         line->setLine(newLine);
     } else if (myMode == MoveItem) {
         QGraphicsScene::mouseMoveEvent(mouseEvent);
+        update();
     }
 }
 
