@@ -102,7 +102,9 @@ void DiagramItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWi
             break;
         case Comp4: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/MTD.png"));;
             break;
-        default:
+        case Comp3: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/input.png"));;
+            break;
+        case Comp5: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/output.png"));;
             break;
     }
 }
@@ -147,7 +149,11 @@ QPixmap DiagramItem::image() const
         case DiagramItem::DiagramType::Comp4 :
             iconName = "MTD";
             break;
-        default:
+        case DiagramItem::DiagramType::Comp3 :
+            iconName = "INPUT";
+            break;
+        case DiagramItem::DiagramType::Comp5 :
+            iconName = "OUTPUT";
             break;
     }
     QString itemIcon = ":/img/" +iconName+".ico";

@@ -76,6 +76,7 @@ public slots:
     void setItemType(DiagramItem::DiagramType type);
     void editorLostFocus(DiagramTextItem *item);
     void startRunCode();
+    void sendRate(float rate);
 
 signals:
     void signal_xy(double x,double y);

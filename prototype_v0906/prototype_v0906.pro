@@ -42,16 +42,16 @@ win32:LIBS += -lOpengl32 \
                 -lglut
 
 SOURCES += \
-        Main\main.cpp \
-        Main\mainwindow.cpp \
-    Tool\myglwidget.cpp \
-    Tool\opengl.cpp \
-    Main\hellodialog.cpp \
-    Main\mysplashscreen.cpp \
-    Main\mainwindownew.cpp \
-    Main\draglistwidget.cpp \
-    Main\mainwindownewscene.cpp \
-    RadarPrototype\radaritem.cpp \
+        Main/main.cpp \
+        Main/mainwindow.cpp \
+    Tool/myglwidget.cpp \
+    Tool/opengl.cpp \
+    Main/hellodialog.cpp \
+    Main/mysplashscreen.cpp \
+    Main/mainwindownew.cpp \
+    Main/draglistwidget.cpp \
+    Main/mainwindownewscene.cpp \
+    RadarPrototype/radaritem.cpp \
     Tool\arrowitem.cpp \
     RadarPrototype\mainwindow_radar.cpp \
     RadarPrototype\radarproperty.cpp \
@@ -66,7 +66,8 @@ SOURCES += \
     Tool\realtimecurve.cpp \
     Tool/qudong.cpp \
     EccmPrototype/ecmproperty.cpp \
-    Tool/runcompconf.cpp
+    Tool/runcompconf.cpp \
+    Tool/instructionexec.cpp
 
 HEADERS += \
         Main\mainwindow.h \
@@ -92,7 +93,8 @@ HEADERS += \
     Tool\realtimecurve.h \
     Tool/qudong.h \
     EccmPrototype/ecmproperty.h \
-    Tool/runcompconf.h
+    Tool/runcompconf.h \
+    Tool/instructionexec.h
 
 FORMS += \
         Main\mainwindow.ui \

@@ -484,7 +484,7 @@ void MainWindow_Radar::itemSelected(QGraphicsItem *item)
 void MainWindow_Radar::createCompBox()
 {
     buttonGroup = new QButtonGroup(ui->dockWidgetContents);
-    buttonGroup->setExclusive(false);
+    buttonGroup->setExclusive(true);
     connect(buttonGroup, SIGNAL(buttonClicked(int)),
             this, SLOT(buttonGroupClicked(int)));
     QGridLayout *layout = new QGridLayout;
@@ -492,6 +492,8 @@ void MainWindow_Radar::createCompBox()
     layout->addWidget(createCellWidget(tr("脉冲压缩"), DiagramItem::Comp1), 0, 0); // Component_1
     layout->addWidget(createCellWidget(tr("恒虚警率"), DiagramItem::Comp2),0, 1); // Component_2
     layout->addWidget(createCellWidget(tr("动目标检测"), DiagramItem::Comp4), 1, 0); // Component_4
+    layout->addWidget(createCellWidget(tr("输入"), DiagramItem::Comp3), 1, 1); // Component_3
+    layout->addWidget(createCellWidget(tr("输出"), DiagramItem::Comp5), 2, 0); // Component_5
     // 文字按钮，在场景添加文字，暂时保留
     QToolButton *textButton = new QToolButton;
     textButton->setCheckable(true);
@@ -509,7 +511,7 @@ void MainWindow_Radar::createCompBox()
 
     QWidget *textWidget = new QWidget;
     textWidget->setLayout(textLayout);
-    layout->addWidget(textWidget, 2, 0);
+    layout->addWidget(textWidget, 2, 1);
 
     //设置行和列的比例
     layout->setRowStretch(3, 10);
@@ -1074,6 +1076,7 @@ void MainWindow_Radar::On_over()
 {
 //    ui->action_Stop->setEnabled(false);
     ui->actionRunRadar->setEnabled(true);
+    label_time->setText(tr("Done"));
 }
 
 // 当对信号进行评估进度的时候，实时设置进度条的值

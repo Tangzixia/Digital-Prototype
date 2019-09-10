@@ -19,7 +19,7 @@ class DiagramItem : public QGraphicsPolygonItem
 public:
     enum { Type = UserType + 15 };
 
-    enum DiagramType { Comp1, Comp2, Comp3, Comp4 };
+    enum DiagramType { Comp1, Comp2, Comp3, Comp4, Comp5};
 
 //    Q_ENUM(DiagramType)
     DiagramType diagramType() const { return myDiagramType; }

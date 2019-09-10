@@ -33,5 +33,9 @@
         <file>img/CFAR.png</file>
         <file>img/MTD.png</file>
         <file>img/FDPC.png</file>
+        <file>img/input.png</file>
+        <file>img/output.png</file>
+        <file>img/INPUT.ico</file>
+        <file>img/OUTPUT.ico</file>
     </qresource>
 </RCC>

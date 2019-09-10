@@ -15,6 +15,16 @@ public:
     explicit RunCompConf(QWidget *parent = nullptr);
     ~RunCompConf();
 
+signals:
+    void rateSignal(float rate);
+    void overRun();
+    void startRun();
+
+public slots:
+    void On_start();
+    void On_pause();
+    void On_over();
+    void On_rateSignal(float rate);
 private:
     Ui::RunCompConf *ui;
 };

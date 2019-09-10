@@ -4,8 +4,8 @@
 #include <QTextCursor>
 #include <QGraphicsSceneMouseEvent>
 #include <QMetaEnum>
-#include <qudong.h>
 #include <runcompconf.h>
+#include <QTimer>
 #include "diagramitem.h"
 #include "mainwindow_radar.h"
 /**
@@ -108,7 +108,11 @@ void RadarScene::modifyXmlItems(QPointF pos, DiagramItem *item)
         case DiagramItem::DiagramType::Comp4:
             comp = doc.createElement("comp_4");
             break;
-        default:
+        case DiagramItem::DiagramType::Comp3:
+            comp = doc.createElement("comp_3");
+            break;
+        case DiagramItem::DiagramType::Comp5:
+            comp = doc.createElement("comp_5");
             break;
     }
     QDomElement color = doc.createElement("color");
@@ -194,16 +198,36 @@ void RadarScene::editorLostFocus(DiagramTextItem *item)
     }
 }
 
+// This is available in all editors.
+/**
+* @projectName   prototype_v0906
+* @brief         执行指令
+* @author        Antrn
+* @date          2019-09-10
+*/
 void RadarScene::startRunCode()
 {
     emit startRun();
     // TODO 执行代码程序
-    // run generated code
+    // 先展示出配置窗口
     RunCompConf *run = new RunCompConf();
     run->exec();
-//    QuDong::startRun("/home/a913/Qt_project/20190906/prototype_v0906/Projects/test/code/radar_test.cpp", "./radar_test.out");
-    emit rateSignal(100);
+//    QTimer::singleShot( 0, this, [=](){
+//        sendRate(10);}
+//    );
+//    QTimer::singleShot( 1000, this, [=](){
+//        sendRate(70);}
+//    );
+//    QTimer::singleShot( 3000, this, [=](){
+//        sendRate(100);}
+//    );
+    sendRate(100);
     emit overRun();
+}
+
+void RadarScene::sendRate(float rate)
+{
+    emit rateSignal(rate);
 }
 
 void RadarScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
