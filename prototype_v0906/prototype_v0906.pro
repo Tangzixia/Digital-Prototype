@@ -42,16 +42,16 @@ win32:LIBS += -lOpengl32 \
                 -lglut
 
 SOURCES += \
-        Main\main.cpp \
-        Main\mainwindow.cpp \
-    Tool\myglwidget.cpp \
-    Tool\opengl.cpp \
-    Main\hellodialog.cpp \
-    Main\mysplashscreen.cpp \
-    Main\mainwindownew.cpp \
-    Main\draglistwidget.cpp \
-    Main\mainwindownewscene.cpp \
-    RadarPrototype\radaritem.cpp \
+        Main/main.cpp \
+        Main/mainwindow.cpp \
+    Tool/myglwidget.cpp \
+    Tool/opengl.cpp \
+    Main/hellodialog.cpp \
+    Main/mysplashscreen.cpp \
+    Main/mainwindownew.cpp \
+    Main/draglistwidget.cpp \
+    Main/mainwindownewscene.cpp \
+    RadarPrototype/radaritem.cpp \
     Tool\arrowitem.cpp \
     RadarPrototype\mainwindow_radar.cpp \
     RadarPrototype\radarproperty.cpp \
@@ -64,7 +64,10 @@ SOURCES += \
     EccmPrototype\ecmitem.cpp \
     Tool\clickablelabel.cpp \
     Tool\realtimecurve.cpp \
-    Tool/qudong.cpp
+    Tool/qudong.cpp \
+    EccmPrototype/ecmproperty.cpp \
+    Tool/runcompconf.cpp \
+    Tool/instructionexec.cpp
 
 HEADERS += \
         Main\mainwindow.h \
@@ -88,7 +91,10 @@ HEADERS += \
     EccmPrototype\ecmitem.h \
     Tool\clickablelabel.h \
     Tool\realtimecurve.h \
-    Tool/qudong.h
+    Tool/qudong.h \
+    EccmPrototype/ecmproperty.h \
+    Tool/runcompconf.h \
+    Tool/instructionexec.h
 
 FORMS += \
         Main\mainwindow.ui \
@@ -98,7 +104,9 @@ FORMS += \
     RadarPrototype\mainwindow_radar.ui \
     RadarPrototype\radarproperty.ui \
     Tool\compproperty.ui \
-    Tool\realtimecurve.ui
+    Tool\realtimecurve.ui \
+    EccmPrototype/ecmproperty.ui \
+    Tool/runcompconf.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -106,4 +114,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
-    Res\res.qrc
+    Res/res.qrc

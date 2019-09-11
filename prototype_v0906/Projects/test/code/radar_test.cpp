@@ -81,5 +81,5 @@ int main(){
     finish = time(NULL);
     double_t end_time = omp_get_wtime();
     printf("%fs\n",(end_time-start_time));
-    writeData("./cfar_result.txt",cfar_result);
+    writeData("cfar_result.txt",cfar_result);
 }

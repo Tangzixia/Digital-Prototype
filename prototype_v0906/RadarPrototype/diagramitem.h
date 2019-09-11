@@ -19,7 +19,7 @@ class DiagramItem : public QGraphicsPolygonItem
 public:
     enum { Type = UserType + 15 };
 
-    enum DiagramType { Comp1, Comp2, Comp3, Comp4 };
+    enum DiagramType { Comp1, Comp2, Comp3, Comp4, Comp5};
 
 //    Q_ENUM(DiagramType)
     DiagramType diagramType() const { return myDiagramType; }
@@ -36,8 +36,8 @@ public:
     int itemId;
     QString iconName;
     int init_pos_set=0;
-//    QRectF boundingRect();
-//    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
+    QRectF boundingRect();
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr);
 
 protected:
     //WARN 暂时不能定义下面这几个，即使什么都不写也会有问题

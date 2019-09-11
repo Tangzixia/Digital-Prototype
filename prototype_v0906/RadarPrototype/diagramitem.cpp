@@ -15,8 +15,6 @@
 * @date          2019-08-12
 */
 
-
-
 DiagramItem::DiagramItem(DiagramType diagramType, QMenu *contextMenu,
              QGraphicsItem *parent): QGraphicsPolygonItem(parent)
 {
@@ -28,44 +26,57 @@ DiagramItem::DiagramItem(DiagramType diagramType, QMenu *contextMenu,
     switch (myDiagramType) {
         //暂不使用
         case Comp3:
-            path.moveTo(200, 50);
-            path.arcTo(150, 0, 50, 50, 0, 90);
-            path.arcTo(50, 0, 50, 50, 90, 90);
-            path.arcTo(50, 50, 50, 50, 180, 90);
-            path.arcTo(150, 50, 50, 50, 270, 90);
-            path.lineTo(200, 25);
-            myPolygon = path.toFillPolygon();
+//            path.moveTo(200, 50);
+//            path.arcTo(150, 0, 50, 50, 0, 90);
+//            path.arcTo(50, 0, 50, 50, 90, 90);
+//            path.arcTo(50, 50, 50, 50, 180, 90);
+//            path.arcTo(150, 50, 50, 50, 270, 90);
+//            path.lineTo(200, 25);
+//            myPolygon = path.toFillPolygon();
+        //统一形状
+            myPolygon << QPointF(-50, -50) << QPointF(50, -50)
+                      << QPointF(50, 50) << QPointF(-50, 50)
+                      << QPointF(-50, -50);
             break;
         //立着正方形
         case Comp2:
-            myPolygon << QPointF(-50, 0) << QPointF(0, 50)
-                      << QPointF(50, 0) << QPointF(0, -50)
-                      << QPointF(-50, 0);
+//            myPolygon << QPointF(-50, 0) << QPointF(0, 50)
+//                      << QPointF(50, 0) << QPointF(0, -50)
+//                      << QPointF(-50, 0);
+
+        //统一形状
+            myPolygon << QPointF(-50, -50) << QPointF(50, -50)
+                      << QPointF(50, 50) << QPointF(-50, 50)
+                      << QPointF(-50, -50);
             break;
         //正方形
         case Comp1:
-            path.moveTo(-50, -50);
+//            path.moveTo(-50, -50);
 //            path.addText(QPointF(0,0),QFont("Helvetica", 20),QString("hhh"));
-            path.moveTo(50, -50);
+//            path.moveTo(50, -50);
 //            path.lineTo(50, -50);
-            path.lineTo(50, 50);
-            path.lineTo(-50, 50);
-            path.lineTo(-50, -50);
+//            path.lineTo(50, 50);
+//            path.lineTo(-50, 50);
+//            path.lineTo(-50, -50);
 
-//            myPolygon << QPointF(-50, -50) << QPointF(50, -50)
-//                      << QPointF(50, 50) << QPointF(-50, 50)
-//                      << QPointF(-50, -50);
-            myPolygon = path.toFillPolygon();
+        //统一形状
+            myPolygon << QPointF(-50, -50) << QPointF(50, -50)
+                      << QPointF(50, 50) << QPointF(-50, 50)
+                      << QPointF(-50, -50);
+//            myPolygon = path.toFillPolygon();
             break;
         //默认 菱形，IO
         default:
-            myPolygon << QPointF(-60, -40) << QPointF(-35, 40)
-                      << QPointF(60, 40) << QPointF(35, -40)
-                      << QPointF(-60, -40);
+//            myPolygon << QPointF(-60, -40) << QPointF(-35, 40)
+//                      << QPointF(60, 40) << QPointF(35, -40)
+//                      << QPointF(-60, -40);
+        //统一形状
+            myPolygon << QPointF(-50, -50) << QPointF(50, -50)
+                      << QPointF(50, 50) << QPointF(-50, 50)
+                      << QPointF(-50, -50);
             break;
     }
     setPolygon(myPolygon);
-
     setFlag(QGraphicsItem::ItemIsFocusable, true);
     setFlag(QGraphicsItem::ItemIsMovable, true);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
@@ -74,17 +85,29 @@ DiagramItem::DiagramItem(DiagramType diagramType, QMenu *contextMenu,
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
 }
 
-//QRectF DiagramItem::boundingRect()
-//{
-//    qreal adjust=0.5;
-//    return QRectF(0-adjust,0-adjust,100+adjust,100+adjust);
-//}
+QRectF DiagramItem::boundingRect()
+{
+    qreal adjust=0.5;
+    return QRectF(-50-adjust,50-adjust,100+adjust,100+adjust);
+}
 
-//void DiagramItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
-//{
-//    painter->drawRect(0,0,100,100);
-//    painter->drawPixmap(0,0,48,48, QPixmap(":/img/radar.png"));
-//}
+void DiagramItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
+{
+    painter->drawRect(-50,-50,100,100);
+    myDiagramType = diagramType();
+    switch (myDiagramType) {
+        case Comp1: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/FDPC.png"));;
+            break;
+        case Comp2: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/CFAR.png"));;
+            break;
+        case Comp4: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/MTD.png"));;
+            break;
+        case Comp3: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/input.png"));;
+            break;
+        case Comp5: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/output.png"));;
+            break;
+    }
+}
 
 void DiagramItem::removeArrow(Arrow *arrow)
 {
@@ -126,7 +149,11 @@ QPixmap DiagramItem::image() const
         case DiagramItem::DiagramType::Comp4 :
             iconName = "MTD";
             break;
-        default:
+        case DiagramItem::DiagramType::Comp3 :
+            iconName = "INPUT";
+            break;
+        case DiagramItem::DiagramType::Comp5 :
+            iconName = "OUTPUT";
             break;
     }
     QString itemIcon = ":/img/" +iconName+".ico";
