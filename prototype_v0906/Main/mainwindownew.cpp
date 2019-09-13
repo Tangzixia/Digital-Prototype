@@ -25,48 +25,15 @@ MainWindowNew::MainWindowNew(QWidget *parent) :
     label_xy=new QLabel(this);
     // 状态栏左边加入xy坐标
     ui->statusBar->addWidget(label_xy);
-//    设置雷达组件类表初始状态隐藏
-    ui->RadarListWidget->setVisible(false);
-
-//    雷达组件列表按钮绑定事件
-    connect(ui->RadarListButton,&QPushButton::clicked,this,[=](){
-        bool flag = this->ui->RadarListWidget->isHidden();
-        if(flag){
-            this->ui->RadarListWidget->setVisible(true);
-        }
-        else{
-            this->ui->RadarListWidget->setVisible(false);
-        }
-    });
-
-
-    //    设置对抗组件类表初始状态隐藏
-        ui->ECMListWidget->setVisible(false);
-    //    对抗组件列表按钮绑定事件
-        connect(ui->ECMListButton,&QPushButton::clicked,this,[=](){
-            bool flag2 = this->ui->ECMListWidget->isHidden();
-            if(flag2){
-                this->ui->ECMListWidget->setVisible(true);
-            }
-            else{
-                this->ui->ECMListWidget->setVisible(false);
-            }
-        });
-
-//    当listwidget additem的时候通知父组件重绘（并没有卵用）
-    connect(ui->RadarListWidget,&DragListWidget::repaintWidget,this,[=](){
-//        this->ui->scrollAreaWidgetContents->repaint();
-        this->repaint();
-    });
-
     // 将主窗口中的场景设置为自定义的场景
     ui->graphicsView->setScene(graphicsScene);
 //    ui->graphicsView->setStyleSheet("border:1px;padding:0");
 //     设置鼠标跟踪开启
     ui->graphicsView->setMouseTracking(true);
     ui->graphicsView->setAcceptDrops(true);
-
+//不设置大小会出现拖动释放后位置跳变
     graphicsScene->setSceneRect(QRectF(0, 0, 5000, 5000));
+    ui->dockWidget_left->setFeatures(QDockWidget::AllDockWidgetFeatures);
     connect(graphicsScene,SIGNAL(signal_xy(double,double)),this,SLOT(xy_show(double,double)));
     this->showMaximized();
     this->setWindowTitle(tr("新建工程"));
