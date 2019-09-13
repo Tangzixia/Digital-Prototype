@@ -6,16 +6,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>810</width>
-    <height>496</height>
+    <width>720</width>
+    <height>487</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout" columnstretch="1,5">
-    <item row="0" column="1">
+   <layout class="QGridLayout" name="gridLayout_5">
+    <item row="0" column="0">
      <widget class="QGraphicsView" name="graphicsView">
       <property name="styleSheet">
        <string notr="true"/>
@@ -34,108 +34,6 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="0">
-     <widget class="QScrollArea" name="scrollArea">
-      <property name="widgetResizable">
-       <bool>true</bool>
-      </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>129</width>
-         <height>435</height>
-        </rect>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout">
-          <item>
-           <widget class="QPushButton" name="RadarListButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>35</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>35</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>雷达</string>
-            </property>
-            <property name="autoDefault">
-             <bool>false</bool>
-            </property>
-            <property name="default">
-             <bool>false</bool>
-            </property>
-            <property name="flat">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="DragListWidget" name="RadarListWidget">
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>50</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>100000</width>
-              <height>100000</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="ECMListButton">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>35</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>对抗</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="ECMDragListWidget" name="ECMListWidget"/>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>150</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </widget>
-     </widget>
-    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -143,8 +41,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>810</width>
-     <height>21</height>
+     <width>720</width>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menufile">
@@ -185,6 +83,142 @@
    <addaction name="menuabout"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QDockWidget" name="dockWidget_left">
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_3">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QToolBox" name="toolBox_2">
+       <property name="font">
+        <font>
+         <family>黑体</family>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <property name="tabSpacing">
+        <number>6</number>
+       </property>
+       <widget class="QWidget" name="page_rader_2">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>164</width>
+          <height>293</height>
+         </rect>
+        </property>
+        <attribute name="icon">
+         <iconset resource="../Res/res.qrc">
+          <normaloff>:/img/radar.png</normaloff>:/img/radar.png</iconset>
+        </attribute>
+        <attribute name="label">
+         <string>雷达设备</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_8">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="DragListWidget" name="listWidget_4"/>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="page_ECMD_2">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>164</width>
+          <height>293</height>
+         </rect>
+        </property>
+        <attribute name="icon">
+         <iconset resource="../Res/res.qrc">
+          <normaloff>:/img/ecmdemo.jpg</normaloff>:/img/ecmdemo.jpg</iconset>
+        </attribute>
+        <attribute name="label">
+         <string>对抗机</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_6">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="ECMDragListWidget" name="listWidget_5"/>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="page_obiect_2">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>164</width>
+          <height>293</height>
+         </rect>
+        </property>
+        <attribute name="icon">
+         <iconset resource="../Res/res.qrc">
+          <normaloff>:/img/input.png</normaloff>:/img/input.png</iconset>
+        </attribute>
+        <attribute name="label">
+         <string>目标环境</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_7">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QListWidget" name="listWidget_6"/>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
   <action name="actionnewFile">
    <property name="text">
     <string>新建文件</string>
@@ -215,7 +249,7 @@
   <customwidget>
    <class>DragListWidget</class>
    <extends>QListWidget</extends>
-   <header>draglistwidget.h</header>
+   <header location="global">draglistwidget.h</header>
   </customwidget>
   <customwidget>
    <class>ECMDragListWidget</class>
@@ -223,6 +257,8 @@
    <header location="global">ecmdraglistwidget.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../Res/res.qrc"/>
+ </resources>
  <connections/>
 </ui>
