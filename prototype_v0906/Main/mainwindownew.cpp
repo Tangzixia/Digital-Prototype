@@ -79,3 +79,12 @@ void MainWindowNew::on_actionexit_triggered()
 {
     qApp->closeAllWindows();
 }
+
+void MainWindowNew::on_actio_leftDock_triggered()
+{
+    if(ui->dockWidget_left->isHidden()){
+        ui->dockWidget_left->show();
+    }else{
+        ui->dockWidget_left->hide();
+    }
+}

@@ -92,9 +92,9 @@ void MainWindow::on_actionToolsBar_triggered()
 void MainWindow::on_actionEquip_triggered()
 {
     //显示装备栏
-    if(ui->dockWidget->isVisible()){
-        ui->dockWidget->close();
+    if(ui->dockWidget_left->isVisible()){
+        ui->dockWidget_left->close();
     }else{
-        ui->dockWidget->show();
+        ui->dockWidget_left->show();
     }
 }

@@ -63,6 +63,7 @@
     <property name="title">
      <string>设置</string>
     </property>
+    <addaction name="actio_leftDock"/>
    </widget>
    <widget class="QMenu" name="menuhelp">
     <property name="title">
@@ -90,7 +91,7 @@
    <widget class="QWidget" name="dockWidgetContents_3">
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="0">
-      <widget class="QToolBox" name="toolBox_2">
+      <widget class="QToolBox" name="toolBox_left">
        <property name="font">
         <font>
          <family>黑体</family>
@@ -98,17 +99,17 @@
         </font>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <property name="tabSpacing">
         <number>6</number>
        </property>
-       <widget class="QWidget" name="page_rader_2">
+       <widget class="QWidget" name="page_rader">
         <property name="geometry">
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>164</width>
+          <width>256</width>
           <height>293</height>
          </rect>
         </property>
@@ -136,16 +137,16 @@
           <number>0</number>
          </property>
          <item row="0" column="0">
-          <widget class="DragListWidget" name="listWidget_4"/>
+          <widget class="DragListWidget" name="listWidget_rader"/>
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="page_ECMD_2">
+       <widget class="QWidget" name="page_ecm">
         <property name="geometry">
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>164</width>
+          <width>256</width>
           <height>293</height>
          </rect>
         </property>
@@ -173,16 +174,16 @@
           <number>0</number>
          </property>
          <item row="0" column="0">
-          <widget class="ECMDragListWidget" name="listWidget_5"/>
+          <widget class="ECMDragListWidget" name="listWidget_ecm"/>
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="page_obiect_2">
+       <widget class="QWidget" name="page_object">
         <property name="geometry">
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>164</width>
+          <width>256</width>
           <height>293</height>
          </rect>
         </property>
@@ -210,7 +211,7 @@
           <number>0</number>
          </property>
          <item row="0" column="0">
-          <widget class="QListWidget" name="listWidget_6"/>
+          <widget class="QListWidget" name="listWidget_object"/>
          </item>
         </layout>
        </widget>
@@ -242,6 +243,17 @@
   <action name="actionexit">
    <property name="text">
     <string>退出</string>
+   </property>
+  </action>
+  <action name="actio_leftDock">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>组件栏</string>
    </property>
   </action>
  </widget>

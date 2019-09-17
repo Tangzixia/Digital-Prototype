@@ -186,6 +186,7 @@ void MainWindow_Radar::autoloadXmlById(QString id)
         }
     }
 }
+
 QFileInfoList MainWindow_Radar::getFileList(QString path)
 {
     QDir dir(path);
@@ -201,7 +202,6 @@ QFileInfoList MainWindow_Radar::getFileList(QString path)
 
     return file_list;
 }
-
 
 // 退出的时候应该让用户选择是否保存当前场景
 // FIXME 默认保存场景到name+.xml好像有点不合理，应该可以自己选择路径
@@ -228,6 +228,7 @@ void MainWindow_Radar::closeEvent(QCloseEvent *event)
         event->accept();
     }
 }
+
 void MainWindow_Radar::save2XmlFile(){
     ui->statusbar->showMessage("正在保存场景...", 3000);
     qDebug() << tr("to close radar window");
@@ -853,6 +854,7 @@ void MainWindow_Radar::saveSnapshot(int flag)
         }
     }
 }
+
 void MainWindow_Radar::currentFontChanged(const QFont &)
 {
     handleFontChange();
