@@ -25,10 +25,12 @@ public:
     enum Mode { InsertItem, InsertLine, InsertText, MoveItem };
 
     explicit RadarScene(QMenu *itemMenu, QObject *parent = nullptr);
+
     QFont font() const { return myFont; }
     QColor textColor() const { return myTextColor; }
     QColor itemColor() const { return myItemColor; }
     QColor lineColor() const { return myLineColor; }
+
     void setLineColor(const QColor &color);
     void setTextColor(const QColor &color);
     void setItemColor(const QColor &color);
@@ -39,8 +41,11 @@ public:
     void modifyXmlArrows(Arrow *arrow, DiagramItem *startItem, DiagramItem *endItem);
 
     QMenu *getItemMenu(){return myItemMenu;}
+
     QDomDocument getDoc(){return doc;}
+
     QList<int> idList;
+
     int generateUniqueid()
     {
         int i,j;
@@ -80,6 +85,7 @@ public slots:
 
 signals:
     void signal_xy(double x,double y);
+
     void itemInserted(DiagramItem *item);
     void textInserted(QGraphicsTextItem *item);
     void itemSelected(QGraphicsItem *item);
@@ -103,8 +109,8 @@ private:
     bool leftButtonDown;
     QPointF startPoint;
     QGraphicsLineItem *line;
-    QFont myFont;
 
+    QFont myFont;
     QColor myTextColor;
     QColor myItemColor;
     QColor myLineColor;

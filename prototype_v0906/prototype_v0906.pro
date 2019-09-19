@@ -67,7 +67,9 @@ SOURCES += \
     Tool/qudong.cpp \
     EccmPrototype/ecmproperty.cpp \
     Tool/runcompconf.cpp \
-    Tool/instructionexec.cpp
+    Tool/instructionexec.cpp \
+    EccmPrototype/mainwindow_ecm.cpp \
+    Tool/graphicsScenepublic.cpp
 
 HEADERS += \
         Main\mainwindow.h \
@@ -94,7 +96,9 @@ HEADERS += \
     Tool/qudong.h \
     EccmPrototype/ecmproperty.h \
     Tool/runcompconf.h \
-    Tool/instructionexec.h
+    Tool/instructionexec.h \
+    EccmPrototype/mainwindow_ecm.h \
+    Tool/graphicsscenepublic.h
 
 FORMS += \
         Main\mainwindow.ui \
@@ -106,7 +110,8 @@ FORMS += \
     Tool\compproperty.ui \
     Tool\realtimecurve.ui \
     EccmPrototype/ecmproperty.ui \
-    Tool/runcompconf.ui
+    Tool/runcompconf.ui \
+    EccmPrototype/mainwindow_ecm.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

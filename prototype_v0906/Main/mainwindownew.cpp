@@ -33,7 +33,7 @@ MainWindowNew::MainWindowNew(QWidget *parent) :
     ui->graphicsView->setAcceptDrops(true);
 //不设置大小会出现拖动释放后位置跳变
     graphicsScene->setSceneRect(QRectF(0, 0, 5000, 5000));
-    ui->dockWidget_left->setFeatures(QDockWidget::AllDockWidgetFeatures);
+
     connect(graphicsScene,SIGNAL(signal_xy(double,double)),this,SLOT(xy_show(double,double)));
     this->showMaximized();
     this->setWindowTitle(tr("新建工程"));

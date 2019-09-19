@@ -45,6 +45,7 @@ RadarScene::RadarScene(QMenu *itemMenu, QObject *parent)
     root.appendChild(Items);
 }
 
+
 void RadarScene::setLineColor(const QColor &color)
 {
     myLineColor = color;
@@ -90,6 +91,7 @@ void RadarScene::setFont(const QFont &font)
             item->setFont(myFont);
     }
 }
+
 
 void RadarScene::modifyXmlItems(QPointF pos, DiagramItem *item)
 {
@@ -181,8 +183,7 @@ void RadarScene::setItemType(DiagramItem::DiagramType type)
 {
     myItemType = type;
 }
-
-
+//文本框
 void RadarScene::editorLostFocus(DiagramTextItem *item)
 {
     //获取光标
@@ -197,6 +198,7 @@ void RadarScene::editorLostFocus(DiagramTextItem *item)
         item->deleteLater();
     }
 }
+
 
 // This is available in all editors.
 /**
@@ -230,6 +232,7 @@ void RadarScene::sendRate(float rate)
     emit rateSignal(rate);
 }
 
+//鼠标事件
 void RadarScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     //左键
@@ -326,6 +329,7 @@ void RadarScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
     QGraphicsScene::mouseReleaseEvent(mouseEvent);
 }
 
+//
 bool RadarScene::isItemChange(int type)
 {
     foreach (QGraphicsItem *item, selectedItems()) {
