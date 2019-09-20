@@ -29,7 +29,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>26</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_file">
@@ -46,6 +46,7 @@
      <string>窗口</string>
     </property>
     <addaction name="action_list"/>
+    <addaction name="action_toolBar"/>
    </widget>
    <widget class="QMenu" name="menu_build">
     <property name="title">
@@ -109,6 +110,12 @@
       <layout class="QGridLayout" name="gridLayout_5">
        <item row="0" column="0">
         <widget class="QToolBox" name="toolBox">
+         <property name="font">
+          <font>
+           <family>黑体</family>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
@@ -124,7 +131,7 @@
             <x>0</x>
             <y>0</y>
             <width>256</width>
-            <height>416</height>
+            <height>421</height>
            </rect>
           </property>
           <attribute name="label">
@@ -153,7 +160,14 @@
             <number>0</number>
            </property>
            <item row="0" column="5">
-            <widget class="QListWidget" name="listWidget_arithmetic"/>
+            <widget class="QListWidget" name="listWidget_arithmetic">
+             <property name="font">
+              <font>
+               <family>黑体</family>
+               <pointsize>12</pointsize>
+              </font>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -163,7 +177,7 @@
             <x>0</x>
             <y>0</y>
             <width>256</width>
-            <height>416</height>
+            <height>421</height>
            </rect>
           </property>
           <attribute name="label">
@@ -273,6 +287,17 @@
    </property>
    <property name="text">
     <string>打开</string>
+   </property>
+  </action>
+  <action name="action_toolBar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>工具栏</string>
    </property>
   </action>
  </widget>

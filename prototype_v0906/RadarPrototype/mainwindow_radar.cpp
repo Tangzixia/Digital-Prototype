@@ -242,8 +242,7 @@ void MainWindow_Radar::deleteItem()
         }
     }
 }
-
-//左边切换页面的效果
+//变换背景
 void MainWindow_Radar::backgroundButtonGroupClicked(QAbstractButton *button)
 {
     QList<QAbstractButton *> buttons = backgroundButtonGroup->buttons();
@@ -491,7 +490,7 @@ void MainWindow_Radar::createMenus()
     itemMenu->addAction(toFrontAction);
     itemMenu->addAction(sendBackAction);
 
-    // 进度条
+    // 比例条
     progressBar=new QProgressBar(this);
     progressBar->setMinimum(0);
     progressBar->setMaximum(100);

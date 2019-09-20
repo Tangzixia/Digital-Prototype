@@ -53,6 +53,7 @@ MainWindow_ECM::MainWindow_ECM(QString id , QWidget *parent) :
 
     //加入算法组件
     createCompBox();
+    createToolbars();
 }
 MainWindow_ECM::~MainWindow_ECM()
 {
@@ -108,6 +109,34 @@ QWidget *MainWindow_ECM::createCellWidget(const QString &text, DiagramItem::Diag
         return widget;
     }
 
+void MainWindow_ECM::createToolbars()
+{
+ //箭头和连线
+    QToolButton *pointerButton = new QToolButton;
+    pointerButton->setCheckable(true);
+    pointerButton->setChecked(true);
+    //默认是指针移动
+    pointerButton->setIcon(QIcon(":/img/pointer.png"));
+    QToolButton *linePointerButton = new QToolButton;
+    linePointerButton->setCheckable(true);
+    linePointerButton->setIcon(QIcon(":/img/linepointer.png"));
+
+    pointerTypeGroup = new QButtonGroup(this);
+    //后面参数是id唯一标识
+    pointerTypeGroup->addButton(pointerButton, int(GraphicsScenePublic::MoveItem));
+    pointerTypeGroup->addButton(linePointerButton, int(GraphicsScenePublic::InsertLine));
+    connect(pointerTypeGroup, SIGNAL(buttonClicked(int)),
+            this, SLOT(pointerGroupClicked(int)));
+     ui->toolBar->addWidget(pointerButton);
+     ui->toolBar->addWidget(linePointerButton);
+
+}
+//参数呢？
+void MainWindow_ECM::pointerGroupClicked(int id)
+{
+    qDebug()<<"pointerGroupClickedid:"<<id;
+    sceneECM->setMode(GraphicsScenePublic::Mode(pointerTypeGroup->checkedId()));
+}
 void MainWindow_ECM::buttonGroupClicked(int id)
 {
     QList<QAbstractButton *> buttons = buttonGroup->buttons();
@@ -144,13 +173,13 @@ void MainWindow_ECM::itemInserted(DiagramItem *item)
 //    isSave = false;
     qDebug() << "ECM item Inserted finish";
     //当有图形项插入到场景中的时候，应该将指针组改为移动指针
-//    pointerTypeGroup->button(int(GraphicsScenePublic::MoveItem))->setChecked(true);
+   pointerTypeGroup->button(int(GraphicsScenePublic::MoveItem))->setChecked(true);
     //设置成上面那个
-//   sceneECM->setMode(GraphicsScenePublic::Mode(pointerTypeGroup->checkedId()));
-   sceneECM->setMode(GraphicsScenePublic::MoveItem);
+   sceneECM->setMode(GraphicsScenePublic::Mode(pointerTypeGroup->checkedId()));
+   //sceneECM->setMode(GraphicsScenePublic::MoveItem);
     //取消原按钮的选中状态
     buttonGroup->button(int(item->diagramType()))->setChecked(false);
-    ui->listWidget_arithmetic->clear();
+    ui->toolBox->update();
 }
 
 void MainWindow_ECM::sceneScaleChanged(const QString &scale)
@@ -162,4 +191,22 @@ void MainWindow_ECM::sceneScaleChanged(const QString &scale)
 //    ui->graphicsView->resetMatrix();
 //    ui->graphicsView->translate(oldMatrix.dx(), oldMatrix.dy());
 //    ui->graphicsView->scale(newScale, newScale);
+}
+
+void MainWindow_ECM::on_action_list_triggered(bool checked)
+{
+    if(checked){
+        ui->dockWidget->show();
+    }else{
+        ui->dockWidget->hide();
+    }
+}
+
+void MainWindow_ECM::on_action_toolBar_triggered(bool checked)
+{
+    if(checked){
+        ui->toolBar->show();
+    }else{
+        ui->toolBar->hide();
+    }
 }

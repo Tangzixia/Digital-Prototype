@@ -37,7 +37,9 @@ private:
     QButtonGroup *pointerTypeGroup;
     GraphicsScenePublic *sceneECM;
     void xy_show(double x, double y);
+
     void createCompBox();
+    void createToolbars();
     QWidget *createCellWidget(const QString &text,
                           DiagramItem::DiagramType type);
 private slots:
@@ -47,7 +49,10 @@ private slots:
     void itemInserted(DiagramItem *item);
     void itemSelected(QGraphicsItem *item);
     void sceneScaleChanged(const QString &scale);
-
+    //实现toolBar箭头连线千切换
+    void pointerGroupClicked(int id);
+    void on_action_list_triggered(bool checked);
+    void on_action_toolBar_triggered(bool checked);
 };
 
 #endif // MAINWINDOW_ECM_H
