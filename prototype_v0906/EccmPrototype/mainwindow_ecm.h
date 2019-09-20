@@ -4,9 +4,9 @@
 #include<QLabel>
 #include <QMainWindow>
 
-#include "GraphicsScenePublic.h"
+#include "graphicsscenepublic.h"
 //盗用
-#include "diagramitem.h"
+#include "diagramitempublic.h"
 #include <QButtonGroup>
 /**
 * @projectName   prototype_v0906
@@ -31,7 +31,7 @@ public:
 private:
     Ui::MainWindow_ECM *ui;
     QLabel *label_xy;
-    //使用DiagramItem的构造方法所必须的
+    //使用DiagramItempublic的构造方法所必须的
     QMenu *itemMenu;
     QButtonGroup *buttonGroup;
     QButtonGroup *pointerTypeGroup;
@@ -41,18 +41,23 @@ private:
     void createCompBox();
     void createToolbars();
     QWidget *createCellWidget(const QString &text,
-                          DiagramItem::DiagramType type);
+                          DiagramItemPublic::DiagramType type);
 private slots:
     //实现点击左边算法组件改变右边Graphics状态
     void buttonGroupClicked(int id);
     //右边插入左边算法组件失去焦点
-    void itemInserted(DiagramItem *item);
+    void itemInserted(DiagramItemPublic *item);
     void itemSelected(QGraphicsItem *item);
     void sceneScaleChanged(const QString &scale);
-    //实现toolBar箭头连线千切换
+    //实现toolBar 箭头 连线  之间的切换
     void pointerGroupClicked(int id);
+
+    void showItemProperties();
+
     void on_action_list_triggered(bool checked);
     void on_action_toolBar_triggered(bool checked);
+
+
 };
 
 #endif // MAINWINDOW_ECM_H

@@ -29,7 +29,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>23</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_file">
@@ -52,7 +52,7 @@
     <property name="title">
      <string>构建</string>
     </property>
-    <addaction name="actionz_run"/>
+    <addaction name="action_run"/>
    </widget>
    <addaction name="menu_file"/>
    <addaction name="menu_windows"/>
@@ -69,9 +69,9 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="action1"/>
-   <addaction name="action2"/>
-   <addaction name="action1_2"/>
+   <addaction name="action_run_2"/>
+   <addaction name="action_xml_open_2"/>
+   <addaction name="action_xml_save_2"/>
   </widget>
   <widget class="QDockWidget" name="dockWidget">
    <property name="toolTipDuration">
@@ -120,7 +120,7 @@
           <enum>QFrame::StyledPanel</enum>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <property name="tabSpacing">
           <number>6</number>
@@ -131,7 +131,7 @@
             <x>0</x>
             <y>0</y>
             <width>256</width>
-            <height>421</height>
+            <height>406</height>
            </rect>
           </property>
           <attribute name="label">
@@ -167,6 +167,9 @@
                <pointsize>12</pointsize>
               </font>
              </property>
+             <property name="frameShape">
+              <enum>QFrame::Panel</enum>
+             </property>
             </widget>
            </item>
           </layout>
@@ -177,7 +180,7 @@
             <x>0</x>
             <y>0</y>
             <width>256</width>
-            <height>421</height>
+            <height>406</height>
            </rect>
           </property>
           <attribute name="label">
@@ -248,7 +251,7 @@
     <string>保存为xml文件</string>
    </property>
   </action>
-  <action name="actionz_run">
+  <action name="action_run">
    <property name="icon">
     <iconset resource="../Res/res.qrc">
      <normaloff>:/img/runXml.png</normaloff>:/img/runXml.png</iconset>
@@ -262,7 +265,7 @@
     <string>Exit</string>
    </property>
   </action>
-  <action name="action1">
+  <action name="action_run_2">
    <property name="icon">
     <iconset resource="../Res/res.qrc">
      <normaloff>:/img/runXml.png</normaloff>:/img/runXml.png</iconset>
@@ -271,7 +274,7 @@
     <string>运行</string>
    </property>
   </action>
-  <action name="action2">
+  <action name="action_xml_open_2">
    <property name="icon">
     <iconset resource="../Res/res.qrc">
      <normaloff>:/img/save.png</normaloff>:/img/save.png</iconset>
@@ -280,7 +283,7 @@
     <string>保存</string>
    </property>
   </action>
-  <action name="action1_2">
+  <action name="action_xml_save_2">
    <property name="icon">
     <iconset resource="../Res/res.qrc">
      <normaloff>:/img/open.png</normaloff>:/img/open.png</iconset>

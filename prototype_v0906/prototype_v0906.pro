@@ -69,7 +69,8 @@ SOURCES += \
     Tool/runcompconf.cpp \
     Tool/instructionexec.cpp \
     EccmPrototype/mainwindow_ecm.cpp \
-    Tool/graphicsScenepublic.cpp
+    Tool/graphicsScenepublic.cpp \
+    Tool/diagramitempublic.cpp
 
 HEADERS += \
         Main\mainwindow.h \
@@ -98,7 +99,8 @@ HEADERS += \
     Tool/runcompconf.h \
     Tool/instructionexec.h \
     EccmPrototype/mainwindow_ecm.h \
-    Tool/graphicsscenepublic.h
+    Tool/graphicsscenepublic.h \
+    Tool/diagramitempublic.h
 
 FORMS += \
         Main\mainwindow.ui \

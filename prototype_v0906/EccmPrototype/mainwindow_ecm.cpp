@@ -4,8 +4,9 @@
 #include<QLabel>
 #include <QDebug>
 #include<QGraphicsScene>
-#include "GraphicsScenePublic.h"
+#include "graphicsscenepublic.h"
 #include <QToolButton>
+#include "compproperty.h"
 MainWindow_ECM::MainWindow_ECM(QString id , QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow_ECM)
@@ -35,12 +36,12 @@ MainWindow_ECM::MainWindow_ECM(QString id , QWidget *parent) :
     connect(sceneECM,&GraphicsScenePublic::signal_xy,this,[=](double x,double y){
         this->xy_show(x,y);
     });
-    connect(sceneECM, SIGNAL(itemInserted(DiagramItem*)),
-            this, SLOT(itemInserted(DiagramItem*)));
+    connect(sceneECM, SIGNAL(itemInserted(DiagramItemPublic*)),
+            this, SLOT(itemInserted(DiagramItemPublic*)));
 //    connect(sceneECM, SIGNAL(textInserted(QGraphicsTextItem*)),
 //            this, SLOT(textInserted(QGraphicsTextItem*)));
-//    connect(sceneECM, SIGNAL(itemSelected(QGraphicsItem*)),
-//            this, SLOT(itemSelected(QGraphicsItem*)));
+    connect(sceneECM, SIGNAL(itemSelected(QGraphicsItem*)),
+            this, SLOT(itemSelected(QGraphicsItem*)));
     connect(sceneECM,SIGNAL(startRun()),
             this,SLOT(On_start()));
     connect(sceneECM,SIGNAL(overRun()),
@@ -49,8 +50,13 @@ MainWindow_ECM::MainWindow_ECM(QString id , QWidget *parent) :
 
     //设置可以使鼠标在视图上拖拽出橡皮筋框选择多个组件
     ui->graphicsView_ecm->setDragMode(QGraphicsView::RubberBandDrag);
-
-
+    //点击run菜单项（或工具栏图标）触发
+    connect(ui->action_run,SIGNAL(triggered()),
+            sceneECM,SLOT(startRunCode()));
+    connect(ui->action_run_2,SIGNAL(triggered()),
+            sceneECM,SLOT(startRunCode()));
+    //点击退出菜单项触发
+    connect(ui->actiont_exit, SIGNAL(triggered()), this, SLOT(close()));
     //加入算法组件
     createCompBox();
     createToolbars();
@@ -73,11 +79,11 @@ void MainWindow_ECM::createCompBox(){
     //表格布局
     QGridLayout *layout = new QGridLayout;
     // TODO 支持点击修改组件名
-    layout->addWidget(createCellWidget(tr("*脉冲压缩"), DiagramItem::Comp1), 0, 0); // Component_1
-    layout->addWidget(createCellWidget(tr("*恒虚警率"), DiagramItem::Comp2),0, 1); // Component_2
-    layout->addWidget(createCellWidget(tr("*动目标检测"), DiagramItem::Comp4), 1, 0); // Component_4
-    layout->addWidget(createCellWidget(tr("输入"), DiagramItem::Comp3), 1, 1); // Component_3
-    layout->addWidget(createCellWidget(tr("输出"), DiagramItem::Comp5), 2, 0); // Component_5
+    layout->addWidget(createCellWidget(tr("*脉冲压缩"), DiagramItemPublic::Comp1), 0, 0); // Component_1
+    layout->addWidget(createCellWidget(tr("*恒虚警率"), DiagramItemPublic::Comp2),0, 1); // Component_2
+    layout->addWidget(createCellWidget(tr("*动目标检测"), DiagramItemPublic::Comp4), 1, 0); // Component_4
+    layout->addWidget(createCellWidget(tr("输入"), DiagramItemPublic::Comp3), 1, 1); // Component_3
+    layout->addWidget(createCellWidget(tr("输出"), DiagramItemPublic::Comp5), 2, 0); // Component_5
 
     //设置行和列的比例
     layout->setRowStretch(3, 10);
@@ -89,9 +95,9 @@ void MainWindow_ECM::createCompBox(){
             this, SLOT(buttonGroupClicked(int)));
 };
 
-QWidget *MainWindow_ECM::createCellWidget(const QString &text, DiagramItem::DiagramType type)
+QWidget *MainWindow_ECM::createCellWidget(const QString &text, DiagramItemPublic::DiagramType type)
     {
-        DiagramItem item(type, itemMenu);
+        DiagramItemPublic item(type, itemMenu);
         QIcon icon(item.image());
         //专门用来显示图片的按钮组件
         QToolButton *button = new QToolButton;
@@ -105,7 +111,7 @@ QWidget *MainWindow_ECM::createCellWidget(const QString &text, DiagramItem::Diag
         layout->addWidget(new QLabel(text), 1, 0, Qt::AlignCenter);
         QWidget *widget = new QWidget();
         widget->setLayout(layout);
-    //返回一个含有名称的toolbutton---->是否该换成自已控件？
+    //返回一个含有名称的toolbutton---->是否该换成自定义控件？
         return widget;
     }
 
@@ -122,9 +128,10 @@ void MainWindow_ECM::createToolbars()
     linePointerButton->setIcon(QIcon(":/img/linepointer.png"));
 
     pointerTypeGroup = new QButtonGroup(this);
-    //后面参数是id唯一标识
+    //后面参数是id唯一标识（String强转int？--->好方法 好记不会错）
     pointerTypeGroup->addButton(pointerButton, int(GraphicsScenePublic::MoveItem));
     pointerTypeGroup->addButton(linePointerButton, int(GraphicsScenePublic::InsertLine));
+    //一旦有按钮选中-->鼠标就变箭头（不再是连线）
     connect(pointerTypeGroup, SIGNAL(buttonClicked(int)),
             this, SLOT(pointerGroupClicked(int)));
      ui->toolBar->addWidget(pointerButton);
@@ -134,7 +141,7 @@ void MainWindow_ECM::createToolbars()
 //参数呢？
 void MainWindow_ECM::pointerGroupClicked(int id)
 {
-    qDebug()<<"pointerGroupClickedid:"<<id;
+    qDebug()<<"pointerGroupClickedid:  "<<id;
     sceneECM->setMode(GraphicsScenePublic::Mode(pointerTypeGroup->checkedId()));
 }
 void MainWindow_ECM::buttonGroupClicked(int id)
@@ -145,10 +152,10 @@ void MainWindow_ECM::buttonGroupClicked(int id)
             button->setChecked(false);
     }
     //判断是否是文本框
-    if (id == 10) {//InsertTextButton=10 我没定义
-        sceneECM->setMode(GraphicsScenePublic::InsertText);
+    if (id == 10) { //InsertTextButton=10 我没定义
+        //sceneECM->setMode(GraphicsScenePublic::InsertText);
     } else {
-        sceneECM->setItemType(DiagramItem::DiagramType(id));
+        sceneECM->setItemType(DiagramItemPublic::DiagramType(id));
         sceneECM->setMode(GraphicsScenePublic::InsertItem);
     }
 }
@@ -167,7 +174,7 @@ void MainWindow_ECM::itemSelected(QGraphicsItem *item)
 //    underlineAction->setChecked(font.underline());
 }
 
-void MainWindow_ECM::itemInserted(DiagramItem *item)
+void MainWindow_ECM::itemInserted(DiagramItemPublic *item)
 {
 
 //    isSave = false;
@@ -179,9 +186,10 @@ void MainWindow_ECM::itemInserted(DiagramItem *item)
    //sceneECM->setMode(GraphicsScenePublic::MoveItem);
     //取消原按钮的选中状态
     buttonGroup->button(int(item->diagramType()))->setChecked(false);
-    ui->toolBox->update();
+    update();
+//    ui->toolBox->update();
 }
-
+//没有使用
 void MainWindow_ECM::sceneScaleChanged(const QString &scale)
 {
 //    isSave = false;
@@ -192,7 +200,7 @@ void MainWindow_ECM::sceneScaleChanged(const QString &scale)
 //    ui->graphicsView->translate(oldMatrix.dx(), oldMatrix.dy());
 //    ui->graphicsView->scale(newScale, newScale);
 }
-
+//打开关闭左边算法组件窗口
 void MainWindow_ECM::on_action_list_triggered(bool checked)
 {
     if(checked){
@@ -201,7 +209,7 @@ void MainWindow_ECM::on_action_list_triggered(bool checked)
         ui->dockWidget->hide();
     }
 }
-
+//打开关闭toolBar
 void MainWindow_ECM::on_action_toolBar_triggered(bool checked)
 {
     if(checked){
@@ -210,3 +218,42 @@ void MainWindow_ECM::on_action_toolBar_triggered(bool checked)
         ui->toolBar->hide();
     }
 }
+
+//弹出属性窗口
+void MainWindow_ECM::showItemProperties()
+{
+    foreach (QGraphicsItem *item, sceneECM->selectedItems()) {
+        if (item->type() == DiagramItem::Type) {
+            // DELETE
+            qDebug() << "Show Component Property";
+            CompProperty *p = new CompProperty();
+            p->exec();
+        }
+    }
+}
+//进度条相关
+// 当已经开始运行的时候
+//void MainWindow_ECM::On_start()
+//{
+//    // 关闭几个按钮和动作
+//    ui->actionRunRadar->setEnabled(false);
+//    // 打开停止按钮和动作
+////    ui->action_Stop->setEnabled(true);
+//    // 进度条为0
+//    progressBar->setValue(0);
+//}
+
+// 当运行结束的时候
+//void MainWindow_ECM::On_over()
+//{
+////    ui->action_Stop->setEnabled(false);
+//    ui->actionRunRadar->setEnabled(true);
+//    label_time->setText(tr("Done"));
+//}
+
+// 当对信号进行评估进度的时候，实时设置进度条的值
+//void MainWindow_ECM::On_rateSignal(float rate)
+//{
+//    progressBar->setValue(int(rate));
+//}
+

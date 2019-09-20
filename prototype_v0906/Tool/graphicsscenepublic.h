@@ -3,7 +3,7 @@
 
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
-#include "diagramitem.h"
+#include "diagramitempublic.h"
 class GraphicsScenePublic : public QGraphicsScene
 {
     Q_OBJECT
@@ -11,9 +11,9 @@ public:
     //InsertItem默认
     enum Mode { InsertItem, InsertLine, InsertText, MoveItem };
     explicit GraphicsScenePublic(QMenu *itemMenu, QObject *parent = nullptr);
-    void modifyXmlItems(QPointF pos, DiagramItem *item);
-    void updateXmlItemsPos(QPointF pos, DiagramItem *item);
-    void modifyXmlArrows(Arrow *arrow, DiagramItem *startItem, DiagramItem *endItem);
+    void modifyXmlItems(QPointF pos, DiagramItemPublic *item);
+    void updateXmlItemsPos(QPointF pos, DiagramItemPublic *item);
+    void modifyXmlArrows(Arrow *arrow, DiagramItemPublic *startItem, DiagramItemPublic *endItem);
     QList<int> idList;
 
     int generateUniqueid()
@@ -48,15 +48,19 @@ public:
 signals:
    void signal_xy(double x,double y);
    //算法组件添加
-    void itemInserted(DiagramItem *item);
+    void itemInserted(DiagramItemPublic *item);
     void itemSelected(QGraphicsItem *item);
     //运行，结束
      void startRun();
      void overRun();
+     void rateSignal(float rate);
 
 public slots:
     void setMode(Mode mode);
-    void setItemType(DiagramItem::DiagramType itemType);
+    void setItemType(DiagramItemPublic::DiagramType itemType);
+//    运行用
+    void startRunCode();
+    void sendRate(float rate);
 protected:
      //为了XY
     void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
@@ -67,7 +71,7 @@ private:
 
      Mode myMode;
      QGraphicsLineItem *line;
-     DiagramItem::DiagramType myItemType;
+     DiagramItemPublic::DiagramType myItemType;
      QMenu *myItemMenu;
     bool isItemChange(int type);
 };
