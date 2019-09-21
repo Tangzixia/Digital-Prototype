@@ -33,7 +33,7 @@ MainWindowNew::MainWindowNew(QWidget *parent) :
     ui->graphicsView->setAcceptDrops(true);
 //不设置大小会出现拖动释放后位置跳变
     graphicsScene->setSceneRect(QRectF(0, 0, 5000, 5000));
-    ui->dockWidget_left->setFeatures(QDockWidget::AllDockWidgetFeatures);
+
     connect(graphicsScene,SIGNAL(signal_xy(double,double)),this,SLOT(xy_show(double,double)));
     this->showMaximized();
     this->setWindowTitle(tr("新建工程"));
@@ -78,4 +78,13 @@ void MainWindowNew::on_actionabout_DPSP_triggered()
 void MainWindowNew::on_actionexit_triggered()
 {
     qApp->closeAllWindows();
+}
+
+void MainWindowNew::on_actio_leftDock_triggered()
+{
+    if(ui->dockWidget_left->isHidden()){
+        ui->dockWidget_left->show();
+    }else{
+        ui->dockWidget_left->hide();
+    }
 }

@@ -36,6 +36,8 @@ private slots:
 
     void on_actionexit_triggered();
 
+    void on_actio_leftDock_triggered();
+
 private:
     Ui::MainWindowNew *ui;
     QRect rect;
