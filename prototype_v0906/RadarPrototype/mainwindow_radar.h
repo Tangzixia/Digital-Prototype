@@ -41,13 +41,14 @@ public:
     void save2XmlFile();
     //默认程序一打开就是已经保存好的状态
     static bool isSave;
+    void toggleSaveXml(int flag);
 
 protected:
     void closeEvent(QCloseEvent *event);
 
 
 private slots:
-    void on_actionCom_list_triggered();
+     void on_actionCom_list_triggered();
      void xy_show(double x,double y);
 
      void backgroundButtonGroupClicked(QAbstractButton *button);
@@ -77,6 +78,8 @@ private slots:
      void On_start();
      void On_over();
      void On_rateSignal(float rate);
+
+     void On_isSave2False();
 
 private:
     QString equip_id;

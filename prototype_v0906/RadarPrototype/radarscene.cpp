@@ -145,7 +145,8 @@ void RadarScene::updateXmlItemsPos(QPointF pos, DiagramItem *item)
                  elem.setAttribute("pos_x", pos.x());
                  elem.setAttribute("pos_y", pos.y());
                  MainWindow_Radar::isSave = false;
-//                 qDebug() << doc.toString();
+//                 qDebug() << "xml由于位置改变而被修改";
+                 emit isSave2False();
                  return;
              }
         }
@@ -316,6 +317,7 @@ void RadarScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
             Arrow *arrow = new Arrow(startItem, endItem);
             arrow->setColor(myLineColor);
             arrow->itemId = generateUniqueid();
+            qDebug() << "新箭头的ID: " << arrow->itemId << "; " << idList;
             startItem->addArrow(arrow);
             endItem->addArrow(arrow);
             arrow->setZValue(-1000.0);
@@ -329,7 +331,26 @@ void RadarScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
     QGraphicsScene::mouseReleaseEvent(mouseEvent);
 }
 
-//
+//void RadarScene::focusInEvent(QFocusEvent *)
+//{
+//    qDebug() << "focus in";
+//    // 暂时无用
+//}
+
+void RadarScene::focusOutEvent(QFocusEvent *)
+{
+    qDebug() << "scene focus out";
+    if(myItemMenu->isEnabled() && isSelected){
+//        myItemMenu->setEnabled(true);
+//        qDebug() << "myItemMenu设置为true" << myItemMenu->isEnabled();
+        isSelected = false;
+    }else{
+        myItemMenu->setEnabled(false);
+        qDebug() << "myItemMenu设置为false" << myItemMenu->isEnabled();
+    }
+}
+
+//是否有选中的类型
 bool RadarScene::isItemChange(int type)
 {
     foreach (QGraphicsItem *item, selectedItems()) {

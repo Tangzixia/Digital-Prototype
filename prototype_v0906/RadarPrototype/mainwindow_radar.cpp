@@ -13,7 +13,6 @@
 #include <QLineEdit>
 #include "arrow.h"
 #include "compproperty.h"
-#include <iostream>
 #include "clickablelabel.h"
 const int InsertTextButton = 10;
 /**
@@ -22,6 +21,7 @@ const int InsertTextButton = 10;
 * @author        Antrn
 * @date          2019-08-12
 */
+
 bool MainWindow_Radar::isSave = true;
 
 MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
@@ -30,8 +30,9 @@ MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
     ui(new Ui::MainWindow_Radar)
 {
     ui->setupUi(this);
+    this->setAttribute(Qt::WA_DeleteOnClose);
     //最大窗口
-   this->showMaximized();
+    this->showMaximized();
     setWindowTitle(tr("Radar Edit"));
     //兼容性？？
     setUnifiedTitleAndToolBarOnMac(true);
@@ -39,6 +40,30 @@ MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
     //组件列表设置(左边的窗口)
     ui->actionCom_list->setCheckable(true);
     ui->actionCom_list->setChecked(true);
+
+    createActions();
+    createCompBox();
+    createMenus();
+
+    scene = new RadarScene(itemMenu, this);
+    scene->setSceneRect(QRectF(0, 0, 5000, 5000));
+    connect(scene, SIGNAL(itemInserted(DiagramItem*)),
+            this, SLOT(itemInserted(DiagramItem*)));
+    connect(scene, SIGNAL(itemSelected(QGraphicsItem*)),
+            this, SLOT(itemSelected(QGraphicsItem*)));
+    createToolbars();
+    //点击run菜单项（或工具栏图标）触发
+    connect(ui->actionRunRadar,SIGNAL(triggered()),
+            scene,SLOT(startRunCode()));
+ //    connect(ui->action_Stop,SIGNAL(triggered()),graphicsScene,SLOT(stopSimulation()));
+    connect(scene,SIGNAL(startRun()),
+            this,SLOT(On_start()));
+    connect(scene,SIGNAL(overRun()),
+            this,SLOT(On_over()));
+    connect(scene,SIGNAL(rateSignal(float)),
+            this,SLOT(On_rateSignal(float)));
+
+    ui->graphicsView->setScene(scene);
 
     // xy坐标标签
     label_xy=new QLabel(this);
@@ -48,41 +73,16 @@ MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
     ui->graphicsView->setMouseTracking(true);
 
     ui->graphicsView->setAcceptDrops(true);
-
-    scene = new RadarScene(itemMenu, this);
-    scene->setSceneRect(QRectF(0, 0, 5000, 5000));
-    connect(scene, SIGNAL(itemInserted(DiagramItem*)),
-            this, SLOT(itemInserted(DiagramItem*)));
-    connect(scene, SIGNAL(textInserted(QGraphicsTextItem*)),
-            this, SLOT(textInserted(QGraphicsTextItem*)));
-    connect(scene, SIGNAL(itemSelected(QGraphicsItem*)),
-            this, SLOT(itemSelected(QGraphicsItem*)));
-    connect(scene,SIGNAL(startRun()),
-            this,SLOT(On_start()));
-    connect(scene,SIGNAL(overRun()),
-            this,SLOT(On_over()));
-    connect(scene,SIGNAL(rateSignal(float)),
-            this,SLOT(On_rateSignal(float)));
-
-    //点击run菜单项（或工具栏图标）触发
-    connect(ui->actionRunRadar,SIGNAL(triggered()),
-            scene,SLOT(startRunCode()));
- //    connect(ui->action_Stop,SIGNAL(triggered()),graphicsScene,SLOT(stopSimulation()));
-
-    ui->graphicsView->setScene(scene);
+    //设置可以使鼠标在视图上拖拽出橡皮筋框选择多个组件
+    ui->graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
     connect(scene,SIGNAL(signal_xy(double,double)),this,SLOT(xy_show(double,double)));
 
-    createActions();
-    createCompBox();
-    createMenus();
-    createToolbars();
+    connect(scene, SIGNAL(textInserted(QGraphicsTextItem*)),
+            this, SLOT(textInserted(QGraphicsTextItem*)));
 
+    // 关联是否保存xml的按钮可用的信号和槽函数
+    connect(scene, &RadarScene::isSave2False, this, &MainWindow_Radar::On_isSave2False);
 
-   //设置可以使鼠标在视图上拖拽出橡皮筋框选择多个组件
-    ui->graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
-
-    //TODO 用法不清楚
-    this->setAttribute(Qt::WA_DeleteOnClose);
     //打开自动读取已有的xml文件
     autoloadXmlById(getEquip_id());
     //    QGridLayout *layout = new QGridLayout;
@@ -105,7 +105,8 @@ MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
 void MainWindow_Radar::sceneScaleChanged(const QString &scale)
 {
     isSave = false;
-    qDebug() << "1117";
+    ui->actionsave->setEnabled(true);
+    qDebug() << "xml由于场景缩放比例变化而改变";
     double newScale = scale.left(scale.indexOf(tr("%"))).toDouble() / 100.0;
     QMatrix oldMatrix = ui->graphicsView->matrix();
     ui->graphicsView->resetMatrix();
@@ -131,10 +132,20 @@ void MainWindow_Radar::itemSelected(QGraphicsItem *item)
     underlineAction->setChecked(font.underline());
 }
 
+void MainWindow_Radar::toggleSaveXml(int flag){
+    if(flag == 1){
+        ui->actionsave->setEnabled(true);
+    }
+    if(flag == 0){
+        ui->actionsave->setEnabled(false);
+    }
+}
+
 void MainWindow_Radar::itemInserted(DiagramItem *item)
 {
     isSave = false;
-    qDebug() << "1115";
+    toggleSaveXml(1);
+    qDebug() << "xml由于组件添加而改变";
     //当有图形项插入到场景中的时候，应该将指针组改为移动指针
     pointerTypeGroup->button(int(RadarScene::MoveItem))->setChecked(true);
     scene->setMode(RadarScene::Mode(pointerTypeGroup->checkedId()));
@@ -145,7 +156,8 @@ void MainWindow_Radar::itemInserted(DiagramItem *item)
 void MainWindow_Radar::textInserted(QGraphicsTextItem *)
 {
     isSave = false;
-    qDebug() << "1116";
+    toggleSaveXml(1);
+    qDebug() << "xml由于文字添加而改变";
     //取消选中状态
     buttonGroup->button(InsertTextButton)->setChecked(false);
     scene->setMode(RadarScene::Mode(pointerTypeGroup->checkedId()));
@@ -208,14 +220,17 @@ void MainWindow_Radar::deleteArrowById(int id)
         }
     }
 }
+
 //删除按钮触发
 void MainWindow_Radar::deleteItem()
 {
     if(scene->selectedItems().isEmpty()){
         qDebug() << "没有要删除的选择对象";
+        QMessageBox::information(this, "alert", "请先选择组件!", QMessageBox::Ok);
     }else{
         isSave = false;
-        qDebug() << "删除添加控件";
+        toggleSaveXml(1);
+        qDebug() << "xml由于删除添加控件而改变";
         //删除相连的箭头
         foreach (QGraphicsItem *item, scene->selectedItems()) {
             if (item->type() == Arrow::Type) {
@@ -298,11 +313,13 @@ void MainWindow_Radar::showItemProperties()
 // 先判断是否退出钱保存？是，则保存退出；否，则直接退出。
 void MainWindow_Radar::closeEvent(QCloseEvent *event)
 {
+    //还未保存
     if(isSave == false){
         int ret1 = QMessageBox::question(this, tr("确认"), tr("确定退出前保存场景到桌面?"), QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel);
         if(ret1 == QMessageBox::Yes){
             save2XmlFile();
             isSave = true;
+            toggleSaveXml(0);
             qDebug() << "1111";
             event->accept();
         }else if(ret1 == QMessageBox::No){
@@ -335,7 +352,8 @@ void MainWindow_Radar::bringToFront()
     }
     selectedItem->setZValue(zValue);
     isSave = false;
-    qDebug() << "1113";
+    toggleSaveXml(1);
+    qDebug() << "xml由于组件上移一层而改变";
 }
 
 void MainWindow_Radar::sendToBack()
@@ -355,7 +373,8 @@ void MainWindow_Radar::sendToBack()
     //只把selectedItem设置为最高的z-index
     selectedItem->setZValue(zValue);
     isSave = false;
-    qDebug() << "1114";
+    toggleSaveXml(1);
+    qDebug() << "xml由于组件下移一层而改变";
 }
 
 //create相关
@@ -476,6 +495,10 @@ void MainWindow_Radar::createActions()
     underlineAction->setCheckable(false);
     underlineAction->setShortcut(tr("Ctrl+U"));
     connect(underlineAction, SIGNAL(triggered()), this, SLOT(handleFontChange()));
+
+    //初始化为不可单击
+    ui->actionsave->setEnabled(false);
+    ui->actionRunRadar->setEnabled(false);
 }
 
 void MainWindow_Radar::createMenus()
@@ -500,11 +523,14 @@ void MainWindow_Radar::createMenus()
     // 把时间标签加在状态栏中
     ui->statusbar->addPermanentWidget(label_time);
     ui->statusbar->addPermanentWidget(progressBar);
+    itemMenu->setEnabled(false);
 }
 
 void MainWindow_Radar::createToolbars()
 {
     editToolBar = addToolBar(tr("Edit"));
+    //默认不显示
+    editToolBar->setHidden(true);
     editToolBar->addAction(deleteAction);
     editToolBar->addAction(toFrontAction);
     editToolBar->addAction(sendBackAction);
@@ -591,8 +617,6 @@ void MainWindow_Radar::createToolbars()
             this, SLOT(sceneScaleChanged(QString)));
 
     pointerToolbar = addToolBar(tr("Pointer type"));
-//    // 默认不显示
-//    pointerToolbar->setHidden(true);
     pointerToolbar->addWidget(pointerButton);
     pointerToolbar->addWidget(linePointerButton);
     pointerToolbar->addWidget(sceneScaleCombo);
@@ -777,7 +801,8 @@ void MainWindow_Radar::textColorChanged()
 void MainWindow_Radar::itemColorChanged()
 {
     isSave = false;
-    qDebug() << "1118";
+    toggleSaveXml(1);
+    qDebug() << "组件颜色改变";
     fillAction = qobject_cast<QAction *>(sender());
     fillColorToolButton->setIcon(createColorToolButtonIcon(
                                      ":/img/floodfill.png",
@@ -788,7 +813,8 @@ void MainWindow_Radar::itemColorChanged()
 void MainWindow_Radar::lineColorChanged()
 {
     isSave = false;
-    qDebug() << "1119";
+    toggleSaveXml(1);
+    qDebug() << "线段颜色改变";
     lineAction = qobject_cast<QAction *>(sender());
     lineColorToolButton->setIcon(createColorToolButtonIcon(
                                      ":/img/linecolor.png",
@@ -945,14 +971,17 @@ DiagramItem *MainWindow_Radar::getDiagramItemById(int item_id)
     // 如果没找到，理论上不会。。。
     return nullptr;
 }
+
 //触发保存
 void MainWindow_Radar::on_actionsave_triggered()
 {
     save2XmlFile();
 }
-//保存为xml文件
+
+// 保存为xml文件
+// TODO 新建线程保存文件
 void MainWindow_Radar::save2XmlFile(){
-    ui->statusbar->showMessage("正在保存场景...", 3000);
+    ui->statusbar->showMessage("正在保存场景...", 1000);
     qDebug() << tr("to close radar window");
     // 根元素
     QDomElement rootElem = scene->getDoc().documentElement();
@@ -1003,15 +1032,27 @@ void MainWindow_Radar::save2XmlFile(){
         dir.mkdir(dirp);
     }
     QFile file(dirp+getEquip_id()+".xml");
-    if(!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) return;
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Truncate)){
+        ui->statusbar->showMessage("保存出错", 1000);
+        QMessageBox qm;
+        qm.setText(tr("场景保存失败，请重新尝试!"));
+        qm.exec();
+    }
     QTextStream out(&file);
     scene->getDoc().save(out, 4);
     file.close();
-    // TODO是否需要快照应该由用户决定，后期需要完善
+    // TODO 是否需要快照应该由用户决定，后期需要完善
     // saveSnapshot(1); //保存场景快照
     // saveSnapshot(2); //保存视图快照
     isSave = true;
+    toggleSaveXml(0);
+    ui->actionsave->setEnabled(false);
+    ui->statusbar->showMessage("保存完毕", 1000);
+    QMessageBox qm;
+    qm.setText(tr("场景保存成功!"));
+    qm.exec();
 }
+
 //打开自动读取已有的xml文件
 void MainWindow_Radar::autoloadXmlById(QString id)
 {
@@ -1026,6 +1067,7 @@ void MainWindow_Radar::autoloadXmlById(QString id)
             qDebug() << "找到xml!" << filepath;
             readXmlConf(filepath);
             isSave = true;
+            toggleSaveXml(0);
             qDebug() << "自动读取，不算是手动保存的操作，所以恢复已保存状态";
             ui->actionOpenXml->setEnabled(false);
             break;
@@ -1075,6 +1117,11 @@ void MainWindow_Radar::On_rateSignal(float rate)
     progressBar->setValue(int(rate));
 }
 
+// 当isSave标志变为false时就把保存xml按钮置为可点击
+void MainWindow_Radar::On_isSave2False()
+{
+    ui->actionsave->setEnabled(true);
+}
 
 QString MainWindow_Radar::getEquip_id() const
 {
