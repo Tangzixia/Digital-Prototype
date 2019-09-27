@@ -100,7 +100,7 @@ signals:
     void overRun();
 
     // 通知MainWindow_Radar xml已经改变
-    void isSave2False();
+    void isSave2False(QString message);
 
 
 protected:

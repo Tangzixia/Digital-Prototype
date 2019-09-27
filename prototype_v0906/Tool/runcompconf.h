@@ -25,6 +25,8 @@ public slots:
     void On_pause();
     void On_over();
     void On_rateSignal(float rate);
+private slots:
+
 private:
     Ui::RunCompConf *ui;
 };

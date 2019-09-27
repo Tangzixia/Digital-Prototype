@@ -146,7 +146,7 @@ void RadarScene::updateXmlItemsPos(QPointF pos, DiagramItem *item)
                  elem.setAttribute("pos_y", pos.y());
                  MainWindow_Radar::isSave = false;
 //                 qDebug() << "xml由于位置改变而被修改";
-                 emit isSave2False();
+                 emit isSave2False(0);
                  return;
              }
         }
@@ -210,20 +210,15 @@ void RadarScene::editorLostFocus(DiagramTextItem *item)
 */
 void RadarScene::startRunCode()
 {
+    if(MainWindow_Radar::isSave == false){
+//        tr("检测到场景还未保存，是否保存后执行?")
+        emit isSave2False("检测到场景还未保存，是否保存后执行?");
+    }
     emit startRun();
     // TODO 执行代码程序
     // 先展示出配置窗口
     RunCompConf *run = new RunCompConf();
     run->exec();
-//    QTimer::singleShot( 0, this, [=](){
-//        sendRate(10);}
-//    );
-//    QTimer::singleShot( 1000, this, [=](){
-//        sendRate(70);}
-//    );
-//    QTimer::singleShot( 3000, this, [=](){
-//        sendRate(100);}
-//    );
     sendRate(100);
     emit overRun();
 }

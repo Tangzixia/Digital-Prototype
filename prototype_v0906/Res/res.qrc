@@ -37,5 +37,6 @@
         <file>img/output.png</file>
         <file>img/INPUT.ico</file>
         <file>img/OUTPUT.ico</file>
+        <file>img/Comp.png</file>
     </qresource>
 </RCC>

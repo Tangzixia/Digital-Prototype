@@ -79,7 +79,12 @@ private slots:
      void On_over();
      void On_rateSignal(float rate);
 
-     void On_isSave2False();
+     void On_isSave2False(QString message);
+
+     // 更新右面的雷达组件的属性
+     void update_Comp_property(QString name);
+
+     void setComp_typeandMode(int id);
 
 private:
     QString equip_id;

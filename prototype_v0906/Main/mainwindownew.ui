@@ -42,7 +42,7 @@
      <x>0</x>
      <y>0</y>
      <width>720</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menufile">
@@ -85,6 +85,18 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="dockWidget_left">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>87</width>
+     <height>199</height>
+    </size>
+   </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
@@ -99,7 +111,7 @@
         </font>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <property name="tabSpacing">
         <number>6</number>
@@ -110,7 +122,7 @@
           <x>0</x>
           <y>0</y>
           <width>256</width>
-          <height>293</height>
+          <height>316</height>
          </rect>
         </property>
         <attribute name="icon">
@@ -137,7 +149,14 @@
           <number>0</number>
          </property>
          <item row="0" column="0">
-          <widget class="DragListWidget" name="listWidget_rader"/>
+          <widget class="DragListWidget" name="listWidget_rader">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -147,7 +166,7 @@
           <x>0</x>
           <y>0</y>
           <width>256</width>
-          <height>293</height>
+          <height>316</height>
          </rect>
         </property>
         <attribute name="icon">
@@ -184,7 +203,7 @@
           <x>0</x>
           <y>0</y>
           <width>256</width>
-          <height>293</height>
+          <height>316</height>
          </rect>
         </property>
         <attribute name="icon">

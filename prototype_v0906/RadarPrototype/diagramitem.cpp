@@ -242,7 +242,7 @@ QVariant DiagramItem::itemChange(GraphicsItemChange change, const QVariant &valu
     return value;
 }
 
-void DiagramItem::focusInEvent(QFocusEvent *event)
+void DiagramItem::focusInEvent(QFocusEvent *)
 {
     qDebug() << "item focus in";
     bool is = dynamic_cast<RadarScene*>(this->scene())->isSelected;
@@ -253,7 +253,7 @@ void DiagramItem::focusInEvent(QFocusEvent *event)
     myContextMenu->setEnabled(true);
 }
 
-void DiagramItem::focusOutEvent(QFocusEvent *event)
+void DiagramItem::focusOutEvent(QFocusEvent *)
 {
     qDebug() << "item focus out";
     dynamic_cast<RadarScene*>(this->scene())->setIsSelected(false);
