@@ -20,6 +20,7 @@ public:
     static QString puzzleMimeType() {
         return QStringLiteral("image/x-Comp-piece");
     }
+    QListWidgetItem *addCompButton;
 public slots:
 
 signals:
@@ -42,7 +43,6 @@ private:
     QPoint m_dragPoint;
     //记录被拖拽的项.
     QListWidgetItem *m_dragItem;
-    QListWidgetItem *addCompButton;
 };
 
 #endif // RADARCOMPDRAGLISTWIDGET_H

@@ -8,6 +8,7 @@
 #include <QProgressBar>
 #include <QToolBox>
 #include <QToolButton>
+#include <utils.h>
 
 #include "diagramitem.h"
 #include "radarscene.h"
@@ -42,6 +43,10 @@ public:
     //默认程序一打开就是已经保存好的状态
     static bool isSave;
     void toggleSaveXml(int flag);
+    // 初始化5个算法组件
+    void init5Comp();
+    void loadCompByName(QString strText);
+    void loadAllComps();
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -85,11 +90,19 @@ private slots:
      void update_Comp_property(QString name);
 
      void setComp_typeandMode(int id);
+     void search();
+     void editComplete();
 
 private:
     QString equip_id;
     Ui::MainWindow_Radar *ui;
     QLabel *label_xy;
+    QLineEdit *m_pSearchLineEdit;
+    // 工具类
+    Utils *u;
+
+    QStringList word_list;
+    QStringListModel *string_list_model;
 
     RadarScene *scene;
 //    QGraphicsView *view;

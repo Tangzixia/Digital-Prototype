@@ -11,6 +11,9 @@
 #include <QFileDialog>
 #include <QDesktopServices>
 #include <QLineEdit>
+#include <QPushButton>
+#include <utils.h>
+#include <QCompleter>
 #include "arrow.h"
 #include "compproperty.h"
 #include "clickablelabel.h"
@@ -100,6 +103,9 @@ MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
     // FIXME dock无法自由拖动了，只能保持固定宽度能拖出来但是不能自动贴边
 //    ui->dockCompList->setAllowedAreas(Qt::AllDockWidgetAreas);
     connect(ui->listWidget, &RadarCompDraglistWidget::add_one_Comp, this, &MainWindow_Radar::update_Comp_property);
+    u = new Utils;
+    // 当新增组件时候，设置插入模式和插入的组件的类型
+    connect(ui->listWidget, &RadarCompDraglistWidget::setComp_typeandMode, this, &MainWindow_Radar::setComp_typeandMode);
 }
 
 
@@ -140,6 +146,171 @@ void MainWindow_Radar::toggleSaveXml(int flag){
     if(flag == 0){
         ui->actionsave->setEnabled(false);
     }
+}
+
+void MainWindow_Radar::init5Comp()
+{
+    //----------------------------------------
+    QString Compname = "脉冲压缩";
+    // 1
+    QListWidgetItem *item1 = new QListWidgetItem();
+    DiagramItem item(DiagramItem::Comp1, itemMenu);
+    QIcon icon(item.image());
+    item1->setIcon(icon);
+    item1->setText(tr(Compname.toUtf8().data()));
+    //这里的用户角色存储用户数据
+    item1->setData(Qt::UserRole, QPixmap(item.image()));
+    item1->setData(Qt::UserRole+1, Compname);
+    item1->setData(Qt::UserRole+2, ui->listWidget->count());
+    item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
+    ui->listWidget->addDragItem(item1);
+    update_Comp_property(Compname);
+
+    // 2
+    Compname = "恒虚警率";
+    item1 = new QListWidgetItem();
+    DiagramItem item2(DiagramItem::Comp2, itemMenu);
+    QIcon icon2(item2.image());
+    item1->setIcon(icon2);
+    item1->setText(tr(Compname.toUtf8().data()));
+    //这里的用户角色存储用户数据
+    item1->setData(Qt::UserRole, QPixmap(item2.image()));
+    item1->setData(Qt::UserRole+1, Compname);
+    item1->setData(Qt::UserRole+2, ui->listWidget->count());
+    item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
+    ui->listWidget->addDragItem(item1);
+    update_Comp_property(Compname);
+
+
+    // 3
+    Compname = "输入";
+    item1 = new QListWidgetItem();
+    DiagramItem item4(DiagramItem::Comp3, itemMenu);
+    QIcon icon4(item4.image());
+    item1->setIcon(icon4);
+    item1->setText(tr(Compname.toUtf8().data()));
+    //这里的用户角色存储用户数据
+    item1->setData(Qt::UserRole, QPixmap(item4.image()));
+    item1->setData(Qt::UserRole+1, Compname);
+    item1->setData(Qt::UserRole+2, ui->listWidget->count());
+    item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
+    ui->listWidget->addDragItem(item1);
+    update_Comp_property(Compname);
+
+    // 4
+    Compname = "动目标检测";
+    item1 = new QListWidgetItem();
+    DiagramItem item3(DiagramItem::Comp4, itemMenu);
+    QIcon icon3(item3.image());
+    item1->setIcon(icon3);
+    item1->setText(tr(Compname.toUtf8().data()));
+    //这里的用户角色存储用户数据
+    item1->setData(Qt::UserRole, QPixmap(item3.image()));
+    item1->setData(Qt::UserRole+1, Compname);
+    item1->setData(Qt::UserRole+2, ui->listWidget->count());
+    item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
+    ui->listWidget->addDragItem(item1);
+    update_Comp_property(Compname);
+
+    // 5
+    Compname = "输出";
+    item1 = new QListWidgetItem();
+    DiagramItem item5(DiagramItem::Comp5, itemMenu);
+    QIcon icon5(item5.image());
+    item1->setIcon(icon5);
+    item1->setText(tr(Compname.toUtf8().data()));
+    //这里的用户角色存储用户数据
+    item1->setData(Qt::UserRole, QPixmap(item5.image()));
+    item1->setData(Qt::UserRole+1, Compname);
+    item1->setData(Qt::UserRole+2, ui->listWidget->count());
+    item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
+    ui->listWidget->addDragItem(item1);
+    update_Comp_property(Compname);
+}
+
+// This is available in all editors.
+/**
+* @projectName   prototype_v0906
+* @brief         简介 根据用户搜索名字找到组件，目前是用的xmls文件夹里的xml文件代替组件xml
+* @author        Antrn
+* @date          2019-09-27
+*/
+void MainWindow_Radar::loadCompByName(QString strText)
+{
+    QString m_sProjectPath = QDir::currentPath()+"/xmls/";/*文件夹全路径名*/
+    QDir dir(m_sProjectPath);
+    /*判断文件夹是否存在*/
+    if (!dir.exists())
+    {
+        u->alert(geometry(), tr("读取文件夹出错!"));
+        return;
+    }
+    dir.setFilter(QDir::Files); /*设置dir的过滤模式,表示只遍历本文件夹内的文件*/
+    QStringList filterList;
+    filterList << "*.xml";
+    foreach(QFileInfo fileInfo, dir.entryInfoList(filterList)){
+        QString absolute_file_path = fileInfo.absoluteFilePath();
+        QString fileName = fileInfo.baseName();/*获取文件后名(不带后缀的文件名)*/
+        if(fileName == strText){
+            QListWidgetItem *item0 = new QListWidgetItem();
+            item0->setIcon(QIcon(":/img/Comp.png"));
+            item0->setText(tr(fileName.toUtf8().data()));
+            //这里的用户角色存储用户数据
+            item0->setData(Qt::UserRole, QPixmap(":/img/Comp.png"));
+            item0->setData(Qt::UserRole+1, fileName);
+            item0->setData(Qt::UserRole+2, ui->listWidget->count()+1);
+            item0->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
+            ui->listWidget->addDragItem(item0);
+            update_Comp_property(fileName);
+            break;
+        }
+    }
+}
+// This is available in all editors.
+/**
+* @projectName   prototype_v0906
+* @brief         简介 加载所有组件， 目前只是加载了默认的五个组件
+* @author        Antrn
+* @date          2019-09-27
+*/
+void MainWindow_Radar::loadAllComps()
+{
+//    QString m_sProjectPath = QDir::currentPath()+"/xmls/";/*文件夹全路径名*/
+//    QDir dir(m_sProjectPath);
+//    /*判断文件夹是否存在*/
+//    if (!dir.exists())
+//    {
+//        u->alert(geometry(), tr("读取文件夹出错!"));
+//        return;
+//    }
+//    dir.setFilter(QDir::Files); /*设置dir的过滤模式,表示只遍历本文件夹内的文件*/
+//    QStringList filterList;
+//    filterList << "*.xml";
+//    foreach(QFileInfo fileInfo, dir.entryInfoList(filterList)){
+//        QString absolute_file_path = fileInfo.absoluteFilePath();
+//        QString fileName = fileInfo.baseName();/*获取文件后名(不带后缀的文件名)*/
+//        QListWidgetItem *item0 = new QListWidgetItem();
+//        item0->setIcon(QIcon(":/img/Comp.png"));
+//        item0->setText(tr(fileName.toUtf8().data()));
+//        //这里的用户角色存储用户数据
+//        item0->setData(Qt::UserRole, QPixmap(":/img/Comp.png"));
+//        item0->setData(Qt::UserRole+1, fileName);
+//        item0->setData(Qt::UserRole+2, ui->listWidget->count());
+//        item0->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
+//        ui->listWidget->addDragItem(item0);
+//        update_Comp_property(fileName);
+//    }
+    ui->listWidget->clear();
+    // 加入新建雷达按钮项
+    ui->listWidget->addItem(tr("自定义组件"));
+    ui->listWidget->addCompButton = ui->listWidget->item(0);
+    ui->listWidget->addCompButton->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    // addRadarButton->setBackgroundColor(QColor(211,211,211));
+    ui->listWidget->addCompButton->setFlags(Qt::NoItemFlags);
+    ui->listWidget->addCompButton->setIcon(QIcon(":/img/newradar.png"));
+    ui->listWidget->addCompButton->setToolTip(tr("点击增加自定义组件"));
+    // TODO 换成读取组件文件夹里的所有组件
+    init5Comp();
 }
 
 void MainWindow_Radar::itemInserted(DiagramItem *item)
@@ -388,87 +559,11 @@ void MainWindow_Radar::sendToBack()
 */
 void MainWindow_Radar::createCompBox()
 {
-    //----------------------------------------
-    QString Compname = "脉冲压缩";
-    // 1
-    QListWidgetItem *item1 = new QListWidgetItem();
-    DiagramItem item(DiagramItem::Comp1, itemMenu);
-    QIcon icon(item.image());
-    item1->setIcon(icon);
-    item1->setText(tr(Compname.toUtf8().data()));
-    //这里的用户角色存储用户数据
-    item1->setData(Qt::UserRole, QPixmap(item.image()));
-    item1->setData(Qt::UserRole+1, Compname);
-    item1->setData(Qt::UserRole+2, ui->listWidget->count());
-    item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
-    ui->listWidget->addDragItem(item1);
-    update_Comp_property(Compname);
+    // FIXME 样式设置没用...
+    ui->listWidget->setStyleSheet("QDockWidget#listWidget{border: 1px solid #FF00FF; border-radius: 5px");
+    init5Comp();
 
-    // 2
-    Compname = "恒虚警率";
-    item1 = new QListWidgetItem();
-    DiagramItem item2(DiagramItem::Comp2, itemMenu);
-    QIcon icon2(item2.image());
-    item1->setIcon(icon2);
-    item1->setText(tr(Compname.toUtf8().data()));
-    //这里的用户角色存储用户数据
-    item1->setData(Qt::UserRole, QPixmap(item2.image()));
-    item1->setData(Qt::UserRole+1, Compname);
-    item1->setData(Qt::UserRole+2, ui->listWidget->count());
-    item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
-    ui->listWidget->addDragItem(item1);
-    update_Comp_property(Compname);
-
-
-    // 3
-    Compname = "输入";
-    item1 = new QListWidgetItem();
-    DiagramItem item4(DiagramItem::Comp3, itemMenu);
-    QIcon icon4(item4.image());
-    item1->setIcon(icon4);
-    item1->setText(tr(Compname.toUtf8().data()));
-    //这里的用户角色存储用户数据
-    item1->setData(Qt::UserRole, QPixmap(item4.image()));
-    item1->setData(Qt::UserRole+1, Compname);
-    item1->setData(Qt::UserRole+2, ui->listWidget->count());
-    item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
-    ui->listWidget->addDragItem(item1);
-    update_Comp_property(Compname);
-
-    // 4
-    Compname = "动目标检测";
-    item1 = new QListWidgetItem();
-    DiagramItem item3(DiagramItem::Comp4, itemMenu);
-    QIcon icon3(item3.image());
-    item1->setIcon(icon3);
-    item1->setText(tr(Compname.toUtf8().data()));
-    //这里的用户角色存储用户数据
-    item1->setData(Qt::UserRole, QPixmap(item3.image()));
-    item1->setData(Qt::UserRole+1, Compname);
-    item1->setData(Qt::UserRole+2, ui->listWidget->count());
-    item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
-    ui->listWidget->addDragItem(item1);
-    update_Comp_property(Compname);
-
-    // 5
-    Compname = "输出";
-    item1 = new QListWidgetItem();
-    DiagramItem item5(DiagramItem::Comp5, itemMenu);
-    QIcon icon5(item5.image());
-    item1->setIcon(icon5);
-    item1->setText(tr(Compname.toUtf8().data()));
-    //这里的用户角色存储用户数据
-    item1->setData(Qt::UserRole, QPixmap(item5.image()));
-    item1->setData(Qt::UserRole+1, Compname);
-    item1->setData(Qt::UserRole+2, ui->listWidget->count());
-    item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
-    ui->listWidget->addDragItem(item1);
-    update_Comp_property(Compname);
-
-    // 当新增组件时候，设置插入模式和插入的组件的类型
-    connect(ui->listWidget, &RadarCompDraglistWidget::setComp_typeandMode, this, &MainWindow_Radar::setComp_typeandMode);
-    //----------------------------------
-
+    //-----------旧版使用buttonGroup-----------------------
     buttonGroup = new QButtonGroup(ui->dockWidgetContents);
     buttonGroup->setExclusive(true);
     //自定义的slot函数：与graphics交互的关键
@@ -526,12 +621,56 @@ void MainWindow_Radar::createCompBox()
     QWidget *backgroundWidget = new QWidget;
     backgroundWidget->setLayout(backgroundLayout);
 
+
+    //========布局搜索框和listWidget=============
+    QVBoxLayout *searchlayout = new QVBoxLayout;
+    QHBoxLayout *pSearchLayout = new QHBoxLayout;
+    m_pSearchLineEdit = new QLineEdit;
+
+    word_list<<"Java"<<"C++"<<"Python"<<"脉冲压缩"<<"恒虚警率"<<"输入"<<"输出"<<"动目标检测"<<"FDPC"<<"MTD"<<"CFAR";
+    QCompleter *completer = new QCompleter;
+    string_list_model = new QStringListModel(word_list, this);
+    completer->setCaseSensitivity(Qt::CaseInsensitive);
+    completer->setModel(string_list_model);
+    m_pSearchLineEdit->setCompleter(completer);
+    // 自动补全
+    connect(m_pSearchLineEdit, SIGNAL(editingFinished()), this, SLOT(editComplete()));
+
+    m_pSearchLineEdit->setStyleSheet("height:24px;");
+    m_pSearchLineEdit->setPlaceholderText(tr("输入组件名称"));
+    QPushButton *pSearchButton = new QPushButton;
+    pSearchButton->setCursor(Qt::PointingHandCursor);
+    pSearchButton->setToolTip(QStringLiteral("搜索"));
+    pSearchButton->setFixedSize(20, 20);
+    pSearchButton->setStyleSheet("QPushButton{border-image:url(:/img/search.png); background:transparent;} \
+                                         QPushButton:hover{border-image:url(:/img/search_hover.png)} \
+                                         QPushButton:pressed{border-image:url(:/img/search_press.png)}");
+    //防止文本框输入内容位于按钮之下
+    QMargins margins = m_pSearchLineEdit->textMargins();
+    m_pSearchLineEdit->setTextMargins(margins.left(), margins.top(), pSearchButton->width(), margins.bottom());
+    m_pSearchLineEdit->setPlaceholderText(QStringLiteral("请输入搜索内容"));
+    pSearchLayout->addStretch();
+    pSearchLayout->addWidget(pSearchButton);
+    pSearchLayout->setSpacing(0);
+    pSearchLayout->setContentsMargins(0, 0, 0, 0);
+    m_pSearchLineEdit->setLayout(pSearchLayout);
+
+    connect(pSearchButton, SIGNAL(clicked(bool)), this, SLOT(search()));
+
+    searchlayout->addWidget(m_pSearchLineEdit);
+    searchlayout->addWidget(ui->listWidget);
+    QWidget *bigW = new QWidget;
+    searchlayout->setStretch(0,0);
+    searchlayout->setStretch(1,12);
+    bigW->setLayout(searchlayout);
+    //========================
+
     QToolBox *toolBox = new QToolBox;
     toolBox->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Ignored));
     toolBox->setMinimumWidth(itemWidget->sizeHint().width());
-    toolBox->addItem(ui->listWidget, tr("list Widget"));
-    toolBox->addItem(itemWidget, tr("Basic Radar Components"));
-    toolBox->addItem(backgroundWidget, tr("Backgrounds"));
+    toolBox->addItem(bigW, tr("组件列表"));
+    toolBox->addItem(itemWidget, tr("基础雷达组件"));
+    toolBox->addItem(backgroundWidget, tr("背景设置"));
     // TODO 如何只在组件打开的时候才显示属性框？或者可以将这三个分成三个小窗口
     ui->dockCompList->setWidget(toolBox);
 }
@@ -809,41 +948,44 @@ void MainWindow_Radar::saveSnapshot(int flag)
     QString deskTop =  QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     switch (flag) {
         case 1: {
-            QSize mysize(static_cast<int>(scene->width()), static_cast<int>(scene->height()));
-            QImage image(mysize, QImage::Format_RGB32);
-            QPainter painter(&image);
-            painter.setRenderHint(QPainter::Antialiasing);
-            scene->render(&painter);//也可以使用视图保存，只保存视图窗口的快照
-            painter.end();
+//            QSize mysize(static_cast<int>(scene->width()), static_cast<int>(scene->height()));
+//            QImage image(mysize, QImage::Format_RGB32);
+//            QPainter painter(&image);
+//            painter.setRenderHint(QPainter::Antialiasing);
+//            scene->render(&painter);//也可以使用视图保存，只保存视图窗口的快照
+//            painter.end();
 
             QString dir_str = deskTop+"/snapshots/";
-//            QString dir_str = currDir+"/snapshots/";
-            // 检查目录是否存在，若不存在则新建
-            QDir dir;
-            if (!dir.exists(dir_str))
-            {
-                dir.mkpath(dir_str);
-            }
-            image.save(dir_str+"scene.png");
+////            QString dir_str = currDir+"/snapshots/";
+//            // 检查目录是否存在，若不存在则新建
+//            QDir dir;
+//            if (!dir.exists(dir_str))
+//            {
+//                dir.mkpath(dir_str);
+//            }
+//            image.save(dir_str+"scene.png");
+
+            u->saveImage(flag, scene, nullptr, dir_str, "scene.png");
             break;
         }
         case 2: {
-            QSize mysize(static_cast<int>(ui->graphicsView->width()), static_cast<int>(ui->graphicsView->height()));
-            QImage image(mysize, QImage::Format_RGB32);
-            QPainter painter(&image);
-            painter.setRenderHint(QPainter::Antialiasing);
-            ui->graphicsView->render(&painter);//也可以使用视图保存，只保存视图窗口的快照
-            painter.end();
+//            QSize mysize(static_cast<int>(ui->graphicsView->width()), static_cast<int>(ui->graphicsView->height()));
+//            QImage image(mysize, QImage::Format_RGB32);
+//            QPainter painter(&image);
+//            painter.setRenderHint(QPainter::Antialiasing);
+//            ui->graphicsView->render(&painter);//也可以使用视图保存，只保存视图窗口的快照
+//            painter.end();
 
             QString dir_str = deskTop+"/snapshots/";
 //            QString dir_str = currDir+"/snapshots/";
             // 检查目录是否存在，若不存在则新建
-            QDir dir;
-            if (!dir.exists(dir_str))
-            {
-                dir.mkpath(dir_str);
-            }
-            image.save(dir_str+"view.png");
+//            QDir dir;
+//            if (!dir.exists(dir_str))
+//            {
+//                dir.mkpath(dir_str);
+//            }
+//            image.save(dir_str+"view.png");
+            u->saveImage(flag, nullptr, ui->graphicsView, dir_str, "view.png");
             break;
         }
     }
@@ -1109,31 +1251,37 @@ void MainWindow_Radar::save2XmlFile(){
         }
     }
     //]更新color
+
     // 保存雷达组件数据
     QString dirp = QDir::currentPath() + "/xmls/";
-    QDir dir(dirp);
-    if(!dir.exists()){
-        dir.mkdir(dirp);
+
+    // 弹窗用户选择存储路径， WARNING 用户不能自定义文件名
+    switch (u->saveFile(this, dirp, getEquip_id()+".xml", scene, true)) {
+        case 1:
+            ui->statusbar->showMessage("保存成功", 1000);
+            u->alert(geometry(), "场景保存成功!");
+            break;
+        case -1:
+            ui->statusbar->showMessage("保存出错", 1000);
+            u->alert(geometry(), tr("场景保存出错，请重新尝试!"));
+            break;
+        case 0:
+            ui->statusbar->showMessage("保存失败", 1000);
+            u->alert(geometry(), tr("场景保存失败！请选择存储位置后再保存!"));
+            break;
     }
-    QFile file(dirp+getEquip_id()+".xml");
-    if(!file.open(QIODevice::WriteOnly | QIODevice::Truncate)){
-        ui->statusbar->showMessage("保存出错", 1000);
-        QMessageBox qm;
-        qm.setText(tr("场景保存失败，请重新尝试!"));
-        qm.exec();
-    }
-    QTextStream out(&file);
-    scene->getDoc().save(out, 4);
-    file.close();
+    // 不弹窗，自己保存到默认文件夹，如果用户也选择默认文件夹，那就是一个覆盖的事情
+    u->saveFile(this, dirp, getEquip_id()+".xml", scene, false);
+
     // TODO 是否需要快照应该由用户决定，后期需要完善
-    // saveSnapshot(1); //保存场景快照
+//     saveSnapshot(1); //保存场景快照
     // saveSnapshot(2); //保存视图快照
     isSave = true;
     toggleSaveXml(0);
-    ui->statusbar->showMessage("保存完毕", 1000);
-    QMessageBox qm;
-    qm.setText(tr("场景保存成功!"));
-    qm.exec();
+//    QMessageBox qm;
+//    qm.setText(tr("场景保存成功!"));
+//    qm.exec();
+//    u->alert(geometry(), tr("场景保存成功!"));
 }
 
 //打开自动读取已有的xml文件
@@ -1232,6 +1380,33 @@ void MainWindow_Radar::setComp_typeandMode(int id)
 {
     scene->setItemType(DiagramItem::DiagramType(id));
     scene->setMode(RadarScene::InsertItem);
+}
+
+// 搜索框
+void MainWindow_Radar::search()
+{
+    QString strText = m_pSearchLineEdit->text();
+    if (!strText.isEmpty())
+    {
+        QMessageBox::information(this, QStringLiteral("搜索"), QStringLiteral("搜索内容为%1").arg(strText));
+        ui->listWidget->clear();
+        loadCompByName(strText);
+    }else{
+        loadAllComps();
+    }
+}
+
+void MainWindow_Radar::editComplete()
+{
+    QString text = m_pSearchLineEdit->text();
+    if(QString::compare(text, QString("")) != 0) {
+        bool is_contains = word_list.contains(text, Qt::CaseInsensitive);
+        if(!is_contains) {
+           word_list<<text;
+           string_list_model->setStringList(word_list);
+           //completer->setModel(new QStringListModel(wordList, this));
+        }
+    }
 }
 
 QString MainWindow_Radar::getEquip_id() const
