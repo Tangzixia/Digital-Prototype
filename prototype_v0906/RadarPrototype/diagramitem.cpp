@@ -122,8 +122,8 @@ void DiagramItem::removeArrows()
     foreach (Arrow *arrow, arrows) {
         arrow->startItem()->removeArrow(arrow);
         arrow->endItem()->removeArrow(arrow);
-//        RadarScene *sce = dynamic_cast<RadarScene*>(this->scene());
-//        sce->idList.removeOne(arrow->itemId);
+        //RadarScene *sce = dynamic_cast<RadarScene*>(this->scene());
+        //sce->idList.removeOne(arrow->itemId);
         scene()->removeItem(arrow);
         delete arrow;
     }
@@ -166,6 +166,8 @@ QPixmap DiagramItem::image() const
     return pixmap;
 }
 
+//????
+
 //void DiagramItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *)
 //{
 //    setCursor(Qt::ArrowCursor);
@@ -205,6 +207,7 @@ QPixmap DiagramItem::image() const
 //    setCursor(Qt::OpenHandCursor);
 //    setToolTip("component");
 //}
+
 
 //右键菜单，保持一致
 void DiagramItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)

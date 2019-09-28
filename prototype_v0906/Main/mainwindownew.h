@@ -10,6 +10,8 @@
 
 #include <QMainWindow>
 #include <QLabel>
+//仅仅为了引入枚举值OperateType
+#include "menu_iteamoperation.h"
 namespace Ui {
 class MainWindowNew;
 }
@@ -22,8 +24,14 @@ public:
     explicit MainWindowNew(QWidget *parent = nullptr);
     ~MainWindowNew();
     QLabel *label_xy;
-    MainWindowNewScene *graphicsScene;
 
+
+signals:
+//接收子类itemoperate
+    void itemOperate(Menu_iteamOperation::OperateType, QString );
+public slots:
+//向子类发送itemoperate
+    void itemOperateSlot(Menu_iteamOperation::OperateType, QString );
 protected:
     void closeEvent(QCloseEvent *event);
     //设置监听窗口大小，使得视图和场景每次窗口缩放都左上角对应
@@ -38,9 +46,13 @@ private slots:
 
     void on_actio_leftDock_triggered();
 
+    void on_actionProperty_triggered(bool checked);
+
 private:
     Ui::MainWindowNew *ui;
     QRect rect;
+    //为了在itemOperateSlot中可以向graphicsScene中的控件传递信息
+    MainWindowNewScene *graphicsScene;
 };
 
 #endif // MAINWINDOWNEW_H

@@ -27,6 +27,8 @@ MainWindow_ECM::MainWindow_ECM(QString id , QWidget *parent) :
     // 用来显示xy坐标的标签
     label_xy=new QLabel(this);
     // 状态栏左下角加入xy坐标
+//    默认定位到算法组件
+    ui->toolBox->setCurrentIndex(0);
     ui->statusbar->addWidget(label_xy);
     // 设置鼠标跟踪开启
     ui->graphicsView_ecm->setMouseTracking(true);

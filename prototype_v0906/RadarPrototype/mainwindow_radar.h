@@ -9,7 +9,7 @@
 #include <QToolBox>
 #include <QToolButton>
 #include <utils.h>
-
+#include <QListWidget>
 #include "diagramitem.h"
 #include "radarscene.h"
 #include "diagramtextitem.h"
@@ -29,7 +29,8 @@ class MainWindow_Radar : public QMainWindow
 
 public:
     explicit MainWindow_Radar(QWidget *parent = nullptr);
-    explicit MainWindow_Radar( QString id, QWidget *parent = nullptr);
+    explicit MainWindow_Radar(QString id, QListWidget *parent = nullptr);
+//    explicit MainWindow_Radar( QString id, QWidget *parent = nullptr);
     ~MainWindow_Radar();
     DiagramItem *getDiagramItemById(int item_id);
     void deleteItemArrowById(int id);

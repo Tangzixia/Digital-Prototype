@@ -10,7 +10,8 @@
 #include <QPaintEvent>
 #include <QGraphicsItem>
 #include "arrowitem.h"
-
+//为了可以识别枚举值 OperateType
+#include "menu_iteamoperation.h"
 
 class MainWindowNewScene : public QGraphicsScene
 {
@@ -33,6 +34,10 @@ signals:
     void signal_xy(double x,double y);
     void rateSignal(float rate);
 
+    //接收来至于子类的item操作(操作 ，itemId)
+    void itemOperate(Menu_iteamOperation::OperateType,QString);
+    //接收来至于父类的item操作
+    void itemOperate1(Menu_iteamOperation::OperateType,QString);
 private:
     //临时保存起点终点
     QPointF sourcePoint;
@@ -42,6 +47,7 @@ private:
 
     QGraphicsItem *drag_item;
 
+public slots:
 
 private slots:
     void LinePaint();

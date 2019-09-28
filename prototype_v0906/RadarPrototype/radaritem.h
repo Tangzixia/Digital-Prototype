@@ -2,6 +2,7 @@
 #define RADARITEM_H
 #include <QGraphicsItem>
 #include <QMainWindow>
+#include "menu_iteamoperation.h"
 /**
 * @projectName   prototype_v0719
 * @brief         整体仿真中的雷达组件类。
@@ -14,6 +15,7 @@ class RadarItem : public QObject, public QGraphicsItem
     Q_OBJECT
 public:
     RadarItem();
+    RadarItem(QString);
     ~RadarItem();
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr);
@@ -31,9 +33,12 @@ public slots:
     void delete_item();
     void show_property();
     void edit_radar();
+    void itemOperateSlot(Menu_iteamOperation::OperateType,QString);
 
 signals:
     void close_mainwindow();
+    void itemOperate(Menu_iteamOperation::OperateType);
+
 
 private:
     QString radar_id;

@@ -5,7 +5,12 @@
 #include <QtGui>
 #include <QListWidget>
 #include <QApplication>
-
+#include "menu_iteamoperation.h"
+#include<QDialog>
+#include<QMap>
+#include "mainwindow_radar.h"
+//动态命名弹出窗口
+#define SET_RADARNAME(name) radar##name
 /**
 * @projectName   prototype_v0719
 * @brief         整体工程项目左边的拖拽列表：雷达/电子对抗设备，是以list的形式表现的。
@@ -19,19 +24,22 @@ public:
     explicit DragListWidget(QWidget *parent = nullptr);
     void addDragItem(QListWidgetItem*item);
     void addDragItem(const QString &label);
-    static QString puzzleMimeType() {
-        return QStringLiteral("image/x-module-piece");
-    }
-//没用到
-signals:
-    void repaintWidget();
 
+    static QString puzzleMimeType() {
+     return QStringLiteral("image/x-module-piece");
+    }
+
+signals:
+    //没用到
+    void repaintWidget();
+    void itemOperate(Menu_iteamOperation::OperateType,QString);
 protected:
     //开始拖拽
     void startDrag(Qt::DropActions supportedActions);
 
    //从该部件中拖拽出去的操作.
-    void mousePressEvent(QMouseEvent *event);
+    virtual void mousePressEvent(QMouseEvent *event);
+    virtual void mouseDoubleClickEvent(QMouseEvent *event);
 //    void mouseMoveEvent(QMouseEvent *event);
 //    //接受外来拖拽的操作.
 //    void dragEnterEvent(QDragEnterEvent *event);
@@ -44,8 +52,19 @@ private:
     //记录被拖拽的项.
     QListWidgetItem *m_dragItem;
     QListWidgetItem *addRadarButton;
-
+    //0:name 1:itemImgPath
+    void listItem_add(QString);
+    void add_listItem(QString);
+    QMap<QListWidgetItem*,QString> id_item;
+    //listWidgetItem计数
+    int id_inde=1;
+     //是否新建了edit窗口
+    QList<QString> newEditWindowList;
 public slots:
+//操作item
+    void itemOperateSlot(Menu_iteamOperation::OperateType, QString );
+
+
 
 };
 
