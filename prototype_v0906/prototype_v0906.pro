@@ -72,7 +72,7 @@ SOURCES += \
     Tool/graphicsScenepublic.cpp \
     Tool/diagramitempublic.cpp \
     RadarPrototype/radarcompdraglistwidget.cpp \
-    Tool/utils.cpp
+    Tool/utils.cpp \
     Main/menu_iteamoperation.cpp
 HEADERS += \
         Main\mainwindow.h \
@@ -104,7 +104,7 @@ HEADERS += \
     Tool/graphicsscenepublic.h \
     Tool/diagramitempublic.h \
     RadarPrototype/radarcompdraglistwidget.h \
-    Tool/utils.h
+    Tool/utils.h \
     Main/menu_iteamoperation.h
 FORMS += \
         Main\mainwindow.ui \
