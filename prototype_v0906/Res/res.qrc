@@ -37,5 +37,9 @@
         <file>img/output.png</file>
         <file>img/INPUT.ico</file>
         <file>img/OUTPUT.ico</file>
+        <file>img/Comp.png</file>
+        <file>img/search_hover.png</file>
+        <file>img/search_press.png</file>
+        <file>img/search.png</file>
     </qresource>
 </RCC>

@@ -173,11 +173,12 @@ QPixmap DiagramItem::image() const
 //    setCursor(Qt::ArrowCursor);
 //}
 
-//void DiagramItem::mousePressEvent(QGraphicsSceneMouseEvent *)
+//void DiagramItem::mousePressEvent(QGraphicsSceneMouseEvent *e)
 //{
 //    setFocus();
-    // 当移动的时候改变光标
+//     当移动的时候改变光标
 //    setCursor(Qt::ClosedHandCursor);
+//    myContextMenu->setEnabled(true);
 //}
 
 //void DiagramItem::KeyPressEvent(QKeyEvent *event)
@@ -213,6 +214,14 @@ void DiagramItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     scene()->clearSelection();
     setSelected(true);
+    // 菜单可用
+    myContextMenu->setEnabled(true);
+    qDebug() << "myContextMenu设置为true" << myContextMenu->isEnabled();
+    bool is = dynamic_cast<RadarScene*>(this->scene())->isSelected;
+    if(!is){
+        dynamic_cast<RadarScene*>(this->scene())->setIsSelected(true);
+        qDebug() << "isSelected设置为true";
+    };
     myContextMenu->exec(event->screenPos());
 }
 
@@ -234,4 +243,23 @@ QVariant DiagramItem::itemChange(GraphicsItemChange change, const QVariant &valu
     }
 //    update();
     return value;
+}
+
+void DiagramItem::focusInEvent(QFocusEvent *)
+{
+    qDebug() << "item focus in";
+    bool is = dynamic_cast<RadarScene*>(this->scene())->isSelected;
+    if(!is){
+        dynamic_cast<RadarScene*>(this->scene())->setIsSelected(true);
+        qDebug() << "isSelected设置为true";
+    };
+    myContextMenu->setEnabled(true);
+}
+
+void DiagramItem::focusOutEvent(QFocusEvent *)
+{
+    qDebug() << "item focus out";
+    dynamic_cast<RadarScene*>(this->scene())->setIsSelected(false);
+    qDebug() << "isSelected设置为false";
+    myContextMenu->setEnabled(false);
 }

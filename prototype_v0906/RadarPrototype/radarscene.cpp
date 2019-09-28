@@ -145,7 +145,8 @@ void RadarScene::updateXmlItemsPos(QPointF pos, DiagramItem *item)
                  elem.setAttribute("pos_x", pos.x());
                  elem.setAttribute("pos_y", pos.y());
                  MainWindow_Radar::isSave = false;
-//                 qDebug() << doc.toString();
+//                 qDebug() << "xml由于位置改变而被修改";
+                 emit isSave2False(0);
                  return;
              }
         }
@@ -209,20 +210,15 @@ void RadarScene::editorLostFocus(DiagramTextItem *item)
 */
 void RadarScene::startRunCode()
 {
+    if(MainWindow_Radar::isSave == false){
+//        tr("检测到场景还未保存，是否保存后执行?")
+        emit isSave2False("检测到场景还未保存，是否保存后执行?");
+    }
     emit startRun();
     // TODO 执行代码程序
     // 先展示出配置窗口
     RunCompConf *run = new RunCompConf();
     run->exec();
-//    QTimer::singleShot( 0, this, [=](){
-//        sendRate(10);}
-//    );
-//    QTimer::singleShot( 1000, this, [=](){
-//        sendRate(70);}
-//    );
-//    QTimer::singleShot( 3000, this, [=](){
-//        sendRate(100);}
-//    );
     sendRate(100);
     emit overRun();
 }
@@ -316,6 +312,7 @@ void RadarScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
             Arrow *arrow = new Arrow(startItem, endItem);
             arrow->setColor(myLineColor);
             arrow->itemId = generateUniqueid();
+            qDebug() << "新箭头的ID: " << arrow->itemId << "; " << idList;
             startItem->addArrow(arrow);
             endItem->addArrow(arrow);
             arrow->setZValue(-1000.0);
@@ -329,7 +326,26 @@ void RadarScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
     QGraphicsScene::mouseReleaseEvent(mouseEvent);
 }
 
-//
+//void RadarScene::focusInEvent(QFocusEvent *)
+//{
+//    qDebug() << "focus in";
+//    // 暂时无用
+//}
+
+void RadarScene::focusOutEvent(QFocusEvent *)
+{
+    qDebug() << "scene focus out";
+    if(myItemMenu->isEnabled() && isSelected){
+//        myItemMenu->setEnabled(true);
+//        qDebug() << "myItemMenu设置为true" << myItemMenu->isEnabled();
+        isSelected = false;
+    }else{
+        myItemMenu->setEnabled(false);
+        qDebug() << "myItemMenu设置为false" << myItemMenu->isEnabled();
+    }
+}
+
+//是否有选中的类型
 bool RadarScene::isItemChange(int type)
 {
     foreach (QGraphicsItem *item, selectedItems()) {

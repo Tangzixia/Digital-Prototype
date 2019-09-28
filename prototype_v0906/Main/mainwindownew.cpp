@@ -18,7 +18,7 @@ MainWindowNew::MainWindowNew(QWidget *parent) :
     ui(new Ui::MainWindowNew)
 {
     ui->setupUi(this);
-
+    this->setStyleSheet("padding:0;margin:0");
     //this->setAttribute(Qt::WA_DeleteOnClose);
     graphicsScene=new MainWindowNewScene();
     // xy坐标标签
@@ -27,7 +27,7 @@ MainWindowNew::MainWindowNew(QWidget *parent) :
     ui->statusBar->addWidget(label_xy);
     // 将主窗口中的场景设置为自定义的场景
     ui->graphicsView->setScene(graphicsScene);
-//    ui->graphicsView->setStyleSheet("border:1px;padding:0");
+    ui->graphicsView->setStyleSheet("margin:0");
 //     设置鼠标跟踪开启
     ui->graphicsView->setMouseTracking(true);
     ui->graphicsView->setAcceptDrops(true);

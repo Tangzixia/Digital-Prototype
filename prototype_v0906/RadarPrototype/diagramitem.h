@@ -14,9 +14,9 @@ class Arrow;
 * @date          2019-08-12
 */
 
-class DiagramItem : public QGraphicsPolygonItem
+class DiagramItem : public QObject, public QGraphicsPolygonItem
 {
-//    Q_OBJECT
+    Q_OBJECT
 public:
     enum { Type = UserType + 15 };
 
@@ -42,12 +42,16 @@ public:
 
 protected:
     //WARN 暂时不能定义下面这几个，即使什么都不写也会有问题
-    //    void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
+//      void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
 //    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
 //    void KeyPressEvent(QKeyEvent *event);
 //    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
+    void focusInEvent(QFocusEvent *) override;
+    void focusOutEvent(QFocusEvent *) override;
+
+signals:
 
 
 private:

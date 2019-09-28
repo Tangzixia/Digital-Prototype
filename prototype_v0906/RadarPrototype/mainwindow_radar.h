@@ -8,6 +8,7 @@
 #include <QProgressBar>
 #include <QToolBox>
 #include <QToolButton>
+#include <utils.h>
 #include <QListWidget>
 #include "diagramitem.h"
 #include "radarscene.h"
@@ -42,13 +43,18 @@ public:
     void save2XmlFile();
     //默认程序一打开就是已经保存好的状态
     static bool isSave;
+    void toggleSaveXml(int flag);
+    // 初始化5个算法组件
+    void init5Comp();
+    void loadCompByName(QString strText);
+    void loadAllComps();
 
 protected:
     void closeEvent(QCloseEvent *event);
 
 
 private slots:
-    void on_actionCom_list_triggered();
+     void on_actionCom_list_triggered();
      void xy_show(double x,double y);
 
      void backgroundButtonGroupClicked(QAbstractButton *button);
@@ -79,10 +85,25 @@ private slots:
      void On_over();
      void On_rateSignal(float rate);
 
+     void On_isSave2False(QString message);
+
+     // 更新右面的雷达组件的属性
+     void update_Comp_property(QString name);
+
+     void setComp_typeandMode(int id);
+     void search();
+     void editComplete();
+
 private:
     QString equip_id;
     Ui::MainWindow_Radar *ui;
     QLabel *label_xy;
+    QLineEdit *m_pSearchLineEdit;
+    // 工具类
+    Utils *u;
+
+    QStringList word_list;
+    QStringListModel *string_list_model;
 
     RadarScene *scene;
 //    QGraphicsView *view;

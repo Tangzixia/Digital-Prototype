@@ -21,6 +21,10 @@ class RadarScene : public QGraphicsScene
 
 public:
 
+    bool isSelected = false;
+    void setIsSelected(bool b){
+        isSelected = b;
+    }
     //InsertItem默认
     enum Mode { InsertItem, InsertLine, InsertText, MoveItem };
 
@@ -46,11 +50,12 @@ public:
 
     QList<int> idList;
 
+    // NOTE 最多生成100个不重复的数
     int generateUniqueid()
     {
         int i,j;
         qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
-        idList.append(qrand()%10);
+        idList.append(qrand()%100);
         for(i=0;i<idList.size();i++)
         {
             bool flag=true;
@@ -65,7 +70,7 @@ public:
                 }
                 if(j<i)
                 {
-                    idList[i]=rand()%10;
+                    idList[i]=rand()%100;
                 }
                 if(j==i)
                 {
@@ -94,10 +99,16 @@ signals:
     void rateSignal(float rate);
     void overRun();
 
+    // 通知MainWindow_Radar xml已经改变
+    void isSave2False(QString message);
+
+
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
+//    void focusInEvent(QFocusEvent *event) override;
+    void focusOutEvent(QFocusEvent *event) override;
 
 private:
     bool isItemChange(int type);

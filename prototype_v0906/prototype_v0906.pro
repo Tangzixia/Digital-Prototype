@@ -71,8 +71,9 @@ SOURCES += \
     EccmPrototype/mainwindow_ecm.cpp \
     Tool/graphicsScenepublic.cpp \
     Tool/diagramitempublic.cpp \
+    RadarPrototype/radarcompdraglistwidget.cpp \
+    Tool/utils.cpp
     Main/menu_iteamoperation.cpp
-
 HEADERS += \
         Main\mainwindow.h \
     Tool\myglwidget.h \
@@ -102,8 +103,9 @@ HEADERS += \
     EccmPrototype/mainwindow_ecm.h \
     Tool/graphicsscenepublic.h \
     Tool/diagramitempublic.h \
+    RadarPrototype/radarcompdraglistwidget.h \
+    Tool/utils.h
     Main/menu_iteamoperation.h
-
 FORMS += \
         Main\mainwindow.ui \
     Tool\opengl.ui \

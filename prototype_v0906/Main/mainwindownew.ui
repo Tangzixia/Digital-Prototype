@@ -89,6 +89,12 @@
    <property name="windowTitle">
     <string>组件窗口</string>
    </property>
+   <property name="minimumSize">
+    <size>
+     <width>87</width>
+     <height>199</height>
+    </size>
+   </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
@@ -141,7 +147,14 @@
           <number>0</number>
          </property>
          <item row="0" column="0">
-          <widget class="DragListWidget" name="listWidget_rader"/>
+          <widget class="DragListWidget" name="listWidget_rader">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -188,7 +201,7 @@
           <x>0</x>
           <y>0</y>
           <width>256</width>
-          <height>293</height>
+          <height>316</height>
          </rect>
         </property>
         <attribute name="icon">
