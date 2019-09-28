@@ -24,7 +24,7 @@ const int InsertTextButton = 10;
 */
 bool MainWindow_Radar::isSave = true;
 
-MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
+MainWindow_Radar::MainWindow_Radar(QString id, QListWidget *parent) :
     QMainWindow(parent),
     equip_id(id),
     ui(new Ui::MainWindow_Radar)

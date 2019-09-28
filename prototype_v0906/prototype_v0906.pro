@@ -70,7 +70,8 @@ SOURCES += \
     Tool/instructionexec.cpp \
     EccmPrototype/mainwindow_ecm.cpp \
     Tool/graphicsScenepublic.cpp \
-    Tool/diagramitempublic.cpp
+    Tool/diagramitempublic.cpp \
+    Main/menu_iteamoperation.cpp
 
 HEADERS += \
         Main\mainwindow.h \
@@ -100,7 +101,8 @@ HEADERS += \
     Tool/instructionexec.h \
     EccmPrototype/mainwindow_ecm.h \
     Tool/graphicsscenepublic.h \
-    Tool/diagramitempublic.h
+    Tool/diagramitempublic.h \
+    Main/menu_iteamoperation.h
 
 FORMS += \
         Main\mainwindow.ui \
@@ -113,7 +115,8 @@ FORMS += \
     Tool\realtimecurve.ui \
     EccmPrototype/ecmproperty.ui \
     Tool/runcompconf.ui \
-    EccmPrototype/mainwindow_ecm.ui
+    EccmPrototype/mainwindow_ecm.ui \
+    Main/menu_iteamoperation.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
