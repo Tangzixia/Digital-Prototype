@@ -313,17 +313,21 @@ void MainWindowNewScene::dropEvent(QGraphicsSceneDragDropEvent *event)
         QPixmap pixmap;
         QString str;
         dataStream >> pixmap >> str;
-//        qDebug() << pixmap << " ; " << str;
+//        qDebug() << pixmap << " ; str：" << str<< "场景 中的 item 的 ID;
         if(str.startsWith("雷达")){
-            RadarItem *radar=new RadarItem;
-//            // 设置初始位置
-//            radar->setPos(event->scenePos());
-//            qDebug()<<"放下位置: " <<event->scenePos();
+            RadarItem *radar=new RadarItem(str);
+//            radar->setRadar_id(str);
+            connect(radar,&RadarItem::itemOperate,this,[=](Menu_iteamOperation::OperateType operateType){
+                emit  this->itemOperate(operateType,str);
+            });
+                // 这里尽然可以触发，喜出望外
+            connect(this,&MainWindowNewScene::itemOperate1,radar,&RadarItem::itemOperateSlot);
+
             // 设置初始位置
             radar->setPos(event->scenePos().x()-35, event->scenePos().y() -35);
             qDebug() << "radar id str: " <<str;
 //            qDebug()<<"放下位置: " <<event->scenePos();
-            radar->setRadar_id(str);
+
             this->addItem(radar);
             Item_List.append(radar);
 

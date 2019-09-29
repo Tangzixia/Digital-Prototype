@@ -108,7 +108,6 @@ void DiagramItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWi
             break;
     }
 }
-
 void DiagramItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     qDebug() << "hover 进入";
@@ -129,8 +128,8 @@ void DiagramItem::removeArrows()
     foreach (Arrow *arrow, arrows) {
         arrow->startItem()->removeArrow(arrow);
         arrow->endItem()->removeArrow(arrow);
-//        RadarScene *sce = dynamic_cast<RadarScene*>(this->scene());
-//        sce->idList.removeOne(arrow->itemId);
+        //RadarScene *sce = dynamic_cast<RadarScene*>(this->scene());
+        //sce->idList.removeOne(arrow->itemId);
         scene()->removeItem(arrow);
         delete arrow;
     }
@@ -173,6 +172,8 @@ QPixmap DiagramItem::image() const
     return pixmap;
 }
 
+//????
+
 //void DiagramItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *)
 //{
 ////    clearFocus();
@@ -180,7 +181,7 @@ QPixmap DiagramItem::image() const
 //    QGraphicsSceneMouseEvent();
 //}
 
-//void DiagramItem::mousePressEvent(QGraphicsSceneMouseEvent *)
+//void DiagramItem::mousePressEvent(QGraphicsSceneMouseEvent *e)
 //{
 //    clearFocus();
 //    setFocus();
@@ -215,6 +216,7 @@ QPixmap DiagramItem::image() const
 //    setCursor(Qt::OpenHandCursor);
 //    setToolTip("component");
 //}
+
 
 //右键菜单，保持一致
 void DiagramItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)

@@ -118,6 +118,7 @@ void RadarScene::modifyXmlItems(QPointF pos, DiagramItem *item)
 //            comp = doc.createElement("Comp5");
 //            break;
 //    }
+
     QDomElement color = doc.createElement("color");
     QDomAttr posx = doc.createAttribute("pos_x");
     QDomAttr posy = doc.createAttribute("pos_y");

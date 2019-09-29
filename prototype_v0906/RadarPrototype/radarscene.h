@@ -114,6 +114,7 @@ protected:
     void dropEvent(QGraphicsSceneDragDropEvent *event) override;
     void dragMoveEvent(QGraphicsSceneDragDropEvent *event) override;
 
+
 private:
     bool isItemChange(int type);
 

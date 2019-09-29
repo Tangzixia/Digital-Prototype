@@ -15,6 +15,7 @@
 #include <utils.h>
 #include <QCompleter>
 #include <mainwindownew.h>
+
 #include "arrow.h"
 #include "compproperty.h"
 #include "clickablelabel.h"
@@ -28,7 +29,7 @@ const int InsertTextButton = 10;
 
 bool MainWindow_Radar::isSave = true;
 
-MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
+MainWindow_Radar::MainWindow_Radar(QString id, QListWidget *parent) :
     QMainWindow(parent),
     equip_id(id),
     ui(new Ui::MainWindow_Radar)
@@ -1386,7 +1387,6 @@ void MainWindow_Radar::On_isSave2False(QString message)
         }else {
             // 拒绝关闭
             qDebug() << "拒绝关闭!!!";
-
         }
     }
     ui->actionsave->setEnabled(true);
@@ -1410,6 +1410,7 @@ void MainWindow_Radar::search()
     if (!strText.isEmpty())
     {
 //        QMessageBox::information(this, QStringLiteral("搜索"), QStringLiteral("搜索内容为%1").arg(strText));
+
         ui->listWidget->clear();
         loadCompByName(strText);
     }else{

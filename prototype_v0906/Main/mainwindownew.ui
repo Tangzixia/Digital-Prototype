@@ -42,7 +42,7 @@
      <x>0</x>
      <y>0</y>
      <width>720</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menufile">
@@ -64,6 +64,7 @@
      <string>设置</string>
     </property>
     <addaction name="actio_leftDock"/>
+    <addaction name="actionProperty"/>
    </widget>
    <widget class="QMenu" name="menuhelp">
     <property name="title">
@@ -85,11 +86,8 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="dockWidget_left">
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
+   <property name="windowTitle">
+    <string>组件窗口</string>
    </property>
    <property name="minimumSize">
     <size>
@@ -122,7 +120,7 @@
           <x>0</x>
           <y>0</y>
           <width>256</width>
-          <height>316</height>
+          <height>293</height>
          </rect>
         </property>
         <attribute name="icon">
@@ -166,7 +164,7 @@
           <x>0</x>
           <y>0</y>
           <width>256</width>
-          <height>316</height>
+          <height>293</height>
          </rect>
         </property>
         <attribute name="icon">
@@ -239,6 +237,31 @@
     </layout>
    </widget>
   </widget>
+  <widget class="QDockWidget" name="dockWidget_property">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="windowTitle">
+    <string>属性窗口</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="0">
+      <widget class="QListWidget" name="listWidget">
+       <property name="autoScrollMargin">
+        <number>10</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
   <action name="actionnewFile">
    <property name="text">
     <string>新建文件</string>
@@ -273,6 +296,17 @@
    </property>
    <property name="text">
     <string>组件栏</string>
+   </property>
+  </action>
+  <action name="actionProperty">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>属性窗口</string>
    </property>
   </action>
  </widget>

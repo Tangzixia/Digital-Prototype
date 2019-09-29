@@ -4,6 +4,7 @@
 #include <QDateTime>
 #include <QGraphicsItem>
 #include <QObject>
+
 class Arrow;
 
 /**
@@ -21,6 +22,7 @@ public:
 
     enum DiagramType { Comp1, Comp2, Comp3, Comp4, Comp5};
     Q_ENUM(DiagramType)
+
     DiagramType diagramType() const { return myDiagramType; }
 
     DiagramItem(DiagramType diagramType, QMenu *contextMenu, QGraphicsItem *parent = nullptr);

@@ -14,10 +14,11 @@
 * @author        Antrn
 * @date          2019-08-12
 */
-RadarItem::RadarItem(): QGraphicsItem()
+RadarItem::RadarItem(QString id): QGraphicsItem()
 {
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFlag(QGraphicsItem::ItemIsMovable);
+    radar_id=id;
 }
 
 RadarItem::~RadarItem()
@@ -43,7 +44,7 @@ QRectF RadarItem::boundingRect() const
 void RadarItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
     painter->drawRect(0,0,70,70);
-    painter->drawPixmap(11,11,48,48, QPixmap(":/img/radar.png"));
+    painter->drawPixmap(11,11,48,48, QPixmap(":/img/radar.png"));    
 }
 
 void RadarItem::delete_item()
@@ -90,16 +91,43 @@ void RadarItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void RadarItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
-    show_property();
+      emit itemOperate(Menu_iteamOperation::edit);
     QGraphicsItem::mouseDoubleClickEvent (event );
 }
 
 void RadarItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
-    QMenu *menu = new QMenu;
-    menu->addAction(tr("删除"), this, SLOT(delete_item()));
-    menu->addAction(tr("属性"), this, SLOT(show_property()));
-    menu->addAction(tr("编辑"), this, SLOT(edit_radar()));
-    menu->exec(event->screenPos());
-    delete menu;
+        Menu_iteamOperation *menu = new Menu_iteamOperation();
+
+        connect(menu , &Menu_iteamOperation::itemOperate,[=](Menu_iteamOperation::OperateType operate){
+            //信号---->信号（向父容器传递）
+            if(operate==Menu_iteamOperation::del){
+                //删除不用传
+                this->destroyed();
+            }else {
+                emit itemOperate(operate);
+            }
+
+        });
+
+        menu->setAttribute(Qt::WA_DeleteOnClose);
+        menu->exec(event->screenPos());
+        delete menu;
+}
+
+void RadarItem::itemOperateSlot(Menu_iteamOperation::OperateType operateType,QString id){
+    if(id==this->radar_id){
+        switch (operateType){
+        case Menu_iteamOperation::del:
+            qDebug()<<"item_delete:";
+            this->destroyed();
+            break;
+        case Menu_iteamOperation::edit:
+             qDebug()<<"item_edit:";
+            break;
+        case Menu_iteamOperation::property:
+            qDebug()<<"item_property:";
+            break;
+        }
+    }
 }

@@ -126,6 +126,7 @@ void RadarCompDraglistWidget::mousePressEvent(QMouseEvent *event)
             // 获取点击的是哪个组件的id，传到radarScene中，知道该渲染出哪个组件
             int id = qvariant_cast<int>(m_dragItem->data(Qt::UserRole+2))-1; //从0开始
             qDebug() << "当前id:" << id;
+
             emit setComp_typeandMode(id);
         }
     }
