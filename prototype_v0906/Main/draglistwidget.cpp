@@ -133,7 +133,7 @@ void DragListWidget::mousePressEvent(QMouseEvent *event)
             //这里的用户角色存储用户数据
             item1->setData(Qt::UserRole, QPixmap(":/img/radar.png"));
             item1->setData(Qt::UserRole+1, newname);
-            item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled);
+            item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
             this->addDragItem(item1);
         }
     }

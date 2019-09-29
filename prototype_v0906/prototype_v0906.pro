@@ -42,16 +42,16 @@ win32:LIBS += -lOpengl32 \
                 -lglut
 
 SOURCES += \
-        Main\main.cpp \
-        Main\mainwindow.cpp \
-    Tool\myglwidget.cpp \
-    Tool\opengl.cpp \
-    Main\hellodialog.cpp \
-    Main\mysplashscreen.cpp \
-    Main\mainwindownew.cpp \
-    Main\draglistwidget.cpp \
-    Main\mainwindownewscene.cpp \
-    RadarPrototype\radaritem.cpp \
+        Main/main.cpp \
+        Main/mainwindow.cpp \
+    Tool/myglwidget.cpp \
+    Tool/opengl.cpp \
+    Main/hellodialog.cpp \
+    Main/mysplashscreen.cpp \
+    Main/mainwindownew.cpp \
+    Main/draglistwidget.cpp \
+    Main/mainwindownewscene.cpp \
+    RadarPrototype/radaritem.cpp \
     Tool\arrowitem.cpp \
     RadarPrototype\mainwindow_radar.cpp \
     RadarPrototype\radarproperty.cpp \
@@ -63,7 +63,16 @@ SOURCES += \
     EccmPrototype\ecmdraglistwidget.cpp \
     EccmPrototype\ecmitem.cpp \
     Tool\clickablelabel.cpp \
-    Tool\realtimecurve.cpp
+    Tool\realtimecurve.cpp \
+    Tool/qudong.cpp \
+    EccmPrototype/ecmproperty.cpp \
+    Tool/runcompconf.cpp \
+    Tool/instructionexec.cpp \
+    EccmPrototype/mainwindow_ecm.cpp \
+    Tool/graphicsScenepublic.cpp \
+    Tool/diagramitempublic.cpp \
+    RadarPrototype/radarcompdraglistwidget.cpp \
+    Tool/utils.cpp
 
 HEADERS += \
         Main\mainwindow.h \
@@ -86,7 +95,16 @@ HEADERS += \
     EccmPrototype\ecmdraglistwidget.h \
     EccmPrototype\ecmitem.h \
     Tool\clickablelabel.h \
-    Tool\realtimecurve.h
+    Tool\realtimecurve.h \
+    Tool/qudong.h \
+    EccmPrototype/ecmproperty.h \
+    Tool/runcompconf.h \
+    Tool/instructionexec.h \
+    EccmPrototype/mainwindow_ecm.h \
+    Tool/graphicsscenepublic.h \
+    Tool/diagramitempublic.h \
+    RadarPrototype/radarcompdraglistwidget.h \
+    Tool/utils.h
 
 FORMS += \
         Main\mainwindow.ui \
@@ -96,7 +114,10 @@ FORMS += \
     RadarPrototype\mainwindow_radar.ui \
     RadarPrototype\radarproperty.ui \
     Tool\compproperty.ui \
-    Tool\realtimecurve.ui
+    Tool\realtimecurve.ui \
+    EccmPrototype/ecmproperty.ui \
+    Tool/runcompconf.ui \
+    EccmPrototype/mainwindow_ecm.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -104,4 +125,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
-    Res\res.qrc
+    Res/res.qrc

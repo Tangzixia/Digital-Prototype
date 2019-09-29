@@ -29,7 +29,7 @@ public:
 public slots:
     void delete_item();
     void show_property();
-    void edit_radar();
+    void edit_ecm();
 
 signals:
     void close_mainwindow();

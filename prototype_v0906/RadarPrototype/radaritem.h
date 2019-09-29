@@ -33,7 +33,7 @@ public slots:
     void edit_radar();
 
 signals:
-    void close_mainwindow();
+
 
 private:
     QString radar_id;

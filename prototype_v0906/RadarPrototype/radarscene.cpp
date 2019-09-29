@@ -4,8 +4,11 @@
 #include <QTextCursor>
 #include <QGraphicsSceneMouseEvent>
 #include <QMetaEnum>
+#include <runcompconf.h>
+#include <QTimer>
 #include "diagramitem.h"
 #include "mainwindow_radar.h"
+#include "radarcompdraglistwidget.h"
 /**
 * @projectName   prototype_v0719
 * @brief         编辑雷达页面的自定义场景类，上面绘制设计雷达的组件链接。
@@ -42,6 +45,7 @@ RadarScene::RadarScene(QMenu *itemMenu, QObject *parent)
     Items = doc.createElement("Items");
     root.appendChild(Items);
 }
+
 
 void RadarScene::setLineColor(const QColor &color)
 {
@@ -89,26 +93,31 @@ void RadarScene::setFont(const QFont &font)
     }
 }
 
+
 void RadarScene::modifyXmlItems(QPointF pos, DiagramItem *item)
 {
-
-    // 使用下面这两行使得Enum转String怎么都不行
-    // QMetaEnum m = QMetaEnum::fromType<DiagramItem::DiagramType>();
-    // QDomElement comp = doc.createElement(m.valueToKey(myItemType));
     QDomElement comp;
-    switch (item->diagramType()) {
-        case DiagramItem::DiagramType::Comp1:
-            comp = doc.createElement("comp_1");
-            break;
-        case DiagramItem::DiagramType::Comp2:
-            comp = doc.createElement("comp_2");
-            break;
-        case DiagramItem::DiagramType::Comp4:
-            comp = doc.createElement("comp_4");
-            break;
-        default:
-            break;
-    }
+    QMetaObject mo = DiagramItem::staticMetaObject;
+    int index = mo.indexOfEnumerator("DiagramType");
+    QMetaEnum metaEnum = mo.enumerator(index);
+    comp = doc.createElement(metaEnum.valueToKey(item->diagramType()));
+//    switch (item->diagramType()) {
+//        case DiagramItem::DiagramType::Comp1:
+//            comp = doc.createElement("Comp1");
+//            break;
+//        case DiagramItem::DiagramType::Comp2:
+//            comp = doc.createElement("Comp2");
+//            break;
+//        case DiagramItem::DiagramType::Comp4:
+//            comp = doc.createElement("Comp4");
+//            break;
+//        case DiagramItem::DiagramType::Comp3:
+//            comp = doc.createElement("Comp3");
+//            break;
+//        case DiagramItem::DiagramType::Comp5:
+//            comp = doc.createElement("Comp5");
+//            break;
+//    }
     QDomElement color = doc.createElement("color");
     QDomAttr posx = doc.createAttribute("pos_x");
     QDomAttr posy = doc.createAttribute("pos_y");
@@ -137,7 +146,8 @@ void RadarScene::updateXmlItemsPos(QPointF pos, DiagramItem *item)
                  elem.setAttribute("pos_x", pos.x());
                  elem.setAttribute("pos_y", pos.y());
                  MainWindow_Radar::isSave = false;
-//                 qDebug() << doc.toString();
+//                 qDebug() << "xml由于位置改变而被修改";
+                 emit isSave2False(0);
                  return;
              }
         }
@@ -175,8 +185,7 @@ void RadarScene::setItemType(DiagramItem::DiagramType type)
 {
     myItemType = type;
 }
-
-
+//文本框
 void RadarScene::editorLostFocus(DiagramTextItem *item)
 {
     //获取光标
@@ -192,6 +201,35 @@ void RadarScene::editorLostFocus(DiagramTextItem *item)
     }
 }
 
+
+// This is available in all editors.
+/**
+* @projectName   prototype_v0906
+* @brief         执行指令
+* @author        Antrn
+* @date          2019-09-10
+*/
+void RadarScene::startRunCode()
+{
+    if(MainWindow_Radar::isSave == false){
+//        tr("检测到场景还未保存，是否保存后执行?")
+        emit isSave2False("检测到场景还未保存，是否保存后执行?");
+    }
+    emit startRun();
+    // TODO 执行代码程序
+    // 先展示出配置窗口
+    RunCompConf *run = new RunCompConf();
+    run->exec();
+    sendRate(100);
+    emit overRun();
+}
+
+void RadarScene::sendRate(float rate)
+{
+    emit rateSignal(rate);
+}
+
+//鼠标事件
 void RadarScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     //左键
@@ -246,6 +284,7 @@ void RadarScene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
         line->setLine(newLine);
     } else if (myMode == MoveItem) {
         QGraphicsScene::mouseMoveEvent(mouseEvent);
+        update();
     }
 }
 
@@ -274,6 +313,7 @@ void RadarScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
             Arrow *arrow = new Arrow(startItem, endItem);
             arrow->setColor(myLineColor);
             arrow->itemId = generateUniqueid();
+            qDebug() << "新箭头的ID: " << arrow->itemId << "; " << idList;
             startItem->addArrow(arrow);
             endItem->addArrow(arrow);
             arrow->setZValue(-1000.0);
@@ -287,6 +327,74 @@ void RadarScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
     QGraphicsScene::mouseReleaseEvent(mouseEvent);
 }
 
+//void RadarScene::focusInEvent(QFocusEvent *)
+//{
+//    qDebug() << "scene focus in";
+//    // 暂时无用
+//}
+
+void RadarScene::focusOutEvent(QFocusEvent *)
+{
+    qDebug() << "scene focus out";
+    if(myItemMenu->isEnabled() && isSelected){
+//        myItemMenu->setEnabled(true);
+//        qDebug() << "myItemMenu设置为true" << myItemMenu->isEnabled();
+        isSelected = false;
+    }else{
+        myItemMenu->setEnabled(false);
+        qDebug() << "myItemMenu设置为false" << myItemMenu->isEnabled();
+    }
+}
+
+void RadarScene::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
+{
+    if (event->mimeData()->hasFormat(RadarCompDraglistWidget::puzzleMimeType()))
+        event->accept();
+    else
+        event->ignore();
+    qDebug() << "组件被托入到场景中";
+}
+
+void RadarScene::dropEvent(QGraphicsSceneDragDropEvent *event)
+{
+    if (event->mimeData()->hasFormat(RadarCompDraglistWidget::puzzleMimeType())){
+        event->acceptProposedAction();
+
+        DiagramItem *item = new DiagramItem(myItemType, myItemMenu);
+        item->setBrush(myItemColor);
+        item->itemId = generateUniqueid();
+        addItem(item);
+        item->setPos(event->scenePos());
+        emit itemInserted(item);
+        modifyXmlItems(event->scenePos(), item);
+
+
+        QByteArray comData = event->mimeData()->data(RadarCompDraglistWidget::puzzleMimeType());
+        QDataStream dataStream(&comData, QIODevice::ReadOnly);
+        QPixmap pixmap;
+        QString str;
+        dataStream >> pixmap >> str;
+        qDebug() << pixmap << "; " << str;
+        event->setDropAction(Qt::MoveAction);
+        event->accept();
+    }
+    else {
+        event->ignore();
+    }
+}
+
+void RadarScene::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
+{
+    if (event->mimeData()->hasFormat(RadarCompDraglistWidget::puzzleMimeType())) {
+        //设置为移动而不是复制
+        event->setDropAction(Qt::MoveAction);
+        event->accept();
+    } else {
+        event->ignore();
+    }
+}
+
+//是否有选中的类型
 bool RadarScene::isItemChange(int type)
 {
     foreach (QGraphicsItem *item, selectedItems()) {

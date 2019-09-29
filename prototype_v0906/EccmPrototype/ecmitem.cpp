@@ -1,12 +1,12 @@
 #include "ecmitem.h"
-#include "mainwindow_radar.h"
-#include "radarproperty.h"
+#include "mainwindow_ecm.h"
 #include <QDebug>
 #include <QGraphicsSceneDragDropEvent>
 #include <QMenu>
 #include <QPainter>
 #include <QGraphicsSceneMouseEvent>
 #include <QApplication>
+#include "ecmproperty.h"
 
 /**
 * @projectName   prototype_v0719
@@ -56,16 +56,16 @@ void ECMItem::delete_item()
 void ECMItem::show_property()
 {
     qDebug() << "show Property";
-    RadarProperty *p = new RadarProperty();
-    p->exec();
+    EcmProperty *ep = new EcmProperty();
+    ep->exec();
 }
 
-void ECMItem::edit_radar()
+void ECMItem::edit_ecm()
 {
-    MainWindow_Radar *main_radar = new MainWindow_Radar(getEcm_id());
+    MainWindow_ECM *main_ECM = new MainWindow_ECM(getEcm_id());
     //connect(this, &RadarItem::close_mainwindow, getMainWindow(), &QMainWindow::hide);
     //emit close_mainwindow();
-    main_radar->show();
+    main_ECM->show();
 }
 
 QString ECMItem::getEcm_id() const
@@ -101,7 +101,7 @@ void ECMItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     // FIXME 此处和雷达共用属性窗口
     menu->addAction(tr("属性"), this, SLOT(show_property()));
     // FIXME 此处和雷达共用编辑窗口
-    menu->addAction(tr("编辑"), this, SLOT(edit_radar()));
+    menu->addAction(tr("编辑"), this, SLOT(edit_ecm()));
     menu->exec(event->screenPos());
     delete menu;
 }

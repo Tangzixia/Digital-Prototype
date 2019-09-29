@@ -28,5 +28,18 @@
         <file>img/FDPC.ico</file>
         <file>img/CFAR.ico</file>
         <file>img/MTD.ico</file>
+        <file>img/save.png</file>
+        <file>img/runXml.png</file>
+        <file>img/CFAR.png</file>
+        <file>img/MTD.png</file>
+        <file>img/FDPC.png</file>
+        <file>img/input.png</file>
+        <file>img/output.png</file>
+        <file>img/INPUT.ico</file>
+        <file>img/OUTPUT.ico</file>
+        <file>img/Comp.png</file>
+        <file>img/search_hover.png</file>
+        <file>img/search_press.png</file>
+        <file>img/search.png</file>
     </qresource>
 </RCC>

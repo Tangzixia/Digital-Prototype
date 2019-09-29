@@ -22,7 +22,7 @@ public:
     static QString puzzleMimeType() {
         return QStringLiteral("image/x-module-piece");
     }
-
+//没用到
 signals:
     void repaintWidget();
 
@@ -30,7 +30,7 @@ protected:
     //开始拖拽
     void startDrag(Qt::DropActions supportedActions);
 
-//    //从该部件中拖拽出去的操作.
+   //从该部件中拖拽出去的操作.
     void mousePressEvent(QMouseEvent *event);
 //    void mouseMoveEvent(QMouseEvent *event);
 //    //接受外来拖拽的操作.
