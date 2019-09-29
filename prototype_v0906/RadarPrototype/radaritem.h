@@ -40,6 +40,7 @@ signals:
     void itemOperate(Menu_iteamOperation::OperateType);
 
 
+
 private:
     QString radar_id;
 

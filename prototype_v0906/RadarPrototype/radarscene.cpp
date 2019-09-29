@@ -8,6 +8,7 @@
 #include <QTimer>
 #include "diagramitem.h"
 #include "mainwindow_radar.h"
+#include "radarcompdraglistwidget.h"
 /**
 * @projectName   prototype_v0719
 * @brief         编辑雷达页面的自定义场景类，上面绘制设计雷达的组件链接。
@@ -95,28 +96,29 @@ void RadarScene::setFont(const QFont &font)
 
 void RadarScene::modifyXmlItems(QPointF pos, DiagramItem *item)
 {
-
-    // 使用下面这两行使得Enum转String怎么都不行
-    // QMetaEnum m = QMetaEnum::fromType<DiagramItem::DiagramType>();
-    // QDomElement comp = doc.createElement(m.valueToKey(myItemType));
     QDomElement comp;
-    switch (item->diagramType()) {
-        case DiagramItem::DiagramType::Comp1:
-            comp = doc.createElement("comp_1");
-            break;
-        case DiagramItem::DiagramType::Comp2:
-            comp = doc.createElement("comp_2");
-            break;
-        case DiagramItem::DiagramType::Comp4:
-            comp = doc.createElement("comp_4");
-            break;
-        case DiagramItem::DiagramType::Comp3:
-            comp = doc.createElement("comp_3");
-            break;
-        case DiagramItem::DiagramType::Comp5:
-            comp = doc.createElement("comp_5");
-            break;
-    }
+    QMetaObject mo = DiagramItem::staticMetaObject;
+    int index = mo.indexOfEnumerator("DiagramType");
+    QMetaEnum metaEnum = mo.enumerator(index);
+    comp = doc.createElement(metaEnum.valueToKey(item->diagramType()));
+//    switch (item->diagramType()) {
+//        case DiagramItem::DiagramType::Comp1:
+//            comp = doc.createElement("Comp1");
+//            break;
+//        case DiagramItem::DiagramType::Comp2:
+//            comp = doc.createElement("Comp2");
+//            break;
+//        case DiagramItem::DiagramType::Comp4:
+//            comp = doc.createElement("Comp4");
+//            break;
+//        case DiagramItem::DiagramType::Comp3:
+//            comp = doc.createElement("Comp3");
+//            break;
+//        case DiagramItem::DiagramType::Comp5:
+//            comp = doc.createElement("Comp5");
+//            break;
+//    }
+
     QDomElement color = doc.createElement("color");
     QDomAttr posx = doc.createAttribute("pos_x");
     QDomAttr posy = doc.createAttribute("pos_y");
@@ -328,7 +330,7 @@ void RadarScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 
 //void RadarScene::focusInEvent(QFocusEvent *)
 //{
-//    qDebug() << "focus in";
+//    qDebug() << "scene focus in";
 //    // 暂时无用
 //}
 
@@ -342,6 +344,54 @@ void RadarScene::focusOutEvent(QFocusEvent *)
     }else{
         myItemMenu->setEnabled(false);
         qDebug() << "myItemMenu设置为false" << myItemMenu->isEnabled();
+    }
+}
+
+void RadarScene::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
+{
+    if (event->mimeData()->hasFormat(RadarCompDraglistWidget::puzzleMimeType()))
+        event->accept();
+    else
+        event->ignore();
+    qDebug() << "组件被托入到场景中";
+}
+
+void RadarScene::dropEvent(QGraphicsSceneDragDropEvent *event)
+{
+    if (event->mimeData()->hasFormat(RadarCompDraglistWidget::puzzleMimeType())){
+        event->acceptProposedAction();
+
+        DiagramItem *item = new DiagramItem(myItemType, myItemMenu);
+        item->setBrush(myItemColor);
+        item->itemId = generateUniqueid();
+        addItem(item);
+        item->setPos(event->scenePos());
+        emit itemInserted(item);
+        modifyXmlItems(event->scenePos(), item);
+
+
+        QByteArray comData = event->mimeData()->data(RadarCompDraglistWidget::puzzleMimeType());
+        QDataStream dataStream(&comData, QIODevice::ReadOnly);
+        QPixmap pixmap;
+        QString str;
+        dataStream >> pixmap >> str;
+        qDebug() << pixmap << "; " << str;
+        event->setDropAction(Qt::MoveAction);
+        event->accept();
+    }
+    else {
+        event->ignore();
+    }
+}
+
+void RadarScene::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
+{
+    if (event->mimeData()->hasFormat(RadarCompDraglistWidget::puzzleMimeType())) {
+        //设置为移动而不是复制
+        event->setDropAction(Qt::MoveAction);
+        event->accept();
+    } else {
+        event->ignore();
     }
 }
 

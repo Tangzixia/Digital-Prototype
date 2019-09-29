@@ -1,6 +1,6 @@
 #ifndef DIAGRAMITEM_H
 #define DIAGRAMITEM_H
-
+#include <QMetaEnum>
 #include <QDateTime>
 #include <QGraphicsItem>
 #include <QObject>
@@ -21,12 +21,11 @@ public:
     enum { Type = UserType + 15 };
 
     enum DiagramType { Comp1, Comp2, Comp3, Comp4, Comp5};
+    Q_ENUM(DiagramType)
 
-//    Q_ENUM(DiagramType)
     DiagramType diagramType() const { return myDiagramType; }
 
     DiagramItem(DiagramType diagramType, QMenu *contextMenu, QGraphicsItem *parent = nullptr);
-//    DiagramItem(const DiagramItem&);
 
     void removeArrow(Arrow *arrow);
     void removeArrows();
@@ -41,11 +40,11 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr);
 
 protected:
-    //WARN 暂时不能定义下面这几个，即使什么都不写也会有问题
-//      void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
-//    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    // 鼠标事件，会导致一些奇怪的bug，一起运动
+//    void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
+//    void mousePressEvent(QGraphicsSceneMouseEvent *) override;
 //    void KeyPressEvent(QKeyEvent *event);
-//    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
     void focusInEvent(QFocusEvent *) override;

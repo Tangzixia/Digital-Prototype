@@ -28,7 +28,7 @@ public:
     static QString puzzleMimeType() {
      return QStringLiteral("image/x-module-piece");
     }
-
+//没用到
 signals:
     //没用到
     void repaintWidget();
@@ -40,6 +40,7 @@ protected:
    //从该部件中拖拽出去的操作.
     virtual void mousePressEvent(QMouseEvent *event);
     virtual void mouseDoubleClickEvent(QMouseEvent *event);
+
 //    void mouseMoveEvent(QMouseEvent *event);
 //    //接受外来拖拽的操作.
 //    void dragEnterEvent(QDragEnterEvent *event);
