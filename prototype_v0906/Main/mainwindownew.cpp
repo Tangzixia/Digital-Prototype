@@ -13,6 +13,7 @@
 * @author        Antrn
 * @date          2019-08-12
 */
+QList<MainWindow_Radar *> MainWindowNew::main_radar_list;
 MainWindowNew::MainWindowNew(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindowNew)
@@ -38,7 +39,7 @@ MainWindowNew::MainWindowNew(QWidget *parent) :
     this->showMaximized();
     this->setWindowTitle(tr("新建工程"));
     //可以设置在视图上使用鼠标拖出橡皮筋框选择图形项
-    this->ui->graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
+    this->ui->graphicsView->setDragMode(QGraphicsView::RubberBandDrag); 
 }
 
 MainWindowNew::~MainWindowNew()
@@ -48,6 +49,10 @@ MainWindowNew::~MainWindowNew()
 
 void MainWindowNew::closeEvent(QCloseEvent *event)
 {
+    for(MainWindow_Radar *m : main_radar_list){
+        m->close();
+    }
+    main_radar_list.clear();
     event->accept();
 }
 

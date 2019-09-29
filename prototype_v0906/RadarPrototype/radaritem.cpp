@@ -7,6 +7,7 @@
 #include <QPainter>
 #include <QGraphicsSceneMouseEvent>
 #include <QApplication>
+#include <mainwindownew.h>
 /**
 * @projectName   prototype_v0719
 * @brief         整体仿真中的雷达组件类。
@@ -63,7 +64,7 @@ void RadarItem::edit_radar()
 {
     MainWindow_Radar *main_radar = new MainWindow_Radar(getRadar_id());
     // 隐藏bug
-    MainWindow_Radar::main_radar_list.append(main_radar);
+    MainWindowNew::main_radar_list.append(main_radar);
     main_radar->show();
 }
 

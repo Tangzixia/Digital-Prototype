@@ -10,6 +10,7 @@
 
 #include <QMainWindow>
 #include <QLabel>
+#include <mainwindow_radar.h>
 namespace Ui {
 class MainWindowNew;
 }
@@ -23,6 +24,7 @@ public:
     ~MainWindowNew();
     QLabel *label_xy;
     MainWindowNewScene *graphicsScene;
+    static QList<MainWindow_Radar *> main_radar_list;
 
 protected:
     void closeEvent(QCloseEvent *event);

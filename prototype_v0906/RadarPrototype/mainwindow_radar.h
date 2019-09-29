@@ -47,7 +47,6 @@ public:
     void init5Comp();
     void loadCompByName(QString strText);
     void loadAllComps();
-    static QList<MainWindow_Radar *> main_radar_list;
 
 protected:
     void closeEvent(QCloseEvent *event);

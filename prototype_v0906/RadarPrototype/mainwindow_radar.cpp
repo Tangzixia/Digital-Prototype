@@ -14,6 +14,7 @@
 #include <QPushButton>
 #include <utils.h>
 #include <QCompleter>
+#include <mainwindownew.h>
 #include "arrow.h"
 #include "compproperty.h"
 #include "clickablelabel.h"
@@ -495,10 +496,12 @@ void MainWindow_Radar::closeEvent(QCloseEvent *event)
             ui->actionRunRadar->setEnabled(true);
             qDebug() << "保存退出";
             event->accept();
+            MainWindowNew::main_radar_list.removeOne(this);
         }else if(ret1 == QMessageBox::No){
             qDebug() << "do not save";
             // 直接退出
             event->accept();
+            MainWindowNew::main_radar_list.removeOne(this);
         }else {
             // 拒绝关闭
             qDebug() << "拒绝关闭!!!";
@@ -506,6 +509,7 @@ void MainWindow_Radar::closeEvent(QCloseEvent *event)
         }
     }else{
         event->accept();
+        MainWindowNew::main_radar_list.removeOne(this);
     }
 }
 
