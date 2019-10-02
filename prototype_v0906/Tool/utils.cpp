@@ -1,3 +1,4 @@
+#include "algorithmcomp.h"
 #include "utils.h"
 #include <QDesktopWidget>
 #include <QFileDialog>
@@ -143,19 +144,30 @@ void Utils::openDirOrCreate(QString dirPath)
     }
 }
 
-void Utils::readPluginXmlFile(QString fileName)
+// This is available in all editors.
+/**
+* @projectName   prototype_v0906
+* @brief         简介 读取算法组件的xml文件
+* @author        Antrn
+* @date          2019-10-02
+*/
+AlgorithmComp Utils::readPluginXmlFile(QString fileName)
 {
+    AlgorithmComp ac;
     QDomDocument doc;
     if(!fileName.isEmpty()){
         QFile file(fileName);
-        if(!file.open(QIODevice::ReadOnly)) return;
+        if(!file.open(QIODevice::ReadOnly)) {
+            qDebug() << "文件打开出错！";
+            return ac;
+        }
         if(!doc.setContent(&file)){
             file.close();
             qDebug() << "打开失败";
-            return;
+            return ac;
         }
         file.close();
-        //根元素component
+        // 根元素component
         QDomElement docElem = doc.documentElement();
         // 第一个孩子是<Information>
 //        QDomNode n = docElem.firstChild();
@@ -168,7 +180,8 @@ void Utils::readPluginXmlFile(QString fileName)
                 // 每个元素item
                 QString content = m.toElement().text();
                 // 保存起来
-                qDebug() << content << "\n";
+                qDebug() << QString::fromStdString(tagName) << ": " << content;
+                ac.getInfo().insert(QString::fromStdString(tagName), content);
             }
             m = m.nextSibling();
         }
@@ -176,6 +189,8 @@ void Utils::readPluginXmlFile(QString fileName)
         QDomNode descNode = doc.elementsByTagName("Description").at(0);
         QString desc = descNode.toElement().text();
         qDebug() << "desc: " << desc;
+        ac.setDesc(desc);
+
         // 大的标签是Parameter的时候
         QDomNode ParaNode = doc.elementsByTagName("Parameter").at(0);
         // 就是arrow了，因为箭头就一种
@@ -183,17 +198,23 @@ void Utils::readPluginXmlFile(QString fileName)
         QString describe, value;
         // 遍历所有的箭头
         while(!m1.isNull()){
+            std::string tagName = m1.nodeName().toStdString();
             if(m1.isElement()){
                 // 每个元素item
                 QDomElement e = m1.toElement();
                 describe = e.attribute("describe");
                 value = e.attribute("value");
-                qDebug() << "describe： " << describe << "; " << "value: " << value;
+                qDebug() << QString::fromStdString(tagName) << ": describe： " << describe << "; " << "value: " << value;
+                QMap<QString, QString> mm;
+                mm.insert(describe, value);
+                ac.getParam().insert(QString::fromStdString(tagName), mm);
             }
             m1 = m1.nextSibling();
         }
+        return ac;
     }else {
         // TODO 文件名为空，啥也没选，提示
         Utils::alert(QApplication::desktop()->screen()->rect(), "请选择文件!");
+        return ac;
     }
 }

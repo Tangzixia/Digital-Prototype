@@ -2,6 +2,7 @@
 #define RADARCOMPDRAGLISTWIDGET_H
 
 #include <QListWidget>
+#include <algorithmcomp.h>
 
 // This is available in all editors.
 /**
@@ -43,6 +44,7 @@ private:
     QPoint m_dragPoint;
     //记录被拖拽的项.
     QListWidgetItem *m_dragItem;
+    QList<AlgorithmComp> algorithms;
 };
 
 #endif // RADARCOMPDRAGLISTWIDGET_H

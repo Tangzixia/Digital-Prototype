@@ -10,6 +10,7 @@
 #include <QMessageBox>
 #include <QDir>
 #include <qfiledialog.h>
+#include <algorithmcomp.h>
 #include "utils.h"
 // This is available in all editors.
 /**
@@ -149,7 +150,9 @@ void RadarCompDraglistWidget::mousePressEvent(QMouseEvent *event)
                 // 打开xml文件读取
                 const QString fileName = QFileDialog::getOpenFileName(this, tr("打开组件xml"), QString(dirpath), tr("xml files (*.xml)"));
                 qDebug() << fileName;
-                Utils::readPluginXmlFile(fileName);
+                AlgorithmComp ac = Utils::readPluginXmlFile(fileName);
+                algorithms.append(ac);
+                qDebug() << algorithms.size();
                 break;
             }
         }else if(m_dragItem){

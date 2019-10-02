@@ -92,7 +92,7 @@ void RadarItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void RadarItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
-      emit itemOperate(Menu_iteamOperation::edit,radar_id);
+    emit itemOperate(Menu_iteamOperation::edit,radar_id);
     QGraphicsItem::mouseDoubleClickEvent (event );
 }
 
