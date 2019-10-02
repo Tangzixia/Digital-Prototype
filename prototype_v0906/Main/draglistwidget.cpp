@@ -256,6 +256,7 @@ void DragListWidget::itemOperateSlot(Menu_iteamOperation::OperateType operateTyp
                         QMessageBox::warning(this,"warning","你已经打开了编辑窗口，不可以重复打开！",QMessageBox::Ok);
                         radar->showNormal();
                           radar->raise();
+                          radar->showMaximized();
             }
         }
            break;
@@ -302,13 +303,13 @@ void DragListWidget::listItem_add(QString name){
             int button_index=msgBox.exec();
             switch (button_index) {
                 case 0:
-//                    不操作
+                 this->add_listItem(name);
                     break;
             case 1:
-                this->add_listItem(name);
+//                   导入文件
                     break;
                 case 2:
- //                导入文件
+//                    不操作
                     break;
             }
         }
