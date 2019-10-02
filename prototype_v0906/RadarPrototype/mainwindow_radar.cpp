@@ -14,6 +14,8 @@
 #include <QPushButton>
 #include <utils.h>
 #include <QCompleter>
+#include <mainwindownew.h>
+
 #include "arrow.h"
 #include "compproperty.h"
 #include "clickablelabel.h"
@@ -492,12 +494,15 @@ void MainWindow_Radar::closeEvent(QCloseEvent *event)
             save2XmlFile();
             isSave = true;
             toggleSaveXml(0);
-            qDebug() << "1111";
+            ui->actionRunRadar->setEnabled(true);
+            qDebug() << "保存退出";
             event->accept();
+            MainWindowNew::main_radar_list.removeOne(this);
         }else if(ret1 == QMessageBox::No){
             qDebug() << "do not save";
             // 直接退出
             event->accept();
+            MainWindowNew::main_radar_list.removeOne(this);
         }else {
             // 拒绝关闭
             qDebug() << "拒绝关闭!!!";
@@ -505,6 +510,7 @@ void MainWindow_Radar::closeEvent(QCloseEvent *event)
         }
     }else{
         event->accept();
+        MainWindowNew::main_radar_list.removeOne(this);
     }
     //提醒父类更新列表
     emit iClose(this);
@@ -1112,23 +1118,36 @@ void MainWindow_Radar::readXmlConf(QString xmlname)
                 qreal poxy = e.attribute("pos_y").toInt();
                 QString s = e.elementsByTagName("color").at(0).toElement().text();
                 QColor colour(s);
-                // NOTE 暂时不用，依旧不行
-//                        QMetaEnum metaEnum = QMetaEnum::fromType<DiagramItem::DiagramType>();
-//                        const char* c = tagName.toUtf8().data();
-//                        DiagramItem::DiagramType type = DiagramItem::DiagramType(metaEnum.keysToValue(c));
-                // FIXME 只能先用if/else了，switch也不能用
+
+                // 只能先用if/else了，switch也不能用
                 DiagramItem::DiagramType type;
                 qDebug() << "组件名: " << QString::fromStdString(tagName);
-                if(tagName == "comp_1"){
-                    type = DiagramItem::DiagramType::Comp1;
-                }else if(tagName == "comp_2"){
 
-                    type = DiagramItem::DiagramType::Comp2;
-                }else if(tagName == "comp_3"){
-                    type = DiagramItem::DiagramType::Comp3;
-                }else {
-                    type = DiagramItem::DiagramType::Comp4;
-                }
+                // FIXME 这部分出大问题，不可能每次都枚举吧
+//                if(tagName == "comp_1"){
+//                    type = DiagramItem::DiagramType::Comp1;
+//                }else if(tagName == "comp_2"){
+//                    type = DiagramItem::DiagramType::Comp2;
+//                }else if(tagName == "comp_3"){
+//                    type = DiagramItem::DiagramType::Comp3;
+//                }else if(tagName == "comp_4"){
+//                    type = DiagramItem::DiagramType::Comp4;
+//                }else {
+//                    type = DiagramItem::DiagramType::Comp5;
+//                }
+
+                // 成功啦
+                QMetaObject mo = DiagramItem::staticMetaObject;
+                int index = mo.indexOfEnumerator("DiagramType");
+                QMetaEnum metaEnum = mo.enumerator(index);
+                // QMetaEnum metaEnum = QMetaEnum::fromType<DiagramItem::DiagramType>();
+//                for (int i=0; i<metaEnum.keyCount(); ++i)
+//                {
+//                    qDebug() << metaEnum.key(i);
+//                    qDebug()<<  metaEnum.valueToKey(2);              //  enum转string
+//                    qDebug()<<  metaEnum.keysToValue("Comp4");       //  string转enum
+//                }
+                type = DiagramItem::DiagramType(metaEnum.keysToValue(tagName.c_str()));
                 DiagramItem *item_ = new DiagramItem(type, scene->getItemMenu());
                 QPointF pos(posx, poxy);
                 item_->setPos(pos);
@@ -1280,6 +1299,7 @@ void MainWindow_Radar::save2XmlFile(){
     // saveSnapshot(2); //保存视图快照
     isSave = true;
     toggleSaveXml(0);
+    ui->actionRunRadar->setEnabled(true);
 //    QMessageBox qm;
 //    qm.setText(tr("场景保存成功!"));
 //    qm.exec();
@@ -1302,7 +1322,6 @@ void MainWindow_Radar::autoloadXmlById(QString id)
             isSave = true;
             toggleSaveXml(0);
             qDebug() << "自动读取，不算是手动保存的操作，所以恢复已保存状态";
-            ui->actionOpenXml->setEnabled(false);
             ui->actionRunRadar->setEnabled(true);
             break;
         }
@@ -1362,6 +1381,8 @@ void MainWindow_Radar::On_isSave2False(QString message)
             save2XmlFile();
             isSave = true;
             toggleSaveXml(0);
+            ui->actionRunRadar->setEnabled(true);
+            return;
         }else if(res == QMessageBox::No){
             qDebug() << "do not save";
             // 直接退出
@@ -1390,7 +1411,8 @@ void MainWindow_Radar::search()
     QString strText = m_pSearchLineEdit->text();
     if (!strText.isEmpty())
     {
-        QMessageBox::information(this, QStringLiteral("搜索"), QStringLiteral("搜索内容为%1").arg(strText));
+//        QMessageBox::information(this, QStringLiteral("搜索"), QStringLiteral("搜索内容为%1").arg(strText));
+
         ui->listWidget->clear();
         loadCompByName(strText);
     }else{

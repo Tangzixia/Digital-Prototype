@@ -108,6 +108,12 @@ void DiagramItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWi
             break;
     }
 }
+void DiagramItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    qDebug() << "hover 进入";
+    setCursor(Qt::OpenHandCursor);
+    event->accept();
+}
 
 void DiagramItem::removeArrow(Arrow *arrow)
 {
@@ -170,15 +176,18 @@ QPixmap DiagramItem::image() const
 
 //void DiagramItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *)
 //{
-//    setCursor(Qt::ArrowCursor);
+////    clearFocus();
+//    setCursor(Qt::OpenHandCursor);
+//    QGraphicsSceneMouseEvent();
 //}
 
 //void DiagramItem::mousePressEvent(QGraphicsSceneMouseEvent *e)
 //{
+//    clearFocus();
 //    setFocus();
-//     当移动的时候改变光标
+//    // 当移动的时候改变光标
 //    setCursor(Qt::ClosedHandCursor);
-//    myContextMenu->setEnabled(true);
+//    QGraphicsSceneMouseEvent();
 //}
 
 //void DiagramItem::KeyPressEvent(QKeyEvent *event)

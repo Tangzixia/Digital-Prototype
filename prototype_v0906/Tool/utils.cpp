@@ -55,11 +55,15 @@ void Utils::alert(QRect rect, QString content)
 int Utils::saveFile(QWidget *qw, QString dirp, QString filename, RadarScene *scene, bool isPrompt)
 {
     QString directory = dirp;
+    QDir dir(directory);
+    if(!dir.exists()){
+        dir.mkdir(directory);
+    }
     if(isPrompt){
         directory = QFileDialog::getExistingDirectory(
                 qw,
                 "选择文件夹",
-                dirp,
+                directory,
                 QFileDialog::ShowDirsOnly);
     }
 

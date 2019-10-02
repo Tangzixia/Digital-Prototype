@@ -130,6 +130,7 @@ void DragListWidget::mousePressEvent(QMouseEvent *event)
 //        老代码
         {
 //        如果点击项是新建项则新建雷达
+
 //        if(m_dragItem == addRadarButton){
 //            int count = this->count();
 //            QString newname = "雷达"+QString::number(count);
