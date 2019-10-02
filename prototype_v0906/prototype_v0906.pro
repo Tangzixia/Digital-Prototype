@@ -73,7 +73,8 @@ SOURCES += \
     Tool/diagramitempublic.cpp \
     RadarPrototype/radarcompdraglistwidget.cpp \
     Tool/utils.cpp \
-    Main/menu_iteamoperation.cpp
+    Main/menu_iteamoperation.cpp \
+    Main/rightwindow_property.cpp
 HEADERS += \
         Main\mainwindow.h \
     Tool\myglwidget.h \
@@ -105,7 +106,8 @@ HEADERS += \
     Tool/diagramitempublic.h \
     RadarPrototype/radarcompdraglistwidget.h \
     Tool/utils.h \
-    Main/menu_iteamoperation.h
+    Main/menu_iteamoperation.h \
+    Main/rightwindow_property.h
 FORMS += \
         Main\mainwindow.ui \
     Tool\opengl.ui \
@@ -118,7 +120,8 @@ FORMS += \
     EccmPrototype/ecmproperty.ui \
     Tool/runcompconf.ui \
     EccmPrototype/mainwindow_ecm.ui \
-    Main/menu_iteamoperation.ui
+    Main/menu_iteamoperation.ui \
+    Main/rightwindow_property.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

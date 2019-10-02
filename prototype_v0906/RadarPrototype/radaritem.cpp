@@ -17,7 +17,8 @@ RadarItem::RadarItem(QString id): QGraphicsItem()
 {
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFlag(QGraphicsItem::ItemIsMovable);
-    radar_id=id;
+    this->setRadar_id(id);
+
 }
 
 RadarItem::~RadarItem()
@@ -68,14 +69,14 @@ void RadarItem::edit_radar()
     main_radar->show();
 }
 
-QString RadarItem::getRadar_id() const
-{
+QString RadarItem::getRadar_id(){
     return radar_id;
 }
 
 void RadarItem::setRadar_id(QString value)
 {
     radar_id = value;
+    this->setToolTip("组件名:"+value);
 }
 
 void RadarItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -90,7 +91,7 @@ void RadarItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void RadarItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
-      emit itemOperate(Menu_iteamOperation::edit);
+      emit itemOperate(Menu_iteamOperation::edit,radar_id);
     QGraphicsItem::mouseDoubleClickEvent (event );
 }
 
@@ -104,7 +105,7 @@ void RadarItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
                 //删除不用传
                 this->destroyed();
             }else {
-                emit itemOperate(operate);
+                emit itemOperate(operate,this->radar_id);
             }
 
         });
@@ -114,19 +115,21 @@ void RadarItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         delete menu;
 }
 
-void RadarItem::itemOperateSlot(Menu_iteamOperation::OperateType operateType,QString id){
-    if(id==this->radar_id){
-        switch (operateType){
-        case Menu_iteamOperation::del:
-            qDebug()<<"item_delete:";
-            this->destroyed();
-            break;
-        case Menu_iteamOperation::edit:
-             qDebug()<<"item_edit:";
-            break;
-        case Menu_iteamOperation::property:
-            qDebug()<<"item_property:";
-            break;
-        }
+void RadarItem::itemOperateSlot(Menu_iteamOperation::OperateType operateType,QString newName){
+    switch (operateType){
+    case Menu_iteamOperation::del:
+        qDebug()<<"item_delete:";
+        this->destroyed();
+        break;
+    case Menu_iteamOperation::edit:
+         qDebug()<<"item_edit:";
+        break;
+    case Menu_iteamOperation::property:
+        qDebug()<<"item_property:";
+        break;
+    case Menu_iteamOperation::rename:
+        qDebug()<<"item_rename:";
+        this->setRadar_id(newName);
+        break;
     }
 }

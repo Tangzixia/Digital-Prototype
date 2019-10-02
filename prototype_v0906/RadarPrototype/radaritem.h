@@ -26,18 +26,18 @@ public:
 
     QMainWindow* getMainWindow();
 
-    QString getRadar_id() const;
+    QString getRadar_id();
     void setRadar_id(QString value);
 
 public slots:
     void delete_item();
     void show_property();
     void edit_radar();
-    void itemOperateSlot(Menu_iteamOperation::OperateType,QString);
+    void itemOperateSlot(Menu_iteamOperation::OperateType,QString newName="");
 
 signals:
     void close_mainwindow();
-    void itemOperate(Menu_iteamOperation::OperateType);
+    void itemOperate(Menu_iteamOperation::OperateType,QString id);
 
 
 private:

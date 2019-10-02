@@ -14,7 +14,7 @@ class Menu_iteamOperation : public QMenu
 public:
     explicit Menu_iteamOperation(QWidget *parent = nullptr);
     ~Menu_iteamOperation();
-    enum OperateType{del,edit,property};
+    enum OperateType{del,edit,property,rename};
 
 
 signals:

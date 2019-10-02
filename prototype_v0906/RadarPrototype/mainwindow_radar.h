@@ -29,8 +29,7 @@ class MainWindow_Radar : public QMainWindow
 
 public:
     explicit MainWindow_Radar(QWidget *parent = nullptr);
-    explicit MainWindow_Radar(QString id, QListWidget *parent = nullptr);
-//    explicit MainWindow_Radar( QString id, QWidget *parent = nullptr);
+    explicit MainWindow_Radar( QString id, QWidget *parent = nullptr);
     ~MainWindow_Radar();
     DiagramItem *getDiagramItemById(int item_id);
     void deleteItemArrowById(int id);
@@ -161,6 +160,11 @@ private:
     QAction *textAction;
     QAction *fillAction;
     QAction *lineAction;
+
+    //看到代码这么多，我还要加，正的于心不忍
+signals:
+//    返回自己(其实暂时只用了id)
+    void iClose(MainWindow_Radar*);
 };
 
 #endif // MAINWINDOW_RADAR_H
