@@ -455,6 +455,8 @@ void MainWindowNewScene::itemOperateSlot(Menu_iteamOperation::OperateType operat
                     id_new=j==0?newName:newName+"~"+QString::number(j);
                     item=id_gItem.find(id).value();
                     item->itemOperateSlot(Menu_iteamOperation::rename,id_new);
+                    this->id_gItem.insert(id_new,item);
+                    this->id_gItem.remove(id);
                  }
                        break;
                  }

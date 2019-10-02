@@ -216,7 +216,7 @@ void DragListWidget::renameSlot(QListWidgetItem* item)
          }
      }
      forRename.preIndex = this->currentRow();
-     forRename.preName =  item->text();
+     forRename.preName =  this->currentItem()->text();
     }else {forRename.ifEnableChange=true;}
 }
 
@@ -232,6 +232,7 @@ void DragListWidget::itemOperateSlot(Menu_iteamOperation::OperateType operateTyp
             delete item;
             id_item.remove(id_item.key(item));
             if(!newEditWindowList.isEmpty())newEditWindowList.remove(id);
+            this->forRename.preIndex=-1;
             break;
        }
        case Menu_iteamOperation::edit:
@@ -294,9 +295,9 @@ void DragListWidget::listItem_add(QString name){
             msgBox.setWindowTitle("添加"+name);
             msgBox.setText("添加"+name);
             msgBox.setInformativeText("您想要创建一个新的"+name+"组件，还是导入一个已经有的"+name+"组件？");
-            msgBox.addButton(tr("取消"), QMessageBox::ActionRole);
             QPushButton*newButton = msgBox.addButton(tr("新建"), QMessageBox::ActionRole);
             msgBox.addButton(tr("导入"), QMessageBox::ActionRole);
+            msgBox.addButton(tr("取消"), QMessageBox::ActionRole);
             msgBox.setDefaultButton(newButton);
             int button_index=msgBox.exec();
             switch (button_index) {
