@@ -9,7 +9,7 @@
 * @author        Antrn
 * @date          2019-08-12
 */
-DragListWidget::DragListWidget(QWidget *parent) : QListWidget(parent)
+DragListWidget::DragListWidget(QWidget *parent ) : QListWidget(parent)
 {
     //    设置允许接收拖拽
     this->setDragEnabled(true);
@@ -36,9 +36,9 @@ DragListWidget::DragListWidget(QWidget *parent) : QListWidget(parent)
     this->listItem_add("雷达");
 //    设置初始尺寸
    // this->resize(250,200);
-
+    //修改名称后失去焦点生效
+     connect(this, &DragListWidget::itemChanged,this,&DragListWidget::renameSlot);
 }
-
 //添加拖拽项，使用此方法会动态resize整个widget
 void DragListWidget::addDragItem(QListWidgetItem*item){
 
@@ -59,7 +59,6 @@ void DragListWidget::addDragItem(QListWidgetItem*item){
     emit repaintWidget();
 
 }
-
 //添加拖拽项，使用此方法会动态resize整个widget
 void DragListWidget::addDragItem(const QString &label){
     int count = this->count();
@@ -90,10 +89,10 @@ void DragListWidget::startDrag(Qt::DropActions /*supportedActions*/)
     //分别从用户角色中获取信息
     QPixmap pixmap = qvariant_cast<QPixmap>(item->data(Qt::UserRole));
     QString str_name = qvariant_cast<QString>(item->data(Qt::UserRole+1));
-
+    QString itemType = qvariant_cast<QString>(item->data(Qt::UserRole+2));
     //设置dataStream
-    dataStream << pixmap << str_name;
-//    qDebug() << "pixmap: " << pixmap;
+    dataStream << pixmap << str_name<<itemType;
+//    qDebug() << "pixma    p: " << pixmap;
 //    qDebug() << "picture str_name: " << str_name;
 
     QMimeData *mimeData = new QMimeData;
@@ -160,8 +159,11 @@ void DragListWidget::mousePressEvent(QMouseEvent *event)
                         //确定才删除
                         if(operate==Menu_iteamOperation::del){
                             //先询问是否确定
-                            if(QMessageBox::Ok==QMessageBox::question(this,"question","删除此控件，场景中已经添加的组件也将被删除！是否还要继续？", QMessageBox::Ok| QMessageBox::Cancel))
-                                emit itemOperate(operate,id);
+                            if(QMessageBox::Ok==QMessageBox::question(this,"question",
+                                                                        "删除此控件，场景中已经添加的组件"
+                                                                      "也将被删除！是否还要继续？",
+                                                                      QMessageBox::Ok, QMessageBox::Cancel))
+                                emit itemOperate(Menu_iteamOperation::del,id);
 
                         }else {emit itemOperate(operate,id);}
                 });
@@ -176,63 +178,109 @@ void DragListWidget::mousePressEvent(QMouseEvent *event)
 }
 
 void DragListWidget:: mouseDoubleClickEvent(QMouseEvent *event){
-//      必须新建一个QListWidgetItem过渡 否则点击的地方没有item就死了。
+//  必须新建一个QListWidgetItem过渡 否则点击的地方没有item就死了。
     QListWidgetItem * item= new QListWidgetItem();
     item=this->itemAt(event->pos());
     if(item){
-        this->itemOperateSlot(Menu_iteamOperation::edit, this->itemAt(event->pos())->text());
+    //双击修改名称
+    {
+        item->setFlags(item->flags() | Qt::ItemIsEditable);
+    }
+    //双击进入编辑 暂时弃用
+//        this->itemOperateSlot(Menu_iteamOperation::edit,item->text());
     }
     QListWidget::mouseDoubleClickEvent(event);
-
 }
-//item操作
-void DragListWidget::itemOperateSlot(Menu_iteamOperation::OperateType operateType, QString id){
-//   获取id对应的item
-    QListWidgetItem *item=id_item.key(id);
-   if(item){
+
+void DragListWidget::renameSlot(QListWidgetItem* item)
+{
+    //修改名称的过程会触发两次这个slot，所以第一次用来存初原来的名字，第二次用来改名字
+    QString newName=item->text();
+     //在修改名字
+    if(this->forRename.ifEnableChange){
+     if(this->currentRow()==forRename.preIndex && newName!=forRename.preName){
+            qDebug()<<"##newName:"<<newName<<"preName:"<<forRename.preName;
+            //校验新名字
+         if(!this->id_item.contains(newName)){
+                //不重复，修改其他所关联项目的id
+            qDebug()<<"都去改吧！！:1：xml:2：编辑雷达页面 ，3：id_item map数组，4：newedititem数组，5：雷达场景id";
+              //交由父类统一下发修改信号
+             //itemOperateSlot(Menu_iteamOperation::rename,forRename.preName,newName);
+            forRename.ifEnableChange=false;
+            emit itemOperate(Menu_iteamOperation::rename,forRename.preName,newName);
+
+         }else{
+             QMessageBox::warning(this,"warning","名称已存在，请换一个名字重新修改",QMessageBox::Ok);
+             item->setText(forRename.preName);
+//             forRename.ifEnableChange=false;
+         }
+     }
+     forRename.preIndex = this->currentRow();
+     forRename.preName =  this->currentItem()->text();
+    }else {forRename.ifEnableChange=true;}
+}
+
+void DragListWidget::itemOperateSlot(Menu_iteamOperation::OperateType operateType, QString id,QString newName){
+        QListWidgetItem *item= id_item.find(id).value();
+        //触发就选中
+        item->isSelected();
        switch (operateType){ 
-       case Menu_iteamOperation::del:   
+       case Menu_iteamOperation::del:
+       {
            qDebug()<<"left_delete:"<<id;
-                this->removeItemWidget(item);
-                delete item;
-                id_item.remove(item);
-                if(!newEditWindowList.isEmpty())newEditWindowList.removeOne(id);
-           break;
+            this->removeItemWidget(item);
+            delete item;
+            id_item.remove(id_item.key(item));
+            if(!newEditWindowList.isEmpty())newEditWindowList.remove(id);
+            this->forRename.preIndex=-1;
+            break;
+       }
        case Menu_iteamOperation::edit:
+       {
             qDebug()<<"left_edit:"<<id;
             //新建或者提升编辑窗口
             {
                 //查找是否已经创建该子类
-              //qDebug()<<(newEditWindowList->indexOf(id)==-1);
-            if(newEditWindowList.isEmpty()||newEditWindowList.indexOf(id)==-1){
-                //新建
-                MainWindow_Radar *SET_RADARNAME(id)=new MainWindow_Radar(id,this);
-                newEditWindowList.append(id);
-                qDebug()<<"aa:"<<SET_RADARNAME(id);
+             if(!newEditWindowList.contains(id)){
+                //新建(每个变量命名不同)
+                MainWindow_Radar *SET_RADARNAME(id)=new MainWindow_Radar(id);
+                newEditWindowList.insert(id,SET_RADARNAME(id));
+                //窗口关闭时更新子类列表：newEditWindowList
+                connect(SET_RADARNAME(id),&MainWindow_Radar::iClose,
+                        [=](MainWindow_Radar* radar){newEditWindowList.remove(radar->getEquip_id());});
                 SET_RADARNAME(id)->setAttribute(Qt::WA_DeleteOnClose);
                 SET_RADARNAME(id)->show();
             }else {
                 //获取改item对应的mainwindow_radar
-                QList<MainWindow_Radar*> radarList=this->findChildren<MainWindow_Radar*>();
-                foreach(MainWindow_Radar* var,radarList){
-                    qDebug()<<var<<":"<<var->getEquip_id();
-                    if(var->getEquip_id()==id){
-                            QMessageBox::warning(this,"warning","你已经打开了编辑窗口，不可以重复打开！");
-                            var->showNormal();
-//                        var->raise();
-                    }
-
-                }
+                MainWindow_Radar*radar=newEditWindowList.find(id).value();
+                        QMessageBox::warning(this,"warning","你已经打开了编辑窗口，不可以重复打开！",QMessageBox::Ok);
+                        radar->showNormal();
+                          radar->raise();
+                          radar->showMaximized();
             }
-            }
+        }
            break;
+       }
+       case Menu_iteamOperation::rename:{
+           if(  this->id_item.contains(id)){
+               this->id_item.insert(newName,this->id_item.find(id).value());
+               this->id_item.remove(id);
+           }
+           if(  this->newEditWindowList.contains(id)){
+               MainWindow_Radar *radar=this->newEditWindowList.find(id).value();
+               radar->setEquip_id(newName);
+               this->newEditWindowList.insert(newName,radar);
+               this->newEditWindowList.remove(id);
+               radar->setWindowTitle(tr((newName+" Edit").toUtf8().data()));
+            }
+               item->setData(Qt::UserRole+1, newName);
+           break;
+       }
        case Menu_iteamOperation::property:
            qDebug()<<"left_property:"<<id;
            break;
        }
-
     }
-   }
 
 void DragListWidget::listItem_add(QString name){
     QListWidgetItem *listItem_top=new QListWidgetItem();
@@ -248,20 +296,20 @@ void DragListWidget::listItem_add(QString name){
             msgBox.setWindowTitle("添加"+name);
             msgBox.setText("添加"+name);
             msgBox.setInformativeText("您想要创建一个新的"+name+"组件，还是导入一个已经有的"+name+"组件？");
-            msgBox.addButton(tr("取消"), QMessageBox::ActionRole);
             QPushButton*newButton = msgBox.addButton(tr("新建"), QMessageBox::ActionRole);
             msgBox.addButton(tr("导入"), QMessageBox::ActionRole);
+            msgBox.addButton(tr("取消"), QMessageBox::ActionRole);
             msgBox.setDefaultButton(newButton);
             int button_index=msgBox.exec();
             switch (button_index) {
                 case 0:
-//                    不操作
+                 this->add_listItem(name);
                     break;
             case 1:
-                this->add_listItem(name);
+//                   导入文件
                     break;
                 case 2:
- //                导入文件
+//                    不操作
                     break;
             }
         }
@@ -272,20 +320,24 @@ void DragListWidget::add_listItem(QString name) {
     QString path=":/img/radar.png";
     // 有必要枚举   待修缮
     if(name=="雷达"){path=":/img/radar.png";}
-    else if(name=="电子对抗机") path=":/img/radar.png";
-    else if(name=="目标环境")path=":/img/radar.png";
+    else if(name=="电子对抗机") path=":/img/ECM.png";
+    else if(name=="目标环境")path=":/img/object.png";
     //新建item，添加到左边的listwidget
-
-    QString newname = name+QString::number(id_inde++);
+    QString newName = name+QString::number(id_inde++);
+    while(this->id_item.contains(newName)){
+        //名称已经存在，换一个
+        newName = name+QString::number(id_inde++);
+    }
     QListWidgetItem *item = new QListWidgetItem();
-    id_item.insert(item,newname);
+    id_item.insert(newName,item);
     item->setIcon(QIcon(path));
-    item->setText(tr(newname.toUtf8().data()));
+    item->setText(tr(newName.toUtf8().data()));
 
     //这里的用户角色存储用户数据（和拖入场景有关）
     item->setData(Qt::UserRole, QPixmap(path));
-    item->setData(Qt::UserRole+1, newname);
+    item->setData(Qt::UserRole+1, newName);
+    item->setData(Qt::UserRole+2, itemType);
     item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled);
     this->addDragItem(item);
-    qDebug()<<"additem了。"<<newname;
+    qDebug()<<"additem了,name:"<<newName;
 }

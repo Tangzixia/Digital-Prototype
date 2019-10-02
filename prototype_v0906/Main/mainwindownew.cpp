@@ -19,6 +19,8 @@ MainWindowNew::MainWindowNew(QWidget *parent) :
     ui(new Ui::MainWindowNew)
 {
     ui->setupUi(this);
+    // 设置对话框icon
+    this->setWindowIcon(QIcon(":/img/fangzhen.png"));
     this->setStyleSheet("padding:0;margin:0");
     //this->setAttribute(Qt::WA_DeleteOnClose);
     graphicsScene=new MainWindowNewScene();
@@ -45,7 +47,9 @@ MainWindowNew::MainWindowNew(QWidget *parent) :
 //      接收来之左边item的信号
     connect(this->ui->listWidget_rader,&DragListWidget::itemOperate,this,&MainWindowNew::itemOperateSlot);
 //  接收来之scene的item的信号
-    connect (graphicsScene,&MainWindowNewScene::itemOperate,this,&MainWindowNew::itemOperateSlot);
+    connect (graphicsScene,&MainWindowNewScene::itemOperate,[=](Menu_iteamOperation::OperateType operate,QString id){
+        this->itemOperateSlot(operate,id);
+    });
 //    默认属性窗口隐藏
     ui->dockWidget_property->hide();
 }
@@ -102,27 +106,37 @@ void MainWindowNew::on_actio_leftDock_triggered()
     }
 }
 //下发操作指令
- void MainWindowNew::itemOperateSlot(Menu_iteamOperation::OperateType operateType, QString id){
-    qDebug()<<"mainWindowsNew::"<<operateType<<","<<id;
-    //目前只有delete需要graphicsScene向下传递
+ void MainWindowNew::itemOperateSlot(Menu_iteamOperation::OperateType operateType, QString id,QString newName){
+    qDebug()<<"mainWindowsNew::"<<operateType<<","<<id<<"new name:"<<newName;
     if(operateType==Menu_iteamOperation::del){
-        this->graphicsScene->itemOperate1(operateType,id);
-        ui->listWidget_rader->itemOperateSlot(operateType,id);
+        this->graphicsScene->itemOperateSlot(Menu_iteamOperation::del,id);
+        ui->listWidget_rader->itemOperateSlot(Menu_iteamOperation::del,id);
     }else if(operateType==Menu_iteamOperation::property){
         //弹出属性窗
        ui->dockWidget_property->show();
        ui->actionProperty->setChecked(true);
+        //属性窗口内容显示
+        propertyContent(id);
     }
     else if(operateType==Menu_iteamOperation::edit){
        //新建或者提升组件窗口（从left的item来，他在就在，他死就死）
-        ui->listWidget_rader->itemOperateSlot(operateType,id);
-
+        qDebug()<<"edit来了";
+        ui->listWidget_rader->itemOperateSlot(Menu_iteamOperation::edit,id);
+    }else if(operateType==Menu_iteamOperation::rename){
+        this->graphicsScene->itemOperateSlot(Menu_iteamOperation::rename,id,newName);
+        ui->listWidget_rader->itemOperateSlot(Menu_iteamOperation::rename,id,newName);
     }
  }
+  //属性窗口内容显示
+ void MainWindowNew::propertyContent(QString id){
+     //读取XMl写入窗口
+    qDebug()<<"交给你了,组件name:"<<id<<"留下了";
+     //
+ }
 
-void MainWindowNew::on_actionProperty_triggered(bool checked)
+ void MainWindowNew::on_actionProperty_triggered(bool checked)
 {
-    if(ui->dockWidget_property->isHidden()){
+    if(!checked){
         ui->dockWidget_property->show();
     }else{
         ui->dockWidget_property->hide();

@@ -25,7 +25,7 @@ public:
     explicit MainWindowNew(QWidget *parent = nullptr);
     ~MainWindowNew();
     QLabel *label_xy;
-    MainWindowNewScene *graphicsScene;
+//    MainWindowNewScene *graphicsScene;
     static QList<MainWindow_Radar *> main_radar_list;
 
 signals:
@@ -33,7 +33,7 @@ signals:
     void itemOperate(Menu_iteamOperation::OperateType, QString );
 public slots:
 //向子类发送itemoperate
-    void itemOperateSlot(Menu_iteamOperation::OperateType, QString );
+    void itemOperateSlot(Menu_iteamOperation::OperateType, QString,QString newName="");
 protected:
     void closeEvent(QCloseEvent *event);
     //设置监听窗口大小，使得视图和场景每次窗口缩放都左上角对应
@@ -55,6 +55,8 @@ private:
     QRect rect;
     //为了在itemOperateSlot中可以向graphicsScene中的控件传递信息
     MainWindowNewScene *graphicsScene;
+      //属性窗口内容显示
+    void propertyContent(QString);
 };
 
 #endif // MAINWINDOWNEW_H

@@ -41,5 +41,6 @@
         <file>img/search_hover.png</file>
         <file>img/search_press.png</file>
         <file>img/search.png</file>
+        <file>img/fangzhen.png</file>
     </qresource>
 </RCC>

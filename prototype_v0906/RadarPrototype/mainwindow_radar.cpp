@@ -29,7 +29,7 @@ const int InsertTextButton = 10;
 
 bool MainWindow_Radar::isSave = true;
 
-MainWindow_Radar::MainWindow_Radar(QString id, QListWidget *parent) :
+MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
     QMainWindow(parent),
     equip_id(id),
     ui(new Ui::MainWindow_Radar)
@@ -38,7 +38,7 @@ MainWindow_Radar::MainWindow_Radar(QString id, QListWidget *parent) :
     this->setAttribute(Qt::WA_DeleteOnClose);
     //最大窗口
     this->showMaximized();
-    setWindowTitle(tr("Radar Edit"));
+    setWindowTitle(tr((this->equip_id+" Edit").toUtf8().data()));
     //兼容性？？
     setUnifiedTitleAndToolBarOnMac(true);
 
@@ -512,6 +512,8 @@ void MainWindow_Radar::closeEvent(QCloseEvent *event)
         event->accept();
         MainWindowNew::main_radar_list.removeOne(this);
     }
+    //提醒父类更新列表
+    emit iClose(this);
 }
 
 //组件层叠关系

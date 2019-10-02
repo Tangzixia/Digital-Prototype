@@ -311,26 +311,36 @@ void MainWindowNewScene::dropEvent(QGraphicsSceneDragDropEvent *event)
         QByteArray comData = event->mimeData()->data(DragListWidget::puzzleMimeType());
         QDataStream dataStream(&comData, QIODevice::ReadOnly);
         QPixmap pixmap;
-        QString str;
-        dataStream >> pixmap >> str;
+        QString name;
+        QString itemType;
+        dataStream >> pixmap >> name>>itemType;
 //        qDebug() << pixmap << " ; str：" << str<< "场景 中的 item 的 ID;
-        if(str.startsWith("雷达")){
-            RadarItem *radar=new RadarItem(str);
-//            radar->setRadar_id(str);
-            connect(radar,&RadarItem::itemOperate,this,[=](Menu_iteamOperation::OperateType operateType){
-                emit  this->itemOperate(operateType,str);
+        if(itemType=="雷达"){
+            QString id;
+             RadarItem *radar;
+            if(!id_gItem.contains(name)){
+                id=name;
+               radar=new RadarItem(id);
+            }else {
+                int i=1;
+                while(id_gItem.contains(name+"~"+QString::number(i))){ i++;}
+                id=name+"~"+QString::number(i);
+                radar=new RadarItem(id);
+                qDebug()<<"多个Item拖入场景 分配name为:"<<id;
+            }
+            connect(radar,&RadarItem::itemOperate,this,[=](Menu_iteamOperation::OperateType operateType,QString id){
+                QString name=id.split("~").first();
+                emit  this->itemOperate(operateType,name);
             });
-                // 这里尽然可以触发，喜出望外
-            connect(this,&MainWindowNewScene::itemOperate1,radar,&RadarItem::itemOperateSlot);
-
             // 设置初始位置
             radar->setPos(event->scenePos().x()-35, event->scenePos().y() -35);
-            qDebug() << "radar id str: " <<str;
+            qDebug() << "MainWindowNewScene : radar id : " <<id;
 //            qDebug()<<"放下位置: " <<event->scenePos();
 
             this->addItem(radar);
             Item_List.append(radar);
-
+            id_gItem.insert(id,radar);
+            //应该抽成函数的吧
             connect(radar, &RadarItem::destroyed, [=](){
                 this->removeItem(radar);
                 Item_List.removeOne(radar);
@@ -351,15 +361,14 @@ void MainWindowNewScene::dropEvent(QGraphicsSceneDragDropEvent *event)
                 delete_line_List.clear();
             });
         }
-        else if(str.startsWith("电子对抗")){
+        else if(name.startsWith("电子对抗")){
             ECMItem *ecm = new ECMItem;
             // 设置初始位置
             ecm->setPos(event->scenePos().x()-35, event->scenePos().y() -35);
 //            qDebug()<<"放下位置: " <<event->scenePos();
-            ecm->setEcm_id(str);
+            ecm->setEcm_id(name);
             this->addItem(ecm);
             Item_List.append(ecm);
-
             connect(ecm, &ECMItem::destroyed, [=](){
                 this->removeItem(ecm);
                 Item_List.removeOne(ecm);
@@ -401,3 +410,57 @@ void MainWindowNewScene::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
     }
 }
 
+void MainWindowNewScene::itemOperateSlot(Menu_iteamOperation::OperateType operate,QString name,QString newName){
+//   说明已经拖入了至少一个
+    if(id_gItem.contains(name)){
+        int i=1;
+        //确定有几个同名item被拖入
+            while(id_gItem.contains(name+"~"+QString::number(i))){ i++;}
+//             RadarItem *item=id_gItem.find(id).value();
+            RadarItem *item;
+            QString id;
+             switch(operate){
+             //仅仅适用于左边菜单栏下达的删除指令
+                case Menu_iteamOperation::del:{
+
+                 for(int j=0;j<i;j++){
+                     id=j==0?name:name+"~"+QString::number(j);
+                     item=id_gItem.find(id).value();
+                     item->destroyed();
+                     this->removeItem(item);
+                     Item_List.removeOne(item);
+                     id_gItem.remove(id);
+//                 删除对应的连线
+//                     delete_line_List.clear();
+//                     connect_to_List.clear();
+//                     connect_from_List.clear();
+//                     for(int i = 0;i<graphicsLineItem_List.length();i++){
+//                         ArrowItem*linetemp = graphicsLineItem_List.at(i);
+//                         if(linetemp->getEndItem()==item||linetemp->getBeginItem()==item){
+//                             delete_line_List.append(linetemp);
+//                         }
+//                     }
+//                     for(int i = 0;i<delete_line_List.length();i++){
+//                         this->removeItem(delete_line_List.at(i));
+//                         graphicsLineItem_List.removeOne(delete_line_List.at(i));
+//                     }
+//                     delete_line_List.clear();
+                 }
+                 break;
+             }
+                case Menu_iteamOperation::rename:{
+                    QString id_new;
+                    for(int j=0;j<i;j++){
+                    id=j==0?name:name+"~"+QString::number(j);
+                    id_new=j==0?newName:newName+"~"+QString::number(j);
+                    item=id_gItem.find(id).value();
+                    item->itemOperateSlot(Menu_iteamOperation::rename,id_new);
+                    this->id_gItem.insert(id_new,item);
+                    this->id_gItem.remove(id);
+                 }
+                       break;
+                 }
+             default :{}
+            }
+        }
+   }

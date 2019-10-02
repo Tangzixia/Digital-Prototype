@@ -9,6 +9,7 @@
 #include <QGraphicsScene>
 #include <QPaintEvent>
 #include <QGraphicsItem>
+#include "radaritem.h"
 #include "arrowitem.h"
 //为了可以识别枚举值 OperateType
 #include "menu_iteamoperation.h"
@@ -36,19 +37,16 @@ signals:
 
     //接收来至于子类的item操作(操作 ，itemId)
     void itemOperate(Menu_iteamOperation::OperateType,QString);
-    //接收来至于父类的item操作
-    void itemOperate1(Menu_iteamOperation::OperateType,QString);
 private:
     //临时保存起点终点
     QPointF sourcePoint;
     QPointF destPoint;
-
     QGraphicsItem *line_begin_item;
-
     QGraphicsItem *drag_item;
-
+    ///保存拖入场景的雷达item（如果定义了电子对抗，目标环境，雷达的一个公共的，父组件就好了）
+    QMap<QString,RadarItem*> id_gItem;
 public slots:
-
+    void itemOperateSlot(Menu_iteamOperation::OperateType,QString,QString newName="");
 private slots:
     void LinePaint();
 

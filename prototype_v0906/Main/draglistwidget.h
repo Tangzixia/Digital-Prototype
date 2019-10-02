@@ -32,7 +32,7 @@ public:
 signals:
     //没用到
     void repaintWidget();
-    void itemOperate(Menu_iteamOperation::OperateType,QString);
+    void itemOperate(Menu_iteamOperation::OperateType,QString,QString newName="");
 protected:
     //开始拖拽
     void startDrag(Qt::DropActions supportedActions);
@@ -56,15 +56,25 @@ private:
     //0:name 1:itemImgPath
     void listItem_add(QString);
     void add_listItem(QString);
-    QMap<QListWidgetItem*,QString> id_item;
+    QMap<QString,QListWidgetItem*> id_item;
     //listWidgetItem计数
     int id_inde=1;
      //是否新建了edit窗口
-    QList<QString> newEditWindowList;
+    QMap<QString,MainWindow_Radar*> newEditWindowList;
+    //保存前一个被操作的item信息（名字 index）
+
+    struct forRename
+           {
+                QString preName;
+                int preIndex=-1;
+                bool ifEnableChange=true;
+           }forRename;
+    //今后传值方便
+    QString itemType="雷达";
 public slots:
 //操作item
-    void itemOperateSlot(Menu_iteamOperation::OperateType, QString );
-
+    void itemOperateSlot(Menu_iteamOperation::OperateType, QString ,QString newName="");
+    void renameSlot(QListWidgetItem* );
 
 
 };
