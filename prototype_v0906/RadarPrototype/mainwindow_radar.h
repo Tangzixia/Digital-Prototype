@@ -100,7 +100,9 @@ private:
     QLabel *label_xy;
     QLineEdit *m_pSearchLineEdit;
     // 工具类
-    Utils *u;
+//    Utils *u;
+    bool isSelectPath = false;
+    QString userSelectPath;
 
     QStringList word_list;
     QStringListModel *string_list_model;

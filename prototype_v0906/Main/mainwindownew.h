@@ -25,7 +25,7 @@ public:
     explicit MainWindowNew(QWidget *parent = nullptr);
     ~MainWindowNew();
     QLabel *label_xy;
-    MainWindowNewScene *graphicsScene;
+//    MainWindowNewScene *graphicsScene;
     static QList<MainWindow_Radar *> main_radar_list;
 
 signals:
