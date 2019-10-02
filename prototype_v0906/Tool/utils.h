@@ -20,9 +20,11 @@ class Utils
 {
 public:
     Utils();
-    void alert(QRect rect, QString content);
-    int saveFile(QWidget *qw, QString dirp, QString filename, RadarScene *scene, bool isPrompt);
-    int saveImage(int f, RadarScene *scene,  QGraphicsView *view,  QString path, QString name);
+    static void alert(QRect rect, QString content);
+    static int saveFile(QWidget *qw, QString dirp, QString filename, RadarScene *scene, bool isPrompt, QString &spath);
+    static int saveImage(int f, RadarScene *scene,  QGraphicsView *view,  QString path, QString name);
+    static void openDirOrCreate(QString dirPath);
+    static void readPluginXmlFile(QString fileName);
 };
 
 #endif // UTILS_H
