@@ -15,7 +15,7 @@
 #include <utils.h>
 #include <QCompleter>
 #include <mainwindownew.h>
-
+#include <QDesktopWidget>
 #include "arrow.h"
 #include "compproperty.h"
 #include "clickablelabel.h"
@@ -105,7 +105,7 @@ MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
     // FIXME dock无法自由拖动了，只能保持固定宽度能拖出来但是不能自动贴边
 //    ui->dockCompList->setAllowedAreas(Qt::AllDockWidgetAreas);
     connect(ui->listWidget, &RadarCompDraglistWidget::add_one_Comp, this, &MainWindow_Radar::update_Comp_property);
-    u = new Utils;
+//    u = new Utils;
     // 当新增组件时候，设置插入模式和插入的组件的类型
     connect(ui->listWidget, &RadarCompDraglistWidget::setComp_typeandMode, this, &MainWindow_Radar::setComp_typeandMode);
 }
@@ -244,7 +244,7 @@ void MainWindow_Radar::loadCompByName(QString strText)
     /*判断文件夹是否存在*/
     if (!dir.exists())
     {
-        u->alert(geometry(), tr("读取文件夹出错!"));
+        Utils::alert(QApplication::desktop()->screen()->rect(), tr("读取文件夹出错!"));
         return;
     }
     dir.setFilter(QDir::Files); /*设置dir的过滤模式,表示只遍历本文件夹内的文件*/
@@ -282,7 +282,7 @@ void MainWindow_Radar::loadAllComps()
 //    /*判断文件夹是否存在*/
 //    if (!dir.exists())
 //    {
-//        u->alert(geometry(), tr("读取文件夹出错!"));
+//        u->alert(QApplication::desktop()->screen()->rect(), tr("读取文件夹出错!"));
 //        return;
 //    }
 //    dir.setFilter(QDir::Files); /*设置dir的过滤模式,表示只遍历本文件夹内的文件*/
@@ -324,7 +324,7 @@ void MainWindow_Radar::itemInserted(DiagramItem *item)
     pointerTypeGroup->button(int(RadarScene::MoveItem))->setChecked(true);
     scene->setMode(RadarScene::Mode(pointerTypeGroup->checkedId()));
     //取消原按钮的选中状态
-    buttonGroup->button(int(item->diagramType()))->setChecked(false);
+    //buttonGroup->button(int(item->diagramType()))->setChecked(false);
 }
 
 void MainWindow_Radar::textInserted(QGraphicsTextItem *)
@@ -482,8 +482,6 @@ void MainWindow_Radar::showItemProperties()
     }
 }
 
-// 退出的时候应该让用户选择是否保存当前场景
-// FIXME 默认保存场景到name+.xml好像有点不合理，应该可以自己选择路径
 // 先判断是否退出钱保存？是，则保存退出；否，则直接退出。
 void MainWindow_Radar::closeEvent(QCloseEvent *event)
 {
@@ -498,30 +496,29 @@ void MainWindow_Radar::closeEvent(QCloseEvent *event)
             toggleSaveXml(0);
             ui->actionRunRadar->setEnabled(true);
             qDebug() << "保存退出";
-            emit iClose(this);
+             //提醒父类更新列表
+			emit iClose(this);
             event->accept();
             MainWindowNew::main_radar_list.removeOne(this);
-            //提醒父类更新列表
+           
 
         }else if(ret1 == QMessageBox::No){
             qDebug() << "do not save";
-            // 直接退出
-               emit iClose(this);
+             //提醒父类更新列表
+			 emit iClose(this);
+			// 直接退出 
             event->accept();
             MainWindowNew::main_radar_list.removeOne(this);
-            //提醒父类更新列表
-
         }else {
             // 拒绝关闭
             qDebug() << "拒绝关闭!!!";
             event->ignore();
         }
     }else{
-        event->accept();
+		//提醒父类更新列表
          emit iClose(this);
-        MainWindowNew::main_radar_list.removeOne(this);
-        //提醒父类更新列表
-
+        event->accept();
+        MainWindowNew::main_radar_list.removeOne(this); 
     }
 }
 
@@ -982,7 +979,7 @@ void MainWindow_Radar::saveSnapshot(int flag)
 //            }
 //            image.save(dir_str+"scene.png");
 
-            u->saveImage(flag, scene, nullptr, dir_str, "scene.png");
+            Utils::saveImage(flag, scene, nullptr, dir_str, "scene.png");
             break;
         }
         case 2: {
@@ -1002,7 +999,7 @@ void MainWindow_Radar::saveSnapshot(int flag)
 //                dir.mkpath(dir_str);
 //            }
 //            image.save(dir_str+"view.png");
-            u->saveImage(flag, nullptr, ui->graphicsView, dir_str, "view.png");
+            Utils::saveImage(flag, nullptr, ui->graphicsView, dir_str, "view.png");
             break;
         }
     }
@@ -1084,10 +1081,7 @@ void MainWindow_Radar::lineButtonTriggered()
 void MainWindow_Radar::on_actionOpenXml_triggered()
 {
     QString dirpath = QDir::currentPath()+"/xmls/";
-    QDir dir(dirpath);
-    if(!dir.exists()){
-        dir.mkdir(dirpath);//创建多级目录
-    }
+    Utils::openDirOrCreate(dirpath);
     // 打开xml文件读取
     const QString fileName = QFileDialog::getOpenFileName(this, tr("打开xml"), QString(dirpath), tr("xml files (*.xml)"));
     readXmlConf(fileName);
@@ -1284,24 +1278,41 @@ void MainWindow_Radar::save2XmlFile(){
 
     // 保存雷达组件数据
     QString dirp = QDir::currentPath() + "/xmls/";
-
-    // 弹窗用户选择存储路径， WARNING 用户不能自定义文件名
-    switch (u->saveFile(this, dirp, getEquip_id()+".xml", scene, true)) {
-        case 1:
-            ui->statusbar->showMessage("保存成功", 1000);
-            u->alert(geometry(), "场景保存成功!");
-            break;
-        case -1:
-            ui->statusbar->showMessage("保存出错", 1000);
-            u->alert(geometry(), tr("场景保存出错，请重新尝试!"));
-            break;
-        case 0:
-            ui->statusbar->showMessage("保存失败", 1000);
-            u->alert(geometry(), tr("场景保存失败！请选择存储位置后再保存!"));
-            break;
+    QRect rect = QApplication::desktop()->screen()->rect();
+    // 如果之前自己选择位置存错过
+    if(isSelectPath){
+        switch (Utils::saveFile(this, dirp, getEquip_id()+".xml", scene, false, userSelectPath)) {
+            case 1:
+                ui->statusbar->showMessage("保存成功", 1000);
+                Utils::alert(rect, "场景保存成功!");
+                break;
+            case -1:
+                ui->statusbar->showMessage("保存出错", 1000);
+                Utils::alert(rect, tr("场景保存出错，请重新尝试!"));
+                break;
+            case 0:
+                ui->statusbar->showMessage("保存失败", 1000);
+                Utils::alert(rect, tr("场景保存失败！请选择存储位置后再保存!"));
+                break;
+        }
+    }else{
+        // 弹窗用户选择存储路径， WARNING 用户不能自定义文件名
+        switch (Utils::saveFile(this, dirp, getEquip_id()+".xml", scene, true, userSelectPath)) {
+            case 1:
+                ui->statusbar->showMessage("保存成功", 1000);
+                Utils::alert(rect, "场景保存成功!");
+                break;
+            case -1:
+                ui->statusbar->showMessage("保存出错", 1000);
+                Utils::alert(rect, tr("场景保存出错，请重新尝试!"));
+                break;
+            case 0:
+                ui->statusbar->showMessage("保存失败", 1000);
+                Utils::alert(rect, tr("场景保存失败！请选择存储位置后再保存!"));
+                break;
+        }
+        isSelectPath = true;
     }
-    // 不弹窗，自己保存到默认文件夹，如果用户也选择默认文件夹，那就是一个覆盖的事情
-    u->saveFile(this, dirp, getEquip_id()+".xml", scene, false);
 
     // TODO 是否需要快照应该由用户决定，后期需要完善
 //     saveSnapshot(1); //保存场景快照

@@ -7,6 +7,11 @@
 #include <QSizePolicy>
 #include <QGridLayout>
 #include <QInputDialog>
+#include <QMessageBox>
+#include <QDir>
+#include <qfiledialog.h>
+#include <algorithmcomp.h>
+#include "utils.h"
 // This is available in all editors.
 /**
 * @projectName   prototype_v0906
@@ -92,34 +97,63 @@ void RadarCompDraglistWidget::mousePressEvent(QMouseEvent *event)
         m_dragItem = this->itemAt(m_dragPoint);
         // 如果点击项是新建项则新建组件
         if(m_dragItem == addCompButton){
-            int flag = 0;
-            QString Compname = "";
-            while(Compname.isEmpty() || Compname.isNull()){
-                // 弹窗填写参数
-                QInputDialog dlg;
-                dlg.setWindowTitle("参数编辑");
-                dlg.setLabelText("组件名：");
-                dlg.setInputMode(QInputDialog::TextInput);
-                if( dlg.exec() == QInputDialog::Accepted )
-                {
-                    Compname = dlg.textValue();
-                }else{
-                    qDebug() << "取消";
-                    flag = 1;
+            QMessageBox msgBox;
+            msgBox.setWindowTitle("添加组件");
+            msgBox.setText("添加雷达组件");
+            msgBox.setInformativeText("您想要创建一个新的雷达组件，还是导入一个已经有的雷达组件？");
+            QPushButton *newButton = msgBox.addButton(tr("新建"), QMessageBox::ActionRole);
+            msgBox.addButton(tr("导入"), QMessageBox::ActionRole);
+            msgBox.addButton(tr("取消"), QMessageBox::ActionRole);
+            msgBox.setDefaultButton(newButton);
+            int button_index=msgBox.exec();
+            switch (button_index) {
+                case 2:
+                    break;
+            case 0:{
+                    // 新建
+                    int flag = 0;
+                    QString Compname = "";
+                    while(Compname.isEmpty() || Compname.isNull()){
+                        // 弹窗填写参数
+                        QInputDialog dlg;
+                        dlg.setWindowTitle("参数编辑");
+                        dlg.setLabelText("组件名：");
+                        dlg.setInputMode(QInputDialog::TextInput);
+                        if( dlg.exec() == QInputDialog::Accepted )
+                        {
+                            Compname = dlg.textValue();
+                        }else{
+                            qDebug() << "取消";
+                            flag = 1;
+                            break;
+                        }
+                    }
+                    // 没点取消
+                    if(flag == 0){
+                        QListWidgetItem *item1 = new QListWidgetItem();
+                        item1->setIcon(QIcon(":/img/Comp.png"));
+                        item1->setText(tr(Compname.toUtf8().data()));
+                        //这里的用户角色存储用户数据
+                        item1->setData(Qt::UserRole, QPixmap(":/img/Comp.png"));
+                        item1->setData(Qt::UserRole+1, Compname);
+                        item1->setData(Qt::UserRole+2, this->count());
+                        item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
+                        this->addDragItem(item1);
+                        emit add_one_Comp(Compname);
+                    }
                     break;
                 }
-            }
-            if(flag == 0){
-                QListWidgetItem *item1 = new QListWidgetItem();
-                item1->setIcon(QIcon(":/img/Comp.png"));
-                item1->setText(tr(Compname.toUtf8().data()));
-                //这里的用户角色存储用户数据
-                item1->setData(Qt::UserRole, QPixmap(":/img/Comp.png"));
-                item1->setData(Qt::UserRole+1, Compname);
-                item1->setData(Qt::UserRole+2, this->count());
-                item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
-                this->addDragItem(item1);
-                emit add_one_Comp(Compname);
+            case 1:
+                // 导入文件
+                QString dirpath = QDir::currentPath()+"/xmls/";
+                Utils::openDirOrCreate(dirpath);
+                // 打开xml文件读取
+                const QString fileName = QFileDialog::getOpenFileName(this, tr("打开组件xml"), QString(dirpath), tr("xml files (*.xml)"));
+                qDebug() << fileName;
+                AlgorithmComp ac = Utils::readPluginXmlFile(fileName);
+                algorithms.append(ac);
+                qDebug() << algorithms.size();
+                break;
             }
         }else if(m_dragItem){
             emit add_one_Comp(m_dragItem->text());

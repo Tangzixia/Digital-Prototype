@@ -74,7 +74,8 @@ SOURCES += \
     RadarPrototype/radarcompdraglistwidget.cpp \
     Tool/utils.cpp \
     Main/menu_iteamoperation.cpp \
-    Main/rightwindow_property.cpp
+    Main/rightwindow_property.cpp \
+    Tool/algorithmcomp.cpp
 HEADERS += \
         Main\mainwindow.h \
     Tool\myglwidget.h \
@@ -107,7 +108,8 @@ HEADERS += \
     RadarPrototype/radarcompdraglistwidget.h \
     Tool/utils.h \
     Main/menu_iteamoperation.h \
-    Main/rightwindow_property.h
+    Main/rightwindow_property.h \
+    Tool/algorithmcomp.h
 FORMS += \
         Main\mainwindow.ui \
     Tool\opengl.ui \

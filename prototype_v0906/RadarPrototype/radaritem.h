@@ -39,8 +39,6 @@ signals:
     void close_mainwindow();
     void itemOperate(Menu_iteamOperation::OperateType,QString id);
 
-
-
 private:
     QString radar_id;
 
