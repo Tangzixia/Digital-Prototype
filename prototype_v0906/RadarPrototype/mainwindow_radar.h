@@ -12,6 +12,7 @@
 #include <QListWidget>
 #include "diagramitem.h"
 #include "radarscene.h"
+#include "diagramitem.h"
 #include "diagramtextitem.h"
 /**
 * @projectName   prototype_v0719
@@ -45,19 +46,19 @@ public:
     void toggleSaveXml(int flag);
     // 初始化5个算法组件
     void init5Comp();
+    void init1Comp(QString comPName, QMenu *itemMenu, DiagramItem::DiagramType diagramType);
     void loadCompByName(QString strText);
     void loadAllComps();
 
 protected:
     void closeEvent(QCloseEvent *event);
 
-
 private slots:
      void on_actionCom_list_triggered();
      void xy_show(double x,double y);
 
      void backgroundButtonGroupClicked(QAbstractButton *button);
-     void buttonGroupClicked(int id);
+//     void buttonGroupClicked(int id);
      void deleteItem();
      void pointerGroupClicked(int id);
      void bringToFront();
@@ -87,7 +88,7 @@ private slots:
      void On_isSave2False(QString message);
 
      // 更新右面的雷达组件的属性
-     void update_Comp_property(QString name);
+     void update_Comp_property(AlgorithmComp ac);
 
      void setComp_typeandMode(int id);
      void search();
@@ -123,7 +124,7 @@ private:
     QComboBox *fontSizeCombo;
     QFontComboBox *fontCombo;
 
-    QButtonGroup *buttonGroup;
+//    QButtonGroup *buttonGroup;
     QButtonGroup *pointerTypeGroup;
     QButtonGroup *backgroundButtonGroup;
     QToolButton *fontColorToolButton;
@@ -140,8 +141,7 @@ private:
 
     QWidget *createBackgroundCellWidget(const QString &text,
                                         const QString &image);
-    QWidget *createCellWidget(const QString &text,
-                              DiagramItem::DiagramType type);
+//    QWidget *createCellWidget(const QString &text, DiagramItem::DiagramType type);
     QMenu *createColorMenu(const char *slot, QColor defaultColor);
     QIcon createColorToolButtonIcon(const QString &image, QColor color);
     QIcon createColorIcon(QColor color);

@@ -19,7 +19,8 @@
 #include "arrow.h"
 #include "compproperty.h"
 #include "clickablelabel.h"
-const int InsertTextButton = 10;
+#include <QFormLayout>
+//const int InsertTextButton = 10;
 /**
 * @projectName   prototype_v0719
 * @brief         编辑雷达功能的主窗口。
@@ -149,85 +150,43 @@ void MainWindow_Radar::toggleSaveXml(int flag){
         ui->actionsave->setEnabled(false);
     }
 }
-
+// This is available in all editors.
+/**
+* @projectName   prototype_v0906
+* @brief         简介 初始化5个默认的算法组件
+* @author        Antrn
+* @date          2019-10-03
+*/
 void MainWindow_Radar::init5Comp()
 {
-    //----------------------------------------
-    QString Compname = "脉冲压缩";
-    // 1
-    QListWidgetItem *item1 = new QListWidgetItem();
-    DiagramItem item(DiagramItem::Comp1, itemMenu);
-    QIcon icon(item.image());
-    item1->setIcon(icon);
-    item1->setText(tr(Compname.toUtf8().data()));
-    //这里的用户角色存储用户数据
-    item1->setData(Qt::UserRole, QPixmap(item.image()));
-    item1->setData(Qt::UserRole+1, Compname);
-    item1->setData(Qt::UserRole+2, ui->listWidget->count());
-    item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
-    ui->listWidget->addDragItem(item1);
-    update_Comp_property(Compname);
+    init1Comp(tr("脉冲压缩"), itemMenu, DiagramItem::Comp1);
+    init1Comp(tr("恒虚警率"), itemMenu, DiagramItem::Comp2);
+    init1Comp(tr("输入"), itemMenu, DiagramItem::Comp3);
+    init1Comp(tr("动目标检测"), itemMenu, DiagramItem::Comp4);
+    init1Comp(tr("输出"), itemMenu, DiagramItem::Comp5);
+}
 
-    // 2
-    Compname = "恒虚警率";
-    item1 = new QListWidgetItem();
-    DiagramItem item2(DiagramItem::Comp2, itemMenu);
-    QIcon icon2(item2.image());
-    item1->setIcon(icon2);
-    item1->setText(tr(Compname.toUtf8().data()));
+// This is available in all editors.
+/**
+* @projectName   prototype_v0906
+* @brief         简介 初始化单个默认组件
+* @author        Antrn
+* @date          2019-10-03
+*/
+void MainWindow_Radar::init1Comp(QString comPName, QMenu *itemMenu, DiagramItem::DiagramType diagramType)
+{
+    QListWidgetItem *item = new QListWidgetItem();
+    DiagramItem ditem(diagramType, itemMenu);
+    QIcon icon5(ditem.image());
+    item->setIcon(icon5);
+    item->setText(tr(comPName.toUtf8().data()));
     //这里的用户角色存储用户数据
-    item1->setData(Qt::UserRole, QPixmap(item2.image()));
-    item1->setData(Qt::UserRole+1, Compname);
-    item1->setData(Qt::UserRole+2, ui->listWidget->count());
-    item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
-    ui->listWidget->addDragItem(item1);
-    update_Comp_property(Compname);
-
-
-    // 3
-    Compname = "输入";
-    item1 = new QListWidgetItem();
-    DiagramItem item4(DiagramItem::Comp3, itemMenu);
-    QIcon icon4(item4.image());
-    item1->setIcon(icon4);
-    item1->setText(tr(Compname.toUtf8().data()));
-    //这里的用户角色存储用户数据
-    item1->setData(Qt::UserRole, QPixmap(item4.image()));
-    item1->setData(Qt::UserRole+1, Compname);
-    item1->setData(Qt::UserRole+2, ui->listWidget->count());
-    item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
-    ui->listWidget->addDragItem(item1);
-    update_Comp_property(Compname);
-
-    // 4
-    Compname = "动目标检测";
-    item1 = new QListWidgetItem();
-    DiagramItem item3(DiagramItem::Comp4, itemMenu);
-    QIcon icon3(item3.image());
-    item1->setIcon(icon3);
-    item1->setText(tr(Compname.toUtf8().data()));
-    //这里的用户角色存储用户数据
-    item1->setData(Qt::UserRole, QPixmap(item3.image()));
-    item1->setData(Qt::UserRole+1, Compname);
-    item1->setData(Qt::UserRole+2, ui->listWidget->count());
-    item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
-    ui->listWidget->addDragItem(item1);
-    update_Comp_property(Compname);
-
-    // 5
-    Compname = "输出";
-    item1 = new QListWidgetItem();
-    DiagramItem item5(DiagramItem::Comp5, itemMenu);
-    QIcon icon5(item5.image());
-    item1->setIcon(icon5);
-    item1->setText(tr(Compname.toUtf8().data()));
-    //这里的用户角色存储用户数据
-    item1->setData(Qt::UserRole, QPixmap(item5.image()));
-    item1->setData(Qt::UserRole+1, Compname);
-    item1->setData(Qt::UserRole+2, ui->listWidget->count());
-    item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
-    ui->listWidget->addDragItem(item1);
-    update_Comp_property(Compname);
+    item->setData(Qt::UserRole, QPixmap(ditem.image()));
+    item->setData(Qt::UserRole+1, comPName);
+    item->setData(Qt::UserRole+2, ui->listWidget->count());
+    item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
+    ui->listWidget->addDragItem(item);
+//    update_Comp_property(comPName);
 }
 
 // This is available in all editors.
@@ -263,7 +222,7 @@ void MainWindow_Radar::loadCompByName(QString strText)
             item0->setData(Qt::UserRole+2, ui->listWidget->count()+1);
             item0->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
             ui->listWidget->addDragItem(item0);
-            update_Comp_property(fileName);
+//            update_Comp_property(fileName);
             break;
         }
     }
@@ -333,7 +292,7 @@ void MainWindow_Radar::textInserted(QGraphicsTextItem *)
     toggleSaveXml(1);
     qDebug() << "xml由于文字添加而改变";
     //取消选中状态
-    buttonGroup->button(InsertTextButton)->setChecked(false);
+//    buttonGroup->button(InsertTextButton)->setChecked(false);
     scene->setMode(RadarScene::Mode(pointerTypeGroup->checkedId()));
 }
 
@@ -453,21 +412,21 @@ void MainWindow_Radar::backgroundButtonGroupClicked(QAbstractButton *button)
     ui->graphicsView->update();
 }
 
-void MainWindow_Radar::buttonGroupClicked(int id)
-{
-    QList<QAbstractButton *> buttons = buttonGroup->buttons();
-    foreach (QAbstractButton *button, buttons) {
-        if (buttonGroup->button(id) != button)
-            button->setChecked(false);
-    }
-    //判断是否是文本框
-    if (id == InsertTextButton) {
-        scene->setMode(RadarScene::InsertText);
-    } else {
-        scene->setItemType(DiagramItem::DiagramType(id));
-        scene->setMode(RadarScene::InsertItem);
-    }
-}
+//void MainWindow_Radar::buttonGroupClicked(int id)
+//{
+//    QList<QAbstractButton *> buttons = buttonGroup->buttons();
+//    foreach (QAbstractButton *button, buttons) {
+//        if (buttonGroup->button(id) != button)
+//            button->setChecked(false);
+//    }
+//    //判断是否是文本框
+//    if (id == InsertTextButton) {
+//        scene->setMode(RadarScene::InsertText);
+//    } else {
+//        scene->setItemType(DiagramItem::DiagramType(id));
+//        scene->setMode(RadarScene::InsertItem);
+//    }
+//}
 
 //弹出属性窗口
 void MainWindow_Radar::showItemProperties()
@@ -495,12 +454,12 @@ void MainWindow_Radar::closeEvent(QCloseEvent *event)
             ui->actionRunRadar->setEnabled(true);
             qDebug() << "保存退出";
             event->accept();
-            MainWindowNew::main_radar_list.removeOne(this);
+//            MainWindowNew::main_radar_list.removeOne(this);
         }else if(ret1 == QMessageBox::No){
             qDebug() << "do not save";
             // 直接退出
             event->accept();
-            MainWindowNew::main_radar_list.removeOne(this);
+//            MainWindowNew::main_radar_list.removeOne(this);
         }else {
             // 拒绝关闭
             qDebug() << "拒绝关闭!!!";
@@ -508,7 +467,7 @@ void MainWindow_Radar::closeEvent(QCloseEvent *event)
         }
     }else{
         event->accept();
-        MainWindowNew::main_radar_list.removeOne(this);
+//        MainWindowNew::main_radar_list.removeOne(this);
     }
     //提醒父类更新列表
     emit iClose(this);
@@ -570,43 +529,45 @@ void MainWindow_Radar::createCompBox()
     init5Comp();
 
     //-----------旧版使用buttonGroup-----------------------
-    buttonGroup = new QButtonGroup(ui->dockWidgetContents);
-    buttonGroup->setExclusive(true);
+//    buttonGroup = new QButtonGroup(ui->dockWidgetContents);
+//    buttonGroup->setExclusive(true);
     //自定义的slot函数：与graphics交互的关键
-    connect(buttonGroup, SIGNAL(buttonClicked(int)),
-            this, SLOT(buttonGroupClicked(int)));
-    QGridLayout *layout = new QGridLayout;
+//    connect(buttonGroup, SIGNAL(buttonClicked(int)),
+//            this, SLOT(buttonGroupClicked(int)));
+//    QGridLayout *layout = new QGridLayout;
     // TODO 支持点击修改组件名
-    layout->addWidget(createCellWidget(tr("脉冲压缩"), DiagramItem::Comp1), 0, 0); // Component_1 0,0
-    layout->addWidget(createCellWidget(tr("恒虚警率"), DiagramItem::Comp2), 0, 1); // Component_2 0,1
-    layout->addWidget(createCellWidget(tr("输入"), DiagramItem::Comp3), 1, 1); // Component_3 1,1
-    layout->addWidget(createCellWidget(tr("动目标检测"), DiagramItem::Comp4), 1, 0); // Component_4 1,0
-    layout->addWidget(createCellWidget(tr("输出"), DiagramItem::Comp5), 2, 0); // Component_5 2,0
+//    layout->addWidget(createCellWidget(tr("脉冲压缩"), DiagramItem::Comp1), 0, 0); // Component_1 0,0
+//    layout->addWidget(createCellWidget(tr("恒虚警率"), DiagramItem::Comp2), 0, 1); // Component_2 0,1
+//    layout->addWidget(createCellWidget(tr("输入"), DiagramItem::Comp3), 1, 1); // Component_3 1,1
+//    layout->addWidget(createCellWidget(tr("动目标检测"), DiagramItem::Comp4), 1, 0); // Component_4 1,0
+//    layout->addWidget(createCellWidget(tr("输出"), DiagramItem::Comp5), 2, 0); // Component_5 2,0
     // 文字按钮，在场景添加文字，暂时保留
-    QToolButton *textButton = new QToolButton;
-    textButton->setCheckable(true);
-    buttonGroup->addButton(textButton, InsertTextButton);
-    textButton->setIcon(QIcon(QPixmap(":/img/textpointer.png")));
-    textButton->setIconSize(QSize(50, 50));
-    QGridLayout *textLayout = new QGridLayout;
-    textLayout->addWidget(textButton, 0, 0, Qt::AlignHCenter);
+//    QToolButton *textButton = new QToolButton;
+//    textButton->setCheckable(true);
+//    buttonGroup->addButton(textButton, InsertTextButton);
+//    textButton->setIcon(QIcon(QPixmap(":/img/textpointer.png")));
+//    textButton->setIconSize(QSize(50, 50));
+//    QGridLayout *textLayout = new QGridLayout;
+//    textLayout->addWidget(textButton, 0, 0, Qt::AlignHCenter);
     //1,0表示1行0列 TODO 文字
-    ClickableLabel *text = new ClickableLabel(tr("Text"));
+//    ClickableLabel *text = new ClickableLabel(tr("Text"));
     // 能被选中
-    connect(text, &ClickableLabel::lostFocus, text, &ClickableLabel::labelLostFocus);
-    text->setTextInteractionFlags(Qt::TextSelectableByMouse);
-    textLayout->addWidget(text, 1, 0, Qt::AlignCenter);
+//    connect(text, &ClickableLabel::lostFocus, text, &ClickableLabel::labelLostFocus);
+//    text->setTextInteractionFlags(Qt::TextSelectableByMouse);
+//    textLayout->addWidget(text, 1, 0, Qt::AlignCenter);
 
-    QWidget *textWidget = new QWidget;
-    textWidget->setLayout(textLayout);
-    layout->addWidget(textWidget, 2, 1); // 2,1
+//    QWidget *textWidget = new QWidget;
+//    textWidget->setLayout(textLayout);
+//    layout->addWidget(textWidget, 2, 1); // 2,1
 
     //设置行和列的比例
-    layout->setRowStretch(3, 10);
-    layout->setColumnStretch(2, 10);
+//    layout->setRowStretch(3, 10);
+//    layout->setColumnStretch(2, 10);
 
-    QWidget *itemWidget = new QWidget;
-    itemWidget->setLayout(layout);
+//    QWidget *itemWidget = new QWidget;
+//    itemWidget->setLayout(layout);
+
+    //______________________背景颜色---------------------------
 
     backgroundButtonGroup = new QButtonGroup(ui->dockWidgetContents);
     connect(backgroundButtonGroup, SIGNAL(buttonClicked(QAbstractButton*)),
@@ -627,6 +588,7 @@ void MainWindow_Radar::createCompBox()
     QWidget *backgroundWidget = new QWidget;
     backgroundWidget->setLayout(backgroundLayout);
 
+    //---------------------------------------------------
 
     //========布局搜索框和listWidget=============
     QVBoxLayout *searchlayout = new QVBoxLayout;
@@ -673,9 +635,10 @@ void MainWindow_Radar::createCompBox()
 
     QToolBox *toolBox = new QToolBox;
     toolBox->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Ignored));
-    toolBox->setMinimumWidth(itemWidget->sizeHint().width());
+//    toolBox->setMinimumWidth(itemWidget->sizeHint().width());
+    toolBox->setMinimumWidth(backgroundWidget->sizeHint().width());
     toolBox->addItem(bigW, tr("组件列表"));
-    toolBox->addItem(itemWidget, tr("基础雷达组件"));
+//    toolBox->addItem(itemWidget, tr("基础雷达组件"));
     toolBox->addItem(backgroundWidget, tr("背景设置"));
     // TODO 如何只在组件打开的时候才显示属性框？或者可以将这三个分成三个小窗口
     ui->dockCompList->setWidget(toolBox);
@@ -871,26 +834,26 @@ QWidget *MainWindow_Radar::createBackgroundCellWidget(const QString &text, const
     return widget;
 }
 
-QWidget *MainWindow_Radar::createCellWidget(const QString &text, DiagramItem::DiagramType type)
-{
-    DiagramItem item(type, itemMenu);
-    QIcon icon(item.image());
+//QWidget *MainWindow_Radar::createCellWidget(const QString &text, DiagramItem::DiagramType type)
+//{
+//    DiagramItem item(type, itemMenu);
+//    QIcon icon(item.image());
 
-    QToolButton *button = new QToolButton;
-    button->setIcon(icon);
-    button->setIconSize(QSize(50, 50));
-    button->setCheckable(true);
-    buttonGroup->addButton(button, int(type));
+//    QToolButton *button = new QToolButton;
+//    button->setIcon(icon);
+//    button->setIconSize(QSize(50, 50));
+//    button->setCheckable(true);
+//    buttonGroup->addButton(button, int(type));
 
-    QGridLayout *layout = new QGridLayout;
-    layout->addWidget(button, 0, 0, Qt::AlignHCenter);
-    layout->addWidget(new QLabel(text), 1, 0, Qt::AlignCenter);
+//    QGridLayout *layout = new QGridLayout;
+//    layout->addWidget(button, 0, 0, Qt::AlignHCenter);
+//    layout->addWidget(new QLabel(text), 1, 0, Qt::AlignCenter);
 
-    QWidget *widget = new QWidget;
-    widget->setLayout(layout);
+//    QWidget *widget = new QWidget;
+//    widget->setLayout(layout);
 
-    return widget;
-}
+//    return widget;
+//}
 
 QMenu *MainWindow_Radar::createColorMenu(const char *slot, QColor defaultColor)
 {
@@ -1406,9 +1369,44 @@ void MainWindow_Radar::On_isSave2False(QString message)
     ui->actionsave->setEnabled(true);
 }
 
-void MainWindow_Radar::update_Comp_property(QString name)
+void MainWindow_Radar::update_Comp_property(AlgorithmComp ac)
 {
-    ui->lineEdit_CompName->setText(name);
+    QMap<QString, QString> info_map = ac.getInfo();
+    qDebug() << info_map.toStdMap();
+    QMap<QString, QString>::Iterator it;
+    QWidget *w = new QWidget;
+    QVBoxLayout *v = new QVBoxLayout;
+    QWidget *sw = new QWidget;
+    QFormLayout *fl = new QFormLayout;
+    for ( it = info_map.begin(); it != info_map.end(); ++it ) {
+//        QLabel *l = new QLabel(it.key(), sw);
+        QLineEdit *ql = new QLineEdit(it.value(), sw);
+        fl->setLabelAlignment(Qt::AlignLeft);//设置标签的对齐方式
+        fl->addRow(it.key(), ql);
+        sw->setLayout(fl);
+        v->addWidget(sw);
+    }
+
+    QMap<QString, QMap<QString, QString>> para_map = ac.getParam();
+    fl->setSpacing(10);
+
+    for ( QMap<QString, QMap<QString, QString>>::iterator itt = para_map.begin(); itt != para_map.end(); ++itt ) {
+        QLineEdit *desc = new QLineEdit(itt.value().value("describe"), sw);
+        QLineEdit *val = new QLineEdit(itt.value().value("value"), sw);
+        QLabel *l = new QLabel();
+        fl->setAlignment(Qt::AlignLeft);
+        fl->addRow(itt.key(), l);
+        fl->addRow("describe", desc);
+        fl->addRow("value", val);
+        fl->setLabelAlignment(Qt::AlignLeft);//设置标签的对齐方式
+        sw->setLayout(fl);
+        v->addWidget(sw);
+    }
+
+    // 挤上去
+    v->addStretch();
+    w->setLayout(v);
+    ui->dockWidget->setWidget(w);
 }
 
 void MainWindow_Radar::setComp_typeandMode(int id)

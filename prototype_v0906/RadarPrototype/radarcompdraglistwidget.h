@@ -25,7 +25,7 @@ public:
 public slots:
 
 signals:
-    void add_one_Comp(QString name);
+    void add_one_Comp(AlgorithmComp algo);
     void setComp_typeandMode(int id);
 
 protected:
@@ -44,7 +44,7 @@ private:
     QPoint m_dragPoint;
     //记录被拖拽的项.
     QListWidgetItem *m_dragItem;
-    QList<AlgorithmComp> algorithms;
+    QMap<QString, AlgorithmComp> algorithms;
 };
 
 #endif // RADARCOMPDRAGLISTWIDGET_H

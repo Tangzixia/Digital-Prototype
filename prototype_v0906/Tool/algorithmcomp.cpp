@@ -35,3 +35,8 @@ void AlgorithmComp::setParam(const QMap<QString, QMap<QString, QString> > &value
     param = value;
 }
 
+void AlgorithmComp::clearParam()
+{
+    param.clear();
+}
+

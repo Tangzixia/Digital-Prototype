@@ -11,6 +11,7 @@
 #include <QDir>
 #include <qfiledialog.h>
 #include <algorithmcomp.h>
+#include <parameditradardialog.h>
 #include "utils.h"
 // This is available in all editors.
 /**
@@ -111,36 +112,47 @@ void RadarCompDraglistWidget::mousePressEvent(QMouseEvent *event)
                     break;
             case 0:{
                     // 新建
-                    int flag = 0;
-                    QString Compname = "";
-                    while(Compname.isEmpty() || Compname.isNull()){
-                        // 弹窗填写参数
-                        QInputDialog dlg;
-                        dlg.setWindowTitle("参数编辑");
-                        dlg.setLabelText("组件名：");
-                        dlg.setInputMode(QInputDialog::TextInput);
-                        if( dlg.exec() == QInputDialog::Accepted )
-                        {
-                            Compname = dlg.textValue();
-                        }else{
-                            qDebug() << "取消";
-                            flag = 1;
-                            break;
-                        }
+                    ParamEditRadarDialog dlg;
+                    if(dlg.exec() == QDialog::Accepted)
+                    {
+                        qDebug() << "确定";
+                        algorithms.insert(dlg.ac.getInfo()["ID"], dlg.ac);
+                        qDebug() << "algorithms大小： " << algorithms.size();
+                        Utils::writeAlgorithmComp2Xml(dlg.ac);
+                        emit add_one_Comp(dlg.ac);
+                    }else{
+                        qDebug() << "取消";
                     }
-                    // 没点取消
-                    if(flag == 0){
-                        QListWidgetItem *item1 = new QListWidgetItem();
-                        item1->setIcon(QIcon(":/img/Comp.png"));
-                        item1->setText(tr(Compname.toUtf8().data()));
-                        //这里的用户角色存储用户数据
-                        item1->setData(Qt::UserRole, QPixmap(":/img/Comp.png"));
-                        item1->setData(Qt::UserRole+1, Compname);
-                        item1->setData(Qt::UserRole+2, this->count());
-                        item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
-                        this->addDragItem(item1);
-                        emit add_one_Comp(Compname);
-                    }
+//                    int flag = 0;
+//                    QString Compname = "";
+//                    while(Compname.isEmpty() || Compname.isNull()){
+//                        // 弹窗填写参数
+//                        QInputDialog dlg;
+//                        dlg.setWindowTitle("参数编辑");
+//                        dlg.setLabelText("组件名：");
+//                        dlg.setInputMode(QInputDialog::TextInput);
+//                        if( dlg.exec() == QInputDialog::Accepted )
+//                        {
+//                            Compname = dlg.textValue();
+//                        }else{
+//                            qDebug() << "取消";
+//                            flag = 1;
+//                            break;
+//                        }
+//                    }
+//                    // 没点取消
+//                    if(flag == 0){
+//                        QListWidgetItem *item1 = new QListWidgetItem();
+//                        item1->setIcon(QIcon(":/img/Comp.png"));
+//                        item1->setText(tr(Compname.toUtf8().data()));
+//                        //这里的用户角色存储用户数据
+//                        item1->setData(Qt::UserRole, QPixmap(":/img/Comp.png"));
+//                        item1->setData(Qt::UserRole+1, Compname);
+//                        item1->setData(Qt::UserRole+2, this->count());
+//                        item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
+//                        this->addDragItem(item1);
+//                        emit add_one_Comp(Compname);
+//                    }
                     break;
                 }
             case 1:
@@ -151,16 +163,29 @@ void RadarCompDraglistWidget::mousePressEvent(QMouseEvent *event)
                 const QString fileName = QFileDialog::getOpenFileName(this, tr("打开组件xml"), QString(dirpath), tr("xml files (*.xml)"));
                 qDebug() << fileName;
                 AlgorithmComp ac = Utils::readPluginXmlFile(fileName);
-                algorithms.append(ac);
-                qDebug() << algorithms.size();
+                algorithms.insert(ac.getInfo()["ID"], ac);
+                QListWidgetItem *item1 = new QListWidgetItem();
+                item1->setIcon(QIcon(":/img/Comp.png"));
+                item1->setText(tr(ac.getInfo()["Name"].toUtf8().data()));
+                //这里的用户角色存储用户数据
+                item1->setData(Qt::UserRole, QPixmap(":/img/Comp.png"));
+                item1->setData(Qt::UserRole+1, ac.getInfo()["Name"]);
+                // TODO 向这里的id和之前写的id全要改，以xml中的id为准，唯一标识
+                item1->setData(Qt::UserRole+2, ac.getInfo()["ID"]);
+                item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
+                this->addDragItem(item1);
+
+                emit add_one_Comp(ac);
+                qDebug() << "列表的大小：" << algorithms.size();
                 break;
             }
         }else if(m_dragItem){
-            emit add_one_Comp(m_dragItem->text());
-            // 获取点击的是哪个组件的id，传到radarScene中，知道该渲染出哪个组件
+            // TODO 这里的ID也不对
             int id = qvariant_cast<int>(m_dragItem->data(Qt::UserRole+2))-1; //从0开始
             qDebug() << "当前id:" << id;
-
+            // 点击其他组件,这个id应该为xml中的ID
+            emit add_one_Comp(algorithms[QString::number(id)]);
+            // 获取点击的是哪个组件的id，传到radarScene中，知道该渲染出哪个组件
             emit setComp_typeandMode(id);
         }
     }

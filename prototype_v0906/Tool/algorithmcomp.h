@@ -2,6 +2,13 @@
 #define ALGORITHMCOMP_H
 #include <QMap>
 
+// This is available in all editors.
+/**
+* @projectName   prototype_v0906
+* @brief         简介 雷达组件xml对应的类
+* @author        Antrn
+* @date          2019-10-03
+*/
 class AlgorithmComp
 {
 public:
@@ -15,11 +22,12 @@ public:
     QMap<QString, QMap<QString, QString> > getParam() const;
     void setParam(const QMap<QString, QMap<QString, QString> > &value);
 
+    void clearParam();
+
 private:
     QMap<QString, QString> info;
     QMap<QString, QMap<QString, QString>> param;
     QString desc;
-
 };
 
 #endif // ALGORITHMCOMP_H

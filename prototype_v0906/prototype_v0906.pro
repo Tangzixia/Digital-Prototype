@@ -75,7 +75,8 @@ SOURCES += \
     Tool/utils.cpp \
     Main/menu_iteamoperation.cpp \
     Main/rightwindow_property.cpp \
-    Tool/algorithmcomp.cpp
+    Tool/algorithmcomp.cpp \
+    Tool/parameditradardialog.cpp
 HEADERS += \
         Main\mainwindow.h \
     Tool\myglwidget.h \
@@ -109,7 +110,8 @@ HEADERS += \
     Tool/utils.h \
     Main/menu_iteamoperation.h \
     Main/rightwindow_property.h \
-    Tool/algorithmcomp.h
+    Tool/algorithmcomp.h \
+    Tool/parameditradardialog.h
 FORMS += \
         Main\mainwindow.ui \
     Tool\opengl.ui \
@@ -123,7 +125,8 @@ FORMS += \
     Tool/runcompconf.ui \
     EccmPrototype/mainwindow_ecm.ui \
     Main/menu_iteamoperation.ui \
-    Main/rightwindow_property.ui
+    Main/rightwindow_property.ui \
+    Tool/parameditradardialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

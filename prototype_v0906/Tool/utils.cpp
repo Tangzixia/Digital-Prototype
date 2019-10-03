@@ -174,6 +174,7 @@ AlgorithmComp Utils::readPluginXmlFile(QString fileName)
         QDomNode itemNode = doc.elementsByTagName("Information").at(0);
         // 子孩子就是标签名为Name、ID...
         QDomNode m = itemNode.firstChild();
+        QMap<QString, QString> infomap;
         while(!m.isNull()){
             std::string tagName = m.nodeName().toStdString();
             if(m.isElement()){
@@ -181,10 +182,11 @@ AlgorithmComp Utils::readPluginXmlFile(QString fileName)
                 QString content = m.toElement().text();
                 // 保存起来
                 qDebug() << QString::fromStdString(tagName) << ": " << content;
-                ac.getInfo().insert(QString::fromStdString(tagName), content);
+                infomap.insert(QString::fromStdString(tagName), content);
             }
             m = m.nextSibling();
         }
+        ac.setInfo(infomap);
         // Description
         QDomNode descNode = doc.elementsByTagName("Description").at(0);
         QString desc = descNode.toElement().text();
@@ -196,6 +198,7 @@ AlgorithmComp Utils::readPluginXmlFile(QString fileName)
         // 就是arrow了，因为箭头就一种
         QDomNode m1 = ParaNode.firstChild();
         QString describe, value;
+        QMap<QString, QMap<QString, QString> >paramap;
         // 遍历所有的箭头
         while(!m1.isNull()){
             std::string tagName = m1.nodeName().toStdString();
@@ -207,14 +210,76 @@ AlgorithmComp Utils::readPluginXmlFile(QString fileName)
                 qDebug() << QString::fromStdString(tagName) << ": describe： " << describe << "; " << "value: " << value;
                 QMap<QString, QString> mm;
                 mm.insert(describe, value);
-                ac.getParam().insert(QString::fromStdString(tagName), mm);
+                paramap.insert(QString::fromStdString(tagName), mm);
             }
             m1 = m1.nextSibling();
         }
+        ac.setParam(paramap);
+//        qDebug() << ac.getInfo()["ID"];
         return ac;
     }else {
         // TODO 文件名为空，啥也没选，提示
         Utils::alert(QApplication::desktop()->screen()->rect(), "请选择文件!");
         return ac;
+    }
+}
+
+// This is available in all editors.
+/**
+* @projectName   prototype_v0906
+* @brief         简介 将算法组件存到xml文件中
+* @author        Antrn
+* @date          2019-10-03
+*/
+void Utils::writeAlgorithmComp2Xml(AlgorithmComp ac)
+{
+    QString savePath = QDir::currentPath()+"/algoXml/";
+    openDirOrCreate(savePath);
+
+    QMap<QString, QString> infoMap = ac.getInfo();
+    QMap<QString, QMap<QString, QString>> paraMap = ac.getParam();
+    QString desc = ac.getDesc();
+    QDomDocument doc;
+    QDomElement Info, Desc, Param;
+    //添加处理指令即xml头部说明和场景的属性
+    QDomProcessingInstruction instruction = doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
+    doc.appendChild(instruction);
+    QDomElement root = doc.createElement("Plugins");
+    doc.appendChild(root);
+    Info = doc.createElement("Information");
+    Desc = doc.createElement("Description");
+    root.appendChild(Info);
+    root.appendChild(Desc);
+    Param = doc.createElement("Parameter");
+    root.appendChild(Param);
+    for (QMap<QString, QString>::iterator i =infoMap.begin();i!=infoMap.end();i++) {
+        QDomElement info = doc.createElement(i.key());
+        QDomText c = doc.createTextNode(i.value());
+        info.appendChild(c);
+        Info.appendChild(info);
+    }
+    QDomText d = doc.createTextNode(ac.getDesc());
+    Desc.appendChild(d);
+    for (QMap<QString, QMap<QString, QString>>::iterator j =paraMap.begin();j!=paraMap.end();j++) {
+        QDomElement para = doc.createElement(j.key());
+        QDomAttr describe = doc.createAttribute("describe");
+        QDomAttr value = doc.createAttribute("value");
+        describe.setValue(j.value().value("describe"));
+        qDebug() << j.value().toStdMap();
+        value.setValue(j.value().value("value"));
+        para.setAttributeNode(describe);
+        para.setAttributeNode(value);
+        Param.appendChild(para);
+    }
+    QString filename = savePath+"/"+ac.getInfo()["Name"]+".xml";
+    QFile file(filename); // 这个斜杠很关键
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Truncate)){
+        file.close();
+        qDebug() << "打开文件失败";
+    }else{
+        QTextStream out(&file);
+        doc.save(out, 4); //EncodingFromDocument
+        file.close();
+        qDebug() << "场景保存成功!路径为： "+filename;
     }
 }

@@ -27,6 +27,7 @@ public:
     static int saveImage(int f, RadarScene *scene,  QGraphicsView *view,  QString path, QString name);
     static void openDirOrCreate(QString dirPath);
     static AlgorithmComp readPluginXmlFile(QString fileName);
+    static void writeAlgorithmComp2Xml(AlgorithmComp ac);
 };
 
 #endif // UTILS_H

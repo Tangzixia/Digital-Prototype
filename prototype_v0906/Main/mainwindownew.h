@@ -26,7 +26,7 @@ public:
     ~MainWindowNew();
     QLabel *label_xy;
 //    MainWindowNewScene *graphicsScene;
-    static QList<MainWindow_Radar *> main_radar_list;
+//    static QList<MainWindow_Radar *> main_radar_list;
 
 signals:
 //接收子类itemoperate

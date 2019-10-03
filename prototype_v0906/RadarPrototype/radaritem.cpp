@@ -60,14 +60,13 @@ void RadarItem::show_property()
     p->exec();
 }
 
-// BUG 设置使得在雷达页面未关闭之前不能关闭主窗口。
+// 设置使得在雷达页面未关闭之前不能关闭主窗口。
 // 使得每个新打开的页面都和唯一一个雷达/电子对抗绑定，如果对于某个雷达已经配置好，下次编辑直接可以看到雷达里面的组件（场景）
 void RadarItem::edit_radar()
 {
-    MainWindow_Radar *main_radar = new MainWindow_Radar(getRadar_id());
-    // 隐藏bug
-    MainWindowNew::main_radar_list.append(main_radar);
-    main_radar->show();
+//    MainWindow_Radar *main_radar = new MainWindow_Radar(getRadar_id());
+//    MainWindowNew::main_radar_list.append(main_radar);
+//    main_radar->show();
 }
 
 QString RadarItem::getRadar_id(){
@@ -110,7 +109,6 @@ void RadarItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
             }
 
         });
-
         menu->setAttribute(Qt::WA_DeleteOnClose);
         menu->exec(event->screenPos());
         delete menu;

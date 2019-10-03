@@ -75,8 +75,6 @@ public slots:
 //操作item
     void itemOperateSlot(Menu_iteamOperation::OperateType, QString ,QString newName="");
     void renameSlot(QListWidgetItem* );
-
-
 };
 
 #endif // DRAGLISTWIDGET_H
