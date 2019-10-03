@@ -498,18 +498,19 @@ void MainWindow_Radar::closeEvent(QCloseEvent *event)
             toggleSaveXml(0);
             ui->actionRunRadar->setEnabled(true);
             qDebug() << "保存退出";
+            emit iClose(this);
             event->accept();
             MainWindowNew::main_radar_list.removeOne(this);
             //提醒父类更新列表
-            emit iClose(this);
 
         }else if(ret1 == QMessageBox::No){
             qDebug() << "do not save";
             // 直接退出
+               emit iClose(this);
             event->accept();
             MainWindowNew::main_radar_list.removeOne(this);
             //提醒父类更新列表
-            emit iClose(this);
+
         }else {
             // 拒绝关闭
             qDebug() << "拒绝关闭!!!";
@@ -517,9 +518,10 @@ void MainWindow_Radar::closeEvent(QCloseEvent *event)
         }
     }else{
         event->accept();
+         emit iClose(this);
         MainWindowNew::main_radar_list.removeOne(this);
         //提醒父类更新列表
-        emit iClose(this);
+
     }
 }
 

@@ -229,8 +229,7 @@ void DragListWidget::itemOperateSlot(Menu_iteamOperation::OperateType operateTyp
        {
            qDebug()<<"left_delete:"<<id;
            if(newEditWindowList.contains(id)){
-                MainWindow_Radar *radar=newEditWindowList.find(id).value();
-                radar->close();
+                MainWindow_Radar *radar=newEditWindowList.find(id).value();   
                 connect(radar,&MainWindow_Radar::iClose,[=,&item](){
                     this->removeItemWidget(item);
                     delete item;
@@ -238,6 +237,7 @@ void DragListWidget::itemOperateSlot(Menu_iteamOperation::OperateType operateTyp
                     //删除后必须跟新它
                     this->forRename.preIndex=-1;
                 });
+                 radar->close();
            }
             else{
                this->removeItemWidget(item);
