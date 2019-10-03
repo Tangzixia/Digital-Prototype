@@ -489,6 +489,8 @@ void MainWindow_Radar::closeEvent(QCloseEvent *event)
 {
     //还未保存
     if(isSave == false){
+        this->showNormal();
+        this->raise();
         int ret1 = QMessageBox::question(this, tr("确认"), tr("确定退出前保存场景到桌面?"), QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel);
         if(ret1 == QMessageBox::Yes){
             save2XmlFile();
@@ -498,11 +500,16 @@ void MainWindow_Radar::closeEvent(QCloseEvent *event)
             qDebug() << "保存退出";
             event->accept();
             MainWindowNew::main_radar_list.removeOne(this);
+            //提醒父类更新列表
+            emit iClose(this);
+
         }else if(ret1 == QMessageBox::No){
             qDebug() << "do not save";
             // 直接退出
             event->accept();
             MainWindowNew::main_radar_list.removeOne(this);
+            //提醒父类更新列表
+            emit iClose(this);
         }else {
             // 拒绝关闭
             qDebug() << "拒绝关闭!!!";
@@ -511,9 +518,9 @@ void MainWindow_Radar::closeEvent(QCloseEvent *event)
     }else{
         event->accept();
         MainWindowNew::main_radar_list.removeOne(this);
+        //提醒父类更新列表
+        emit iClose(this);
     }
-    //提醒父类更新列表
-    emit iClose(this);
 }
 
 //组件层叠关系
