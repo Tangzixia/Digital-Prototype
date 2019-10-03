@@ -24,9 +24,10 @@ public:
     explicit DragListWidget(QWidget *parent = nullptr);
     void addDragItem(QListWidgetItem*item);
     void addDragItem(const QString &label);
-
+    bool closeDragListWidget();
     static QString puzzleMimeType() {
      return QStringLiteral("image/x-module-piece");
+
     }
 //没用到
 signals:
@@ -59,11 +60,11 @@ private:
     QMap<QString,QListWidgetItem*> id_item;
     //listWidgetItem计数
     int id_inde=1;
-     //是否新建了edit窗口
-    QMap<QString,MainWindow_Radar*> newEditWindowList;
-    //保存前一个被操作的item信息（名字 index）
 
-    struct forRename
+    //是否新建了edit窗口
+   QMap<QString,MainWindow_Radar*> newEditWindowList;
+  //保存前一个被操作的item信息（名字 index）
+   struct forRename
            {
                 QString preName;
                 int preIndex=-1;

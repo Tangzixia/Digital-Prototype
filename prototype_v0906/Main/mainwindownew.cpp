@@ -65,7 +65,17 @@ void MainWindowNew::closeEvent(QCloseEvent *event)
 //        m->close();
 //    }
 //    main_radar_list.clear();
-    event->accept();
+    for(MainWindow_Radar *m : main_radar_list){
+        m->close();
+    }
+    main_radar_list.clear();
+
+    if(ui->listWidget_rader->closeDragListWidget()){
+        event->accept();
+    }
+    else { 
+        event->ignore();
+    }
 }
 
 void MainWindowNew::resizeEvent(QResizeEvent *)

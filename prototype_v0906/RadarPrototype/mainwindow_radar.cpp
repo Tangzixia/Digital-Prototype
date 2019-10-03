@@ -446,18 +446,25 @@ void MainWindow_Radar::closeEvent(QCloseEvent *event)
 {
     //还未保存
     if(isSave == false){
-        int ret1 = QMessageBox::question(this, tr("确认"), tr("确定退出前保存场景?"), QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel);
+        this->showNormal();
+        this->raise();
+        int ret1 = QMessageBox::question(this, tr("确认"), tr("确定退出前保存场景到桌面?"), QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel);
         if(ret1 == QMessageBox::Yes){
             save2XmlFile();
             isSave = true;
             toggleSaveXml(0);
             ui->actionRunRadar->setEnabled(true);
             qDebug() << "保存退出";
+             //提醒父类更新列表
+			emit iClose(this);
             event->accept();
 //            MainWindowNew::main_radar_list.removeOne(this);
+
         }else if(ret1 == QMessageBox::No){
             qDebug() << "do not save";
-            // 直接退出
+             //提醒父类更新列表
+			 emit iClose(this);
+			// 直接退出 
             event->accept();
 //            MainWindowNew::main_radar_list.removeOne(this);
         }else {
@@ -466,11 +473,12 @@ void MainWindow_Radar::closeEvent(QCloseEvent *event)
             event->ignore();
         }
     }else{
+		//提醒父类更新列表
+         emit iClose(this);
         event->accept();
 //        MainWindowNew::main_radar_list.removeOne(this);
+
     }
-    //提醒父类更新列表
-    emit iClose(this);
 }
 
 //组件层叠关系

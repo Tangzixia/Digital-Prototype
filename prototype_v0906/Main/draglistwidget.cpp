@@ -228,11 +228,24 @@ void DragListWidget::itemOperateSlot(Menu_iteamOperation::OperateType operateTyp
        case Menu_iteamOperation::del:
        {
            qDebug()<<"left_delete:"<<id;
-            this->removeItemWidget(item);
-            delete item;
-            id_item.remove(id_item.key(item));
-            if(!newEditWindowList.isEmpty())newEditWindowList.remove(id);
-            this->forRename.preIndex=-1;
+           if(newEditWindowList.contains(id)){
+                MainWindow_Radar *radar=newEditWindowList.find(id).value();   
+                connect(radar,&MainWindow_Radar::iClose,[=,&item](){
+                    this->removeItemWidget(item);
+                    delete item;
+                    id_item.remove(id_item.key(item));
+                    //删除后必须跟新它
+                    this->forRename.preIndex=-1;
+                });
+                 radar->close();
+           }
+            else{
+               this->removeItemWidget(item);
+               delete item;
+               id_item.remove(id_item.key(item));
+               //删除后必须跟新它
+               this->forRename.preIndex=-1;
+           }
             break;
        }
        case Menu_iteamOperation::edit:
@@ -340,4 +353,19 @@ void DragListWidget::add_listItem(QString name) {
     item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled);
     this->addDragItem(item);
     qDebug()<<"additem了,name:"<<newName;
+}
+
+bool DragListWidget::closeDragListWidget(){
+     if(this->newEditWindowList.isEmpty())
+        return true;
+     else {
+        QMessageBox::warning(this,"警告","有子窗口未关闭！！请先关闭子窗口。");
+        QMap<QString,MainWindow_Radar*>::iterator i=this->newEditWindowList.begin();
+        while (i!=newEditWindowList.end()) {
+           i.value()->showNormal();
+           i.value()->raise();
+        i++;
+       }
+       return false;
+     }
 }
