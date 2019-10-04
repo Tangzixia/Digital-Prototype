@@ -16,9 +16,12 @@
   <property name="windowTitle">
    <string>编辑雷达</string>
   </property>
+  <property name="dockOptions">
+   <set>QMainWindow::AllowNestedDocks|QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks</set>
+  </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
      <widget class="QGraphicsView" name="graphicsView">
       <property name="styleSheet">
        <string notr="true"/>
@@ -55,10 +58,11 @@
     <property name="title">
      <string>工具&amp;T</string>
     </property>
-    <addaction name="actionCom_list"/>
     <addaction name="actionOpenXml"/>
     <addaction name="actionsave"/>
     <addaction name="actionRunRadar"/>
+    <addaction name="actionCom_list"/>
+    <addaction name="actionproperty"/>
    </widget>
    <addaction name="menu"/>
   </widget>
@@ -78,6 +82,10 @@
      <width>172</width>
      <height>156</height>
     </size>
+   </property>
+   <property name="windowIcon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/XmlDockIcon.png</normaloff>:/img/XmlDockIcon.png</iconset>
    </property>
    <property name="autoFillBackground">
     <bool>false</bool>
@@ -141,6 +149,25 @@
    <addaction name="actionRunRadar"/>
   </widget>
   <widget class="QDockWidget" name="dockWidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>95</width>
+     <height>111</height>
+    </size>
+   </property>
+   <property name="windowIcon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/propertyDockIcon.png</normaloff>:/img/propertyDockIcon.png</iconset>
+   </property>
+   <property name="features">
+    <set>QDockWidget::AllDockWidgetFeatures</set>
+   </property>
    <property name="windowTitle">
     <string>属性窗口</string>
    </property>
@@ -148,7 +175,7 @@
     <number>2</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_2">
-    <layout class="QFormLayout" name="formLayout"/>
+    <layout class="QVBoxLayout" name="verticalLayout_2"/>
    </widget>
   </widget>
   <action name="actionCom_list">
@@ -158,11 +185,22 @@
    <property name="checked">
     <bool>false</bool>
    </property>
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/compXmlDock.png</normaloff>:/img/compXmlDock.png</iconset>
+   </property>
    <property name="text">
-    <string>组件列表</string>
+    <string>组件窗口</string>
+   </property>
+   <property name="toolTip">
+    <string>组件窗口</string>
    </property>
   </action>
   <action name="actionOpenXml">
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/openxml.png</normaloff>:/img/openxml.png</iconset>
+   </property>
    <property name="text">
     <string>打开xml</string>
    </property>
@@ -189,6 +227,18 @@
    </property>
    <property name="text">
     <string>运行</string>
+   </property>
+  </action>
+  <action name="actionproperty">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/propertyDock.png</normaloff>:/img/propertyDock.png</iconset>
+   </property>
+   <property name="text">
+    <string>属性窗口</string>
    </property>
   </action>
   <zorder>dockCompList</zorder>

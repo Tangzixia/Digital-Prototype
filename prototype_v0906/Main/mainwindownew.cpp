@@ -22,7 +22,7 @@ MainWindowNew::MainWindowNew(QWidget *parent) :
     // 设置对话框icon
     this->setWindowIcon(QIcon(":/img/fangzhen.png"));
     this->setStyleSheet("padding:0;margin:0");
-    //this->setAttribute(Qt::WA_DeleteOnClose);
+    this->setAttribute(Qt::WA_DeleteOnClose);
     graphicsScene=new MainWindowNewScene();
     // xy坐标标签
     label_xy=new QLabel(this);
@@ -65,10 +65,6 @@ void MainWindowNew::closeEvent(QCloseEvent *event)
 //        m->close();
 //    }
 //    main_radar_list.clear();
-    for(MainWindow_Radar *m : main_radar_list){
-        m->close();
-    }
-    main_radar_list.clear();
 
     if(ui->listWidget_rader->closeDragListWidget()){
         event->accept();

@@ -48,7 +48,6 @@ public:
     void init5Comp();
     void init1Comp(QString comPName, QMenu *itemMenu, DiagramItem::DiagramType diagramType);
     void loadCompByName(QString strText);
-    void loadAllComps();
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -56,6 +55,9 @@ protected:
 private slots:
      void on_actionCom_list_triggered();
      void xy_show(double x,double y);
+
+     // 读取文件夹，加载所有组件
+     void loadAllComps();
 
      void backgroundButtonGroupClicked(QAbstractButton *button);
 //     void buttonGroupClicked(int id);
@@ -95,6 +97,7 @@ private slots:
      void editComplete();
 
 private:
+     // 名字
     QString equip_id;
     Ui::MainWindow_Radar *ui;
     QLabel *label_xy;

@@ -9,7 +9,7 @@
 #include <QTimer>
 #include <radarscene.h>
 #include <QApplication>
-// This is available in all editors.
+
 /**
 * @projectName   prototype_v0906
 * @brief         简介:工具类
@@ -48,7 +48,6 @@ void Utils::alert(QRect rect, QString content)
     });
 }
 
-// This is available in all editors.
 /**
 * @projectName   prototype_v0906
 * @brief         简介: 保存文件到某个文件夹的文件中
@@ -98,7 +97,6 @@ int Utils::saveFile(QWidget *qw, QString dirp, QString filename, RadarScene *sce
     }
 }
 
-// This is available in all editors.
 /**
 * @projectName   prototype_v0906
 * @brief         简介 保存快照截图
@@ -136,15 +134,15 @@ int Utils::saveImage(int f, RadarScene *scene, QGraphicsView *view,  QString pat
     return 0;
 }
 
-void Utils::openDirOrCreate(QString dirPath)
+QDir Utils::openDirOrCreate(QString dirPath)
 {
     QDir dir(dirPath);
     if(!dir.exists()){
         dir.mkdir(dirPath);//创建多级目录
     }
+    return dir;
 }
 
-// This is available in all editors.
 /**
 * @projectName   prototype_v0906
 * @brief         简介 读取算法组件的xml文件
@@ -156,9 +154,11 @@ AlgorithmComp Utils::readPluginXmlFile(QString fileName)
     AlgorithmComp ac;
     QDomDocument doc;
     if(!fileName.isEmpty()){
+        qDebug() << fileName;
         QFile file(fileName);
         if(!file.open(QIODevice::ReadOnly)) {
             qDebug() << "文件打开出错！";
+            file.close();
             return ac;
         }
         if(!doc.setContent(&file)){
@@ -209,7 +209,8 @@ AlgorithmComp Utils::readPluginXmlFile(QString fileName)
                 value = e.attribute("value");
                 qDebug() << QString::fromStdString(tagName) << ": describe： " << describe << "; " << "value: " << value;
                 QMap<QString, QString> mm;
-                mm.insert(describe, value);
+                mm.insert("describe", describe);
+                mm.insert("value", value);
                 paramap.insert(QString::fromStdString(tagName), mm);
             }
             m1 = m1.nextSibling();
@@ -224,7 +225,6 @@ AlgorithmComp Utils::readPluginXmlFile(QString fileName)
     }
 }
 
-// This is available in all editors.
 /**
 * @projectName   prototype_v0906
 * @brief         简介 将算法组件存到xml文件中
@@ -271,7 +271,7 @@ void Utils::writeAlgorithmComp2Xml(AlgorithmComp ac)
         para.setAttributeNode(value);
         Param.appendChild(para);
     }
-    QString filename = savePath+"/"+ac.getInfo()["Name"]+".xml";
+    QString filename = savePath+ac.getInfo()["Name"]+".xml";
     QFile file(filename); // 这个斜杠很关键
     if(!file.open(QIODevice::WriteOnly | QIODevice::Truncate)){
         file.close();
@@ -280,6 +280,25 @@ void Utils::writeAlgorithmComp2Xml(AlgorithmComp ac)
         QTextStream out(&file);
         doc.save(out, 4); //EncodingFromDocument
         file.close();
-        qDebug() << "场景保存成功!路径为： "+filename;
+        qDebug() << "算法组件保存成功!路径为： "+filename;
+    }
+}
+
+/**
+* @projectName   prototype_v0906
+* @brief         简介 重命名文件，必须要使用静态方法，且绝对路径，否则失败
+* @author        Antrn
+* @date          2019-10-04
+*/
+bool Utils::modifyFileName(QString fileName, QString newName)
+{
+    QString filePath = QDir::currentPath()+"/algoXml/"+fileName+".xml";
+    qDebug() << filePath;
+    if(QFile::exists(filePath)){
+        bool b = QFile::rename(filePath, QDir::currentPath()+"/algoXml/"+newName+".xml");
+        return b;
+    }else{
+        qDebug() << "文件不存在!";
+        return false;
     }
 }

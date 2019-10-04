@@ -13,6 +13,8 @@
 #include <algorithmcomp.h>
 #include <parameditradardialog.h>
 #include "utils.h"
+#include <QApplication>
+#include <QDesktopWidget>
 // This is available in all editors.
 /**
 * @projectName   prototype_v0906
@@ -43,15 +45,48 @@ RadarCompDraglistWidget::RadarCompDraglistWidget(QWidget *parent) : QListWidget(
     this->addItem(tr("自定义组件"));
     addCompButton = this->item(0);
     addCompButton->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-    // addRadarButton->setBackgroundColor(QColor(211,211,211));
+    addCompButton->setTextColor(QColor(255,0,0));
     addCompButton->setFlags(Qt::NoItemFlags);
     addCompButton->setIcon(QIcon(":/img/newradar.png"));
     addCompButton->setToolTip(tr("点击增加自定义组件"));
+    connect(this, &QListWidget::itemDoubleClicked, this, &RadarCompDraglistWidget::onCurrentDoubleClicked);
+    connect(this, &QListWidget::itemChanged, this, &RadarCompDraglistWidget::onCurrentTextChanged);
 }
 
 void RadarCompDraglistWidget::addDragItem(QListWidgetItem*item){
     this->addItem(item);
     this->setVisible(true);
+}
+
+void RadarCompDraglistWidget::onCurrentTextChanged(QListWidgetItem *item)
+{
+    if(item!=addCompButton){
+        QString lastName = item->text();
+        qDebug() << "item名字变为： " << lastName << "； item内容有变化";
+        if(nameList.contains(lastName)){
+            qDebug() << "与现有的文件名: " << lastName << "重复!";
+            Utils::alert(QApplication::desktop()->screen()->rect(), "已有重复名称存在，请重试");
+        }else{
+            nameList.removeOne(oldName);
+            qDebug() << oldName << "; " << lastName;
+            if(Utils::modifyFileName(oldName, lastName)){
+                qDebug() << "重命名成功!";
+            }else{
+                qDebug() << "重命名失败";
+            }
+        }
+    }
+}
+
+void RadarCompDraglistWidget::onCurrentDoubleClicked(QListWidgetItem *item)
+{
+    QString preName = item->text();
+    if(!nameList.contains(preName)){
+        qDebug() << "原名字: " << preName << "不存在，出现错误";
+    }else{
+        oldName = preName;
+        qDebug() << "原名字： " << preName;
+    }
 }
 
 void RadarCompDraglistWidget::startDrag(Qt::DropActions /*supportedActions*/)
@@ -85,6 +120,10 @@ void RadarCompDraglistWidget::startDrag(Qt::DropActions /*supportedActions*/)
     }
 }
 
+// TODO： 组件重命名
+//       属性编辑更新
+
+
 //重写鼠标点击操作.
 void RadarCompDraglistWidget::mousePressEvent(QMouseEvent *event)
 {
@@ -117,9 +156,11 @@ void RadarCompDraglistWidget::mousePressEvent(QMouseEvent *event)
                     {
                         qDebug() << "确定";
                         algorithms.insert(dlg.ac.getInfo()["ID"], dlg.ac);
+                        qDebug() << "刚增加的id:" << dlg.ac.getInfo()["ID"];
                         qDebug() << "algorithms大小： " << algorithms.size();
                         Utils::writeAlgorithmComp2Xml(dlg.ac);
                         emit add_one_Comp(dlg.ac);
+                        emit toRefreshCompList(); //刷新列表
                     }else{
                         qDebug() << "取消";
                     }
@@ -143,45 +184,46 @@ void RadarCompDraglistWidget::mousePressEvent(QMouseEvent *event)
 //                    // 没点取消
 //                    if(flag == 0){
 //                        QListWidgetItem *item1 = new QListWidgetItem();
-//                        item1->setIcon(QIcon(":/img/Comp.png"));
+//                        item1->setIcon(QIcon(":/img/component.png"));
 //                        item1->setText(tr(Compname.toUtf8().data()));
 //                        //这里的用户角色存储用户数据
-//                        item1->setData(Qt::UserRole, QPixmap(":/img/Comp.png"));
+//                        item1->setData(Qt::UserRole, QPixmap(":/img/component.png"));
 //                        item1->setData(Qt::UserRole+1, Compname);
 //                        item1->setData(Qt::UserRole+2, this->count());
 //                        item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
 //                        this->addDragItem(item1);
 //                        emit add_one_Comp(Compname);
 //                    }
+
                     break;
                 }
             case 1:
                 // 导入文件
-                QString dirpath = QDir::currentPath()+"/xmls/";
+                QString dirpath = QDir::currentPath()+"/algoXml/";
                 Utils::openDirOrCreate(dirpath);
                 // 打开xml文件读取
                 const QString fileName = QFileDialog::getOpenFileName(this, tr("打开组件xml"), QString(dirpath), tr("xml files (*.xml)"));
-                qDebug() << fileName;
+//                qDebug() << fileName;
                 AlgorithmComp ac = Utils::readPluginXmlFile(fileName);
                 algorithms.insert(ac.getInfo()["ID"], ac);
                 QListWidgetItem *item1 = new QListWidgetItem();
-                item1->setIcon(QIcon(":/img/Comp.png"));
+                item1->setIcon(QIcon(":/img/component.png"));
                 item1->setText(tr(ac.getInfo()["Name"].toUtf8().data()));
                 //这里的用户角色存储用户数据
-                item1->setData(Qt::UserRole, QPixmap(":/img/Comp.png"));
+                item1->setData(Qt::UserRole, QPixmap(":/img/component.png"));
                 item1->setData(Qt::UserRole+1, ac.getInfo()["Name"]);
                 // TODO 向这里的id和之前写的id全要改，以xml中的id为准，唯一标识
                 item1->setData(Qt::UserRole+2, ac.getInfo()["ID"]);
                 item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
                 this->addDragItem(item1);
-
                 emit add_one_Comp(ac);
                 qDebug() << "列表的大小：" << algorithms.size();
                 break;
             }
         }else if(m_dragItem){
             // TODO 这里的ID也不对
-            int id = qvariant_cast<int>(m_dragItem->data(Qt::UserRole+2))-1; //从0开始
+//            int id = qvariant_cast<int>(m_dragItem->data(Qt::UserRole+2))-1; //从0开始
+            int id = qvariant_cast<int>(m_dragItem->data(Qt::UserRole+2)); //从0开始
             qDebug() << "当前id:" << id;
             // 点击其他组件,这个id应该为xml中的ID
             emit add_one_Comp(algorithms[QString::number(id)]);

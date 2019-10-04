@@ -103,14 +103,14 @@ MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
 //    widget->setLayout(layout);
 
 //    setCentralWidget(widget);
-    // FIXME dock无法自由拖动了，只能保持固定宽度能拖出来但是不能自动贴边
-//    ui->dockCompList->setAllowedAreas(Qt::AllDockWidgetAreas);
     connect(ui->listWidget, &RadarCompDraglistWidget::add_one_Comp, this, &MainWindow_Radar::update_Comp_property);
+    connect(ui->listWidget, &RadarCompDraglistWidget::toRefreshCompList, this, &MainWindow_Radar::loadAllComps);
 //    u = new Utils;
     // 当新增组件时候，设置插入模式和插入的组件的类型
     connect(ui->listWidget, &RadarCompDraglistWidget::setComp_typeandMode, this, &MainWindow_Radar::setComp_typeandMode);
+    ui->dockWidget->setAllowedAreas(Qt::AllDockWidgetAreas);
+    ui->dockWidget->hide();
 }
-
 
 void MainWindow_Radar::sceneScaleChanged(const QString &scale)
 {
@@ -198,7 +198,7 @@ void MainWindow_Radar::init1Comp(QString comPName, QMenu *itemMenu, DiagramItem:
 */
 void MainWindow_Radar::loadCompByName(QString strText)
 {
-    QString m_sProjectPath = QDir::currentPath()+"/xmls/";/*文件夹全路径名*/
+    QString m_sProjectPath = QDir::currentPath()+"/algoXml/";/*文件夹全路径名*/
     QDir dir(m_sProjectPath);
     /*判断文件夹是否存在*/
     if (!dir.exists())
@@ -209,17 +209,20 @@ void MainWindow_Radar::loadCompByName(QString strText)
     dir.setFilter(QDir::Files); /*设置dir的过滤模式,表示只遍历本文件夹内的文件*/
     QStringList filterList;
     filterList << "*.xml";
+    // 遍历查找
     foreach(QFileInfo fileInfo, dir.entryInfoList(filterList)){
         QString absolute_file_path = fileInfo.absoluteFilePath();
         QString fileName = fileInfo.baseName();/*获取文件后名(不带后缀的文件名)*/
         if(fileName == strText){
+            AlgorithmComp ac = Utils::readPluginXmlFile(m_sProjectPath+fileName+".xml");
+            QString id = ac.getInfo()["ID"];
             QListWidgetItem *item0 = new QListWidgetItem();
-            item0->setIcon(QIcon(":/img/Comp.png"));
+            item0->setIcon(QIcon(":/img/component.png"));
             item0->setText(tr(fileName.toUtf8().data()));
             //这里的用户角色存储用户数据
-            item0->setData(Qt::UserRole, QPixmap(":/img/Comp.png"));
+            item0->setData(Qt::UserRole, QPixmap(":/img/component.png"));
             item0->setData(Qt::UserRole+1, fileName);
-            item0->setData(Qt::UserRole+2, ui->listWidget->count()+1);
+            item0->setData(Qt::UserRole+2, id);
             item0->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
             ui->listWidget->addDragItem(item0);
 //            update_Comp_property(fileName);
@@ -236,45 +239,50 @@ void MainWindow_Radar::loadCompByName(QString strText)
 */
 void MainWindow_Radar::loadAllComps()
 {
-//    QString m_sProjectPath = QDir::currentPath()+"/xmls/";/*文件夹全路径名*/
-//    QDir dir(m_sProjectPath);
-//    /*判断文件夹是否存在*/
-//    if (!dir.exists())
-//    {
-//        u->alert(QApplication::desktop()->screen()->rect(), tr("读取文件夹出错!"));
-//        return;
-//    }
-//    dir.setFilter(QDir::Files); /*设置dir的过滤模式,表示只遍历本文件夹内的文件*/
-//    QStringList filterList;
-//    filterList << "*.xml";
-//    foreach(QFileInfo fileInfo, dir.entryInfoList(filterList)){
-//        QString absolute_file_path = fileInfo.absoluteFilePath();
-//        QString fileName = fileInfo.baseName();/*获取文件后名(不带后缀的文件名)*/
-//        QListWidgetItem *item0 = new QListWidgetItem();
-//        item0->setIcon(QIcon(":/img/Comp.png"));
-//        item0->setText(tr(fileName.toUtf8().data()));
-//        //这里的用户角色存储用户数据
-//        item0->setData(Qt::UserRole, QPixmap(":/img/Comp.png"));
-//        item0->setData(Qt::UserRole+1, fileName);
-//        item0->setData(Qt::UserRole+2, ui->listWidget->count());
-//        item0->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
-//        ui->listWidget->addDragItem(item0);
-//        update_Comp_property(fileName);
-//    }
     ui->listWidget->clear();
     // 加入新建雷达按钮项
     ui->listWidget->addItem(tr("自定义组件"));
     ui->listWidget->addCompButton = ui->listWidget->item(0);
     ui->listWidget->addCompButton->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-    // addRadarButton->setBackgroundColor(QColor(211,211,211));
     ui->listWidget->addCompButton->setFlags(Qt::NoItemFlags);
     ui->listWidget->addCompButton->setIcon(QIcon(":/img/newradar.png"));
     ui->listWidget->addCompButton->setToolTip(tr("点击增加自定义组件"));
     // TODO 换成读取组件文件夹里的所有组件
-    init5Comp();
+//    init5Comp();
+
+    // 读取文件夹下所有的文件
+    QString m_sProjectPath = QDir::currentPath()+"/algoXml/";/*文件夹全路径名*/
+    QDir dir = Utils::openDirOrCreate(m_sProjectPath);
+    dir.setFilter(QDir::Files); /*设置dir的过滤模式,表示只遍历本文件夹内的文件*/
+    QStringList filterList;
+    filterList << "*.xml";
+    // for循环读取有点慢
+    foreach(QFileInfo fileInfo, dir.entryInfoList(filterList)){
+        QString absolute_file_path = fileInfo.absoluteFilePath();
+        QString fileName = fileInfo.baseName();/*获取文件后名(不带后缀的文件名)*/
+        if(!ui->listWidget->nameList.contains(fileName)){
+            ui->listWidget->nameList.append(fileName);
+            qDebug() << "加入fileName: " << fileName;
+        }else {
+            qDebug() << "有重复的文件名存在，文件名： " << fileName;
+        }
+        AlgorithmComp ac = Utils::readPluginXmlFile(m_sProjectPath+fileName+".xml");
+        ui->listWidget->algorithms.insert(ac.getInfo()["ID"], ac);
+
+        QListWidgetItem *item0 = new QListWidgetItem();
+        item0->setIcon(QIcon(":/img/component.png"));
+        item0->setText(tr(fileName.toUtf8().data()));
+        //这里的用户角色存储用户数据
+        item0->setData(Qt::UserRole, QPixmap(":/img/component.png"));
+        item0->setData(Qt::UserRole+1, fileName);
+        item0->setData(Qt::UserRole+2, ac.getInfo()["ID"]);
+        item0->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
+        ui->listWidget->addDragItem(item0);
+//        update_Comp_property(ac);
+    }
 }
 
-void MainWindow_Radar::itemInserted(DiagramItem *item)
+void MainWindow_Radar::itemInserted(DiagramItem *)
 {
     isSave = false;
     toggleSaveXml(1);
@@ -446,7 +454,7 @@ void MainWindow_Radar::closeEvent(QCloseEvent *event)
 {
     //还未保存
     if(isSave == false){
-        this->showNormal();
+//        this->showNormal();
         this->raise();
         int ret1 = QMessageBox::question(this, tr("确认"), tr("确定退出前保存场景到桌面?"), QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel);
         if(ret1 == QMessageBox::Yes){
@@ -534,7 +542,8 @@ void MainWindow_Radar::createCompBox()
 {
     // FIXME 样式设置没用...
     ui->listWidget->setStyleSheet("QDockWidget#listWidget{border: 1px solid #FF00FF; border-radius: 5px");
-    init5Comp();
+//    init5Comp();
+    loadAllComps();
 
     //-----------旧版使用buttonGroup-----------------------
 //    buttonGroup = new QButtonGroup(ui->dockWidgetContents);
@@ -648,6 +657,8 @@ void MainWindow_Radar::createCompBox()
     toolBox->addItem(bigW, tr("组件列表"));
 //    toolBox->addItem(itemWidget, tr("基础雷达组件"));
     toolBox->addItem(backgroundWidget, tr("背景设置"));
+    toolBox->setItemIcon(0, QIcon(":/img/compXmlDock.png"));
+    toolBox->setItemIcon(1, QIcon(":/img/bgList.png"));
     // TODO 如何只在组件打开的时候才显示属性框？或者可以将这三个分成三个小窗口
     ui->dockCompList->setWidget(toolBox);
 }
@@ -1376,50 +1387,58 @@ void MainWindow_Radar::On_isSave2False(QString message)
     }
     ui->actionsave->setEnabled(true);
 }
-
+// This is available in all editors.
+/**
+* @projectName   prototype_v0906
+* @brief         简介 动态更新右面属性列表，内容都是可编辑的。但是问题是怎么获取用户编辑的是哪一个呢？
+* @author        Antrn
+* @date          2019-10-04
+*/
 void MainWindow_Radar::update_Comp_property(AlgorithmComp ac)
 {
+    // 展示出属性dock
+    ui->dockWidget->show();
     QMap<QString, QString> info_map = ac.getInfo();
-    qDebug() << info_map.toStdMap();
+//    qDebug() << info_map.toStdMap();
     QMap<QString, QString>::Iterator it;
+
+    // Note 注意这里不要在设计界面拖入一个ScrollArea，然后再和代码结合，我搞了一上午没解决，blgl
+    QScrollArea *scroll = new QScrollArea;
     QWidget *w = new QWidget;
     QVBoxLayout *v = new QVBoxLayout;
     QWidget *sw = new QWidget;
+
     QFormLayout *fl = new QFormLayout;
+    fl->setRowWrapPolicy(QFormLayout::WrapAllRows);
+    fl->setSpacing(4);
+    fl->setLabelAlignment(Qt::AlignLeft);//设置标签的对齐方式
     for ( it = info_map.begin(); it != info_map.end(); ++it ) {
-//        QLabel *l = new QLabel(it.key(), sw);
         QLineEdit *ql = new QLineEdit(it.value(), sw);
-        fl->setLabelAlignment(Qt::AlignLeft);//设置标签的对齐方式
         fl->addRow(it.key(), ql);
-        sw->setLayout(fl);
-        v->addWidget(sw);
     }
 
     QMap<QString, QMap<QString, QString>> para_map = ac.getParam();
-    fl->setSpacing(10);
 
     for ( QMap<QString, QMap<QString, QString>>::iterator itt = para_map.begin(); itt != para_map.end(); ++itt ) {
         QLineEdit *desc = new QLineEdit(itt.value().value("describe"), sw);
         QLineEdit *val = new QLineEdit(itt.value().value("value"), sw);
         QLabel *l = new QLabel();
-        fl->setAlignment(Qt::AlignLeft);
         fl->addRow(itt.key(), l);
         fl->addRow("describe", desc);
         fl->addRow("value", val);
-        fl->setLabelAlignment(Qt::AlignLeft);//设置标签的对齐方式
-        sw->setLayout(fl);
-        v->addWidget(sw);
     }
-
-    // 挤上去
+    sw->setLayout(fl);
+    v->addWidget(sw);
+//     挤上去
     v->addStretch();
     w->setLayout(v);
-    ui->dockWidget->setWidget(w);
+    scroll->setWidget(w);
+    ui->dockWidget->setWidget(scroll);
 }
 
 void MainWindow_Radar::setComp_typeandMode(int id)
 {
-    scene->setItemType(DiagramItem::DiagramType(id));
+    scene->setItemType(DiagramItem::DiagramType(id-1));
     scene->setMode(RadarScene::InsertItem);
 }
 
@@ -1430,7 +1449,6 @@ void MainWindow_Radar::search()
     if (!strText.isEmpty())
     {
 //        QMessageBox::information(this, QStringLiteral("搜索"), QStringLiteral("搜索内容为%1").arg(strText));
-
         ui->listWidget->clear();
         loadCompByName(strText);
     }else{

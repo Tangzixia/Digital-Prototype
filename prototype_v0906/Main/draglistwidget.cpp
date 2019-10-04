@@ -262,14 +262,15 @@ void DragListWidget::itemOperateSlot(Menu_iteamOperation::OperateType operateTyp
                 connect(SET_RADARNAME(id),&MainWindow_Radar::iClose,
                         [=](MainWindow_Radar* radar){newEditWindowList.remove(radar->getEquip_id());});
                 SET_RADARNAME(id)->setAttribute(Qt::WA_DeleteOnClose);
+                SET_RADARNAME(id)->setWindowIcon(QIcon(":/img/radar.png"));
                 SET_RADARNAME(id)->show();
             }else {
                 //获取改item对应的mainwindow_radar
                 MainWindow_Radar*radar=newEditWindowList.find(id).value();
-                        QMessageBox::warning(this,"warning","你已经打开了编辑窗口，不可以重复打开！",QMessageBox::Ok);
-                        radar->showNormal();
-                          radar->raise();
-                          radar->showMaximized();
+                QMessageBox::warning(this,"warning","你已经打开了编辑窗口，不可以重复打开！",QMessageBox::Ok);
+                radar->showNormal();
+                radar->raise();
+                radar->showMaximized();
             }
         }
            break;

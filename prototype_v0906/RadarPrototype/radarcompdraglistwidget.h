@@ -1,6 +1,6 @@
 #ifndef RADARCOMPDRAGLISTWIDGET_H
 #define RADARCOMPDRAGLISTWIDGET_H
-
+#include <QObject>
 #include <QListWidget>
 #include <algorithmcomp.h>
 
@@ -22,11 +22,16 @@ public:
         return QStringLiteral("image/x-Comp-piece");
     }
     QListWidgetItem *addCompButton;
+    QMap<QString, AlgorithmComp> algorithms;
+    QList<QString> nameList;// 存放每个导入的组件的名字
 public slots:
+    void onCurrentTextChanged(QListWidgetItem *item);
+    void onCurrentDoubleClicked(QListWidgetItem *item);
 
 signals:
     void add_one_Comp(AlgorithmComp algo);
     void setComp_typeandMode(int id);
+    void toRefreshCompList();
 
 protected:
     //开始拖拽
@@ -44,7 +49,7 @@ private:
     QPoint m_dragPoint;
     //记录被拖拽的项.
     QListWidgetItem *m_dragItem;
-    QMap<QString, AlgorithmComp> algorithms;
+    QString oldName;
 };
 
 #endif // RADARCOMPDRAGLISTWIDGET_H

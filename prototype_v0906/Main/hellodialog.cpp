@@ -14,6 +14,7 @@ HelloDialog::HelloDialog(QWidget *parent) :
     ui->setupUi(this);
     //去掉页面边框和标题栏
     this->setWindowFlag(Qt::FramelessWindowHint);
+    this->setWindowIcon(QIcon(":/img/HI.png"));
     //标题栏保留，去掉大小按钮
 //    this->setWindowFlag(Qt::WindowMinimizeButtonHint, false);
 //    this->setWindowFlag(Qt::WindowMaximizeButtonHint, false);

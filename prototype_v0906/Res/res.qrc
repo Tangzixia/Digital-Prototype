@@ -37,10 +37,20 @@
         <file>img/output.png</file>
         <file>img/INPUT.ico</file>
         <file>img/OUTPUT.ico</file>
-        <file>img/Comp.png</file>
         <file>img/search_hover.png</file>
         <file>img/search_press.png</file>
         <file>img/search.png</file>
         <file>img/fangzhen.png</file>
+        <file>img/component.png</file>
+        <file>img/组件设置.png</file>
+        <file>img/compXmlDock.png</file>
+        <file>img/newecmi.png</file>
+        <file>img/openxml.png</file>
+        <file>img/propertyDock.png</file>
+        <file>img/组件设置 (1).png</file>
+        <file>img/bgList.png</file>
+        <file>img/propertyDockIcon.png</file>
+        <file>img/XmlDockIcon.png</file>
+        <file>img/HI.png</file>
     </qresource>
 </RCC>
