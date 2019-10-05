@@ -142,7 +142,7 @@ void MainWindowNew::on_actio_leftDock_triggered()
 
  void MainWindowNew::on_actionProperty_triggered(bool checked)
 {
-    if(!checked){
+    if(checked){
         ui->dockWidget_property->show();
     }else{
         ui->dockWidget_property->hide();

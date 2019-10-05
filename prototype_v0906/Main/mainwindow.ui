@@ -29,7 +29,7 @@
      <x>0</x>
      <y>0</y>
      <width>821</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
@@ -161,8 +161,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>278</width>
-          <height>301</height>
+          <width>256</width>
+          <height>321</height>
          </rect>
         </property>
         <attribute name="icon">
@@ -198,8 +198,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>278</width>
-          <height>301</height>
+          <width>256</width>
+          <height>321</height>
          </rect>
         </property>
         <attribute name="icon">
@@ -235,8 +235,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>278</width>
-          <height>301</height>
+          <width>256</width>
+          <height>321</height>
          </rect>
         </property>
         <attribute name="icon">
@@ -273,111 +273,199 @@
    </widget>
   </widget>
   <action name="actionOpenGL">
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/opengl.png</normaloff>:/img/opengl.png</iconset>
+   </property>
    <property name="text">
     <string>OpenGL</string>
    </property>
   </action>
   <action name="actionabout">
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/about.png</normaloff>:/img/about.png</iconset>
+   </property>
    <property name="text">
     <string>关于</string>
    </property>
   </action>
   <action name="actionhelp">
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/help.png</normaloff>:/img/help.png</iconset>
+   </property>
    <property name="text">
     <string>帮助</string>
    </property>
   </action>
   <action name="actionfullScreen">
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/full-screen.png</normaloff>:/img/full-screen.png</iconset>
+   </property>
    <property name="text">
     <string>全屏</string>
    </property>
   </action>
   <action name="actionoption">
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/options.png</normaloff>:/img/options.png</iconset>
+   </property>
    <property name="text">
     <string>选项</string>
    </property>
   </action>
   <action name="actionstart">
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/start.png</normaloff>:/img/start.png</iconset>
+   </property>
    <property name="text">
     <string>开始</string>
    </property>
   </action>
   <action name="actionstop">
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/stop.png</normaloff>:/img/stop.png</iconset>
+   </property>
    <property name="text">
     <string>停止</string>
    </property>
   </action>
   <action name="actioninterrupt">
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/interrupt.png</normaloff>:/img/interrupt.png</iconset>
+   </property>
    <property name="text">
     <string>中断</string>
    </property>
   </action>
   <action name="actioncontinue">
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/continue.png</normaloff>:/img/continue.png</iconset>
+   </property>
    <property name="text">
     <string>继续</string>
    </property>
   </action>
   <action name="actionredo">
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/redo.png</normaloff>:/img/redo.png</iconset>
+   </property>
    <property name="text">
     <string>重做</string>
    </property>
   </action>
   <action name="actionundo">
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/undo.png</normaloff>:/img/undo.png</iconset>
+   </property>
    <property name="text">
     <string>撤销</string>
    </property>
   </action>
   <action name="actiondelete">
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/delete-equipment.png</normaloff>:/img/delete-equipment.png</iconset>
+   </property>
    <property name="text">
     <string>删除设备</string>
    </property>
   </action>
   <action name="actionedit">
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/edit-equipment.png</normaloff>:/img/edit-equipment.png</iconset>
+   </property>
    <property name="text">
     <string>编辑设备</string>
    </property>
   </action>
   <action name="actionopenproject">
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/open.png</normaloff>:/img/open.png</iconset>
+   </property>
    <property name="text">
     <string>打开工程</string>
    </property>
   </action>
   <action name="actionopenfile">
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/openxml.png</normaloff>:/img/openxml.png</iconset>
+   </property>
    <property name="text">
     <string>打开文件</string>
    </property>
   </action>
   <action name="actionrecentproject">
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/recent.png</normaloff>:/img/recent.png</iconset>
+   </property>
    <property name="text">
     <string>近期项目</string>
    </property>
   </action>
   <action name="actionsaveproject">
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/save-pro.png</normaloff>:/img/save-pro.png</iconset>
+   </property>
    <property name="text">
     <string>保存项目</string>
    </property>
   </action>
   <action name="actioncloseproject">
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/close-pro.png</normaloff>:/img/close-pro.png</iconset>
+   </property>
    <property name="text">
     <string>关闭项目</string>
    </property>
   </action>
   <action name="actioncloseallproject">
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/close-all.png</normaloff>:/img/close-all.png</iconset>
+   </property>
    <property name="text">
     <string>关闭所有工程</string>
    </property>
   </action>
   <action name="actionsaveallproject">
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/save-all.png</normaloff>:/img/save-all.png</iconset>
+   </property>
    <property name="text">
     <string>保存所有项目</string>
    </property>
   </action>
   <action name="actionexit">
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/exit.png</normaloff>:/img/exit.png</iconset>
+   </property>
    <property name="text">
     <string>退出</string>
    </property>
   </action>
   <action name="actionCurve">
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/curve.png</normaloff>:/img/curve.png</iconset>
+   </property>
    <property name="text">
     <string>动态曲线</string>
    </property>
@@ -388,6 +476,10 @@
    </property>
    <property name="checked">
     <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/equipment.png</normaloff>:/img/equipment.png</iconset>
    </property>
    <property name="text">
     <string>装备栏</string>
@@ -400,6 +492,10 @@
    <property name="checked">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/tools.png</normaloff>:/img/tools.png</iconset>
+   </property>
    <property name="text">
     <string>工具栏</string>
    </property>
@@ -410,6 +506,7 @@
   <tabstop>graphicsView</tabstop>
  </tabstops>
  <resources>
+  <include location="../Res/res.qrc"/>
   <include location="../Res/res.qrc"/>
  </resources>
  <connections/>

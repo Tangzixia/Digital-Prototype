@@ -96,6 +96,8 @@ private slots:
      void search();
      void editComplete();
 
+     void on_actionproperty_triggered(bool checked);
+
 private:
      // 名字
     QString equip_id;

@@ -154,7 +154,7 @@ AlgorithmComp Utils::readPluginXmlFile(QString fileName)
     AlgorithmComp ac;
     QDomDocument doc;
     if(!fileName.isEmpty()){
-        qDebug() << fileName;
+//        qDebug() << fileName;
         QFile file(fileName);
         if(!file.open(QIODevice::ReadOnly)) {
             qDebug() << "文件打开出错！";
@@ -181,7 +181,7 @@ AlgorithmComp Utils::readPluginXmlFile(QString fileName)
                 // 每个元素item
                 QString content = m.toElement().text();
                 // 保存起来
-                qDebug() << QString::fromStdString(tagName) << ": " << content;
+//                qDebug() << QString::fromStdString(tagName) << ": " << content;
                 infomap.insert(QString::fromStdString(tagName), content);
             }
             m = m.nextSibling();
@@ -190,7 +190,7 @@ AlgorithmComp Utils::readPluginXmlFile(QString fileName)
         // Description
         QDomNode descNode = doc.elementsByTagName("Description").at(0);
         QString desc = descNode.toElement().text();
-        qDebug() << "desc: " << desc;
+//        qDebug() << "desc: " << desc;
         ac.setDesc(desc);
 
         // 大的标签是Parameter的时候
@@ -207,7 +207,7 @@ AlgorithmComp Utils::readPluginXmlFile(QString fileName)
                 QDomElement e = m1.toElement();
                 describe = e.attribute("describe");
                 value = e.attribute("value");
-                qDebug() << QString::fromStdString(tagName) << ": describe： " << describe << "; " << "value: " << value;
+//                qDebug() << QString::fromStdString(tagName) << ": describe： " << describe << "; " << "value: " << value;
                 QMap<QString, QString> mm;
                 mm.insert("describe", describe);
                 mm.insert("value", value);

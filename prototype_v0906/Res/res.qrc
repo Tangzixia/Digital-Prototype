@@ -7,8 +7,6 @@
         <file>img/start_logo.gif</file>
         <file>img/radar.jpg</file>
         <file>img/radar.png</file>
-        <file>img/background1.png</file>
-        <file>img/background2.png</file>
         <file>img/background3.png</file>
         <file>img/background4.png</file>
         <file>img/bold.png</file>
@@ -47,10 +45,39 @@
         <file>img/newecmi.png</file>
         <file>img/openxml.png</file>
         <file>img/propertyDock.png</file>
-        <file>img/组件设置 (1).png</file>
         <file>img/bgList.png</file>
         <file>img/propertyDockIcon.png</file>
         <file>img/XmlDockIcon.png</file>
         <file>img/HI.png</file>
+        <file>img/addComp.png</file>
+        <file>img/editComp.png</file>
+        <file>res.qrc</file>
+        <file>img/desert.png</file>
+        <file>img/grass.png</file>
+        <file>img/ocean.png</file>
+        <file>img/sky.png</file>
+        <file>img/about.png</file>
+        <file>img/aboutUs.png</file>
+        <file>img/exit.png</file>
+        <file>img/continue.png</file>
+        <file>img/curve.png</file>
+        <file>img/delete-equipment.png</file>
+        <file>img/edit-equipment.png</file>
+        <file>img/equipment.png</file>
+        <file>img/full-screen.png</file>
+        <file>img/help.png</file>
+        <file>img/interrupt.png</file>
+        <file>img/opengl.png</file>
+        <file>img/options.png</file>
+        <file>img/recent.png</file>
+        <file>img/redo.png</file>
+        <file>img/save-pro.png</file>
+        <file>img/start.png</file>
+        <file>img/stop.png</file>
+        <file>img/tools.png</file>
+        <file>img/undo.png</file>
+        <file>img/close-all.png</file>
+        <file>img/close-pro.png</file>
+        <file>img/save-all.png</file>
     </qresource>
 </RCC>

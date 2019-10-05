@@ -51,7 +51,7 @@ void ParamEditRadarDialog::on_pushButton_OK_clicked()
     ac.setInfo(mp);
     QMap<QString, QMap<QString, QString> >pmap;
     QMap<QString, QString> m;
-    qDebug() << "row: " << row;
+    qDebug() << "参数总行数row: " << row;
     for (int i=0;i<row;i++) {
         // WARNING 这里填写的内容一定不能为纯数字！！！，xue的教训，会直接造成写入成功，读取失败!
         QString  name = ui->tableWidget_Param->item(i, 0)->text();
@@ -63,7 +63,7 @@ void ParamEditRadarDialog::on_pushButton_OK_clicked()
         m.insert("value", value);
         pmap.insert(name, m);
     }
-    qDebug() << pmap.size();
+    qDebug() << "参数列表的大小: " << pmap.size();
     ac.clearParam();
     ac.setParam(pmap);
     accept();
@@ -102,7 +102,7 @@ void ParamEditRadarDialog::on_pushButton_Add_clicked()
     txt = QString("%1").arg("参数值");
     itemValue->setText(txt);
     ui->tableWidget_Param->setItem(row, 2, itemValue);
-//    row++;
+    row++;
 }
 
 void ParamEditRadarDialog::on_pushButton_Del_clicked()

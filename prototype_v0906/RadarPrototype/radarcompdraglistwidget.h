@@ -24,9 +24,14 @@ public:
     QListWidgetItem *addCompButton;
     QMap<QString, AlgorithmComp> algorithms;
     QList<QString> nameList;// 存放每个导入的组件的名字
+    void createNewComp();
 public slots:
     void onCurrentTextChanged(QListWidgetItem *item);
     void onCurrentDoubleClicked(QListWidgetItem *item);
+    void deleteItemSlot();
+    void editItemParamSlot();
+    void createItemParamSlot();
+    void contextMenuEvent ( QContextMenuEvent * event );
 
 signals:
     void add_one_Comp(AlgorithmComp algo);

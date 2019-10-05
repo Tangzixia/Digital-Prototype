@@ -57,6 +57,30 @@ void RadarCompDraglistWidget::addDragItem(QListWidgetItem*item){
     this->addItem(item);
     this->setVisible(true);
 }
+// This is an auto-generated comment.
+/**
+* @projectName   prototype_v0906
+* @brief         简介 新建组件
+* @author        Antrn
+* @date          2019-10-05
+*/
+void RadarCompDraglistWidget::createNewComp()
+{
+    // 新建
+    ParamEditRadarDialog dlg;
+    if(dlg.exec() == QDialog::Accepted)
+    {
+        qDebug() << "确定";
+        algorithms.insert(dlg.ac.getInfo()["ID"], dlg.ac);
+        qDebug() << "刚增加的id:" << dlg.ac.getInfo()["ID"];
+        qDebug() << "algorithms大小： " << algorithms.size();
+        Utils::writeAlgorithmComp2Xml(dlg.ac);
+        emit add_one_Comp(dlg.ac);
+        emit toRefreshCompList(); //刷新列表
+    }else{
+        qDebug() << "取消";
+    }
+}
 
 void RadarCompDraglistWidget::onCurrentTextChanged(QListWidgetItem *item)
 {
@@ -87,6 +111,78 @@ void RadarCompDraglistWidget::onCurrentDoubleClicked(QListWidgetItem *item)
         oldName = preName;
         qDebug() << "原名字： " << preName;
     }
+}
+
+void RadarCompDraglistWidget::deleteItemSlot()
+{
+    int ch = QMessageBox::warning(nullptr, "提醒",
+                                      "您确定要删除此组件吗?",
+                                      QMessageBox::Yes | QMessageBox::No,
+                                      QMessageBox::No);
+    if ( ch != QMessageBox::Yes )
+        return;
+    QListWidgetItem * item = currentItem();
+    if( item == nullptr )
+        return;
+    QString na = item->text();
+    qDebug() << "删除组件: " << na;
+    takeItem(row(item));
+    // TODO nameList删除
+    nameList.removeOne(na);
+    // TODO 文件也要删除
+    QFile file(QDir::currentPath()+"/algoXml/"+na+".xml");
+    file.remove();
+    delete item;
+}
+
+void RadarCompDraglistWidget::editItemParamSlot()
+{
+    QListWidgetItem * item = currentItem();
+    if( item == nullptr )
+        return;
+    qDebug() << "要编辑的组件名字为: " << item->text();
+
+}
+
+void RadarCompDraglistWidget::createItemParamSlot()
+{
+    createNewComp();
+}
+
+// This is an auto-generated comment.
+/**
+* @projectName   prototype_v0906
+* @brief         简介 item右键菜单
+* @author        Antrn
+* @date          2019-10-05
+*/
+void RadarCompDraglistWidget::contextMenuEvent(QContextMenuEvent *event)
+{
+    QListWidgetItem *currItem = itemAt(event->pos());
+    QMenu *popMenu = new QMenu(this);
+    QAction *addAct = nullptr, *deleteAct = nullptr, *editAct = nullptr;
+    if(currItem != nullptr && currItem != addCompButton){
+        qDebug() << "------------" << currItem->text();
+        deleteAct = new QAction(tr("删除组件"), this);
+        editAct = new QAction(tr("修改参数"), this);
+        deleteAct->setIcon(QIcon(":/img/delete.png"));
+        editAct->setIcon(QIcon(":/img/editComp.png"));
+        popMenu->addAction(deleteAct);
+        popMenu->addAction(editAct);
+        connect(deleteAct, &QAction::triggered, this, &RadarCompDraglistWidget::deleteItemSlot);
+        connect(editAct, &QAction::triggered, this, &RadarCompDraglistWidget::editItemParamSlot);
+    }else{
+        addAct = new QAction(tr("添加组件"), this);
+        addAct->setIcon(QIcon(":/img/addComp.png"));
+        popMenu->addAction(addAct);
+        connect(addAct, &QAction::triggered, this, &RadarCompDraglistWidget::createItemParamSlot);
+        qDebug() << "此位置没有组件，或者是第一个自定义按钮";
+    }
+    popMenu->exec(QCursor::pos());
+    delete popMenu;
+    delete deleteAct;
+    delete editAct;
+    delete addAct;
 }
 
 void RadarCompDraglistWidget::startDrag(Qt::DropActions /*supportedActions*/)
@@ -120,8 +216,7 @@ void RadarCompDraglistWidget::startDrag(Qt::DropActions /*supportedActions*/)
     }
 }
 
-// TODO： 组件重命名
-//       属性编辑更新
+// TODO： 属性编辑更新
 
 
 //重写鼠标点击操作.
@@ -143,27 +238,13 @@ void RadarCompDraglistWidget::mousePressEvent(QMouseEvent *event)
             msgBox.setInformativeText("您想要创建一个新的雷达组件，还是导入一个已经有的雷达组件？");
             QPushButton *newButton = msgBox.addButton(tr("新建"), QMessageBox::ActionRole);
             msgBox.addButton(tr("导入"), QMessageBox::ActionRole);
-            msgBox.addButton(tr("取消"), QMessageBox::ActionRole);
+            msgBox.addButton(tr("取消"), QMessageBox::RejectRole);
             msgBox.setDefaultButton(newButton);
             int button_index=msgBox.exec();
             switch (button_index) {
-                case 2:
-                    break;
-            case 0:{
-                    // 新建
-                    ParamEditRadarDialog dlg;
-                    if(dlg.exec() == QDialog::Accepted)
-                    {
-                        qDebug() << "确定";
-                        algorithms.insert(dlg.ac.getInfo()["ID"], dlg.ac);
-                        qDebug() << "刚增加的id:" << dlg.ac.getInfo()["ID"];
-                        qDebug() << "algorithms大小： " << algorithms.size();
-                        Utils::writeAlgorithmComp2Xml(dlg.ac);
-                        emit add_one_Comp(dlg.ac);
-                        emit toRefreshCompList(); //刷新列表
-                    }else{
-                        qDebug() << "取消";
-                    }
+                case 2: qDebug() <<"关闭"; break;
+                case 0:{
+                    createNewComp();
 //                    int flag = 0;
 //                    QString Compname = "";
 //                    while(Compname.isEmpty() || Compname.isNull()){

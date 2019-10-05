@@ -108,7 +108,9 @@ MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
 //    u = new Utils;
     // 当新增组件时候，设置插入模式和插入的组件的类型
     connect(ui->listWidget, &RadarCompDraglistWidget::setComp_typeandMode, this, &MainWindow_Radar::setComp_typeandMode);
+    // 属性dock窗口
     ui->dockWidget->setAllowedAreas(Qt::AllDockWidgetAreas);
+    propertyAction->setChecked(false);
     ui->dockWidget->hide();
 }
 
@@ -407,12 +409,16 @@ void MainWindow_Radar::backgroundButtonGroupClicked(QAbstractButton *button)
             button->setChecked(false);
     }
     QString text = button->text();
-    if (text == tr("Blue Grid"))
-        scene->setBackgroundBrush(QPixmap(":/img/background1.png"));
-    else if (text == tr("White Grid"))
-        scene->setBackgroundBrush(QPixmap(":/img/background2.png"));
-    else if (text == tr("Gray Grid"))
+    if (text == tr("海洋方格"))
+        scene->setBackgroundBrush(QPixmap(":/img/ocean.png"));
+    else if (text == tr("草地方格"))
+        scene->setBackgroundBrush(QPixmap(":/img/grass.png"));
+    else if (text == tr("灰色方格"))
         scene->setBackgroundBrush(QPixmap(":/img/background3.png"));
+    else if (text == tr("天空背景"))
+        scene->setBackgroundBrush(QPixmap(":/img/sky.png"));
+    else if (text == tr("沙漠背景"))
+        scene->setBackgroundBrush(QPixmap(":/img/desert.png"));
     else
         scene->setBackgroundBrush(QPixmap(":/img/background4.png"));
 
@@ -540,8 +546,6 @@ void MainWindow_Radar::sendToBack()
 */
 void MainWindow_Radar::createCompBox()
 {
-    // FIXME 样式设置没用...
-    ui->listWidget->setStyleSheet("QDockWidget#listWidget{border: 1px solid #FF00FF; border-radius: 5px");
 //    init5Comp();
     loadAllComps();
 
@@ -591,16 +595,20 @@ void MainWindow_Radar::createCompBox()
             this, SLOT(backgroundButtonGroupClicked(QAbstractButton*)));
 
     QGridLayout *backgroundLayout = new QGridLayout;
-    backgroundLayout->addWidget(createBackgroundCellWidget(tr("Blue Grid"),
-                                                           ":/img/background1.png"), 0, 0);
-    backgroundLayout->addWidget(createBackgroundCellWidget(tr("White Grid"),
-                                                           ":/img/background2.png"), 0, 1);
-    backgroundLayout->addWidget(createBackgroundCellWidget(tr("Gray Grid"),
+    backgroundLayout->addWidget(createBackgroundCellWidget(tr("海洋方格"),
+                                                           ":/img/ocean.png"), 0, 0);
+    backgroundLayout->addWidget(createBackgroundCellWidget(tr("草地方格"),
+                                                           ":/img/grass.png"), 0, 1);
+    backgroundLayout->addWidget(createBackgroundCellWidget(tr("灰色方格"),
                                                            ":/img/background3.png"), 1, 0);
-    backgroundLayout->addWidget(createBackgroundCellWidget(tr("No Grid"),
+    backgroundLayout->addWidget(createBackgroundCellWidget(tr("无背景"),
                                                            ":/img/background4.png"), 1, 1);
-    backgroundLayout->setRowStretch(2, 10);
-    backgroundLayout->setColumnStretch(2, 10);
+    backgroundLayout->addWidget(createBackgroundCellWidget(tr("天空背景"),
+                                                           ":/img/sky.png"), 2, 0);
+    backgroundLayout->addWidget(createBackgroundCellWidget(tr("沙漠背景"),
+                                                           ":/img/desert.png"), 2, 1);
+    backgroundLayout->setRowStretch(3, 10);
+    backgroundLayout->setColumnStretch(3, 10);
 
     QWidget *backgroundWidget = new QWidget;
     backgroundWidget->setLayout(backgroundLayout);
@@ -1397,17 +1405,21 @@ void MainWindow_Radar::On_isSave2False(QString message)
 void MainWindow_Radar::update_Comp_property(AlgorithmComp ac)
 {
     // 展示出属性dock
-    ui->dockWidget->show();
+    if(ui->dockWidget->isHidden()){
+        ui->dockWidget->show();
+    }
+    propertyAction->setChecked(true);
     QMap<QString, QString> info_map = ac.getInfo();
 //    qDebug() << info_map.toStdMap();
     QMap<QString, QString>::Iterator it;
 
-    // Note 注意这里不要在设计界面拖入一个ScrollArea，然后再和代码结合，我搞了一上午没解决，blgl
+    // 注意这里不要在设计界面拖入一个ScrollArea，然后再和代码结合，我搞了一上午没解决，blgl
     QScrollArea *scroll = new QScrollArea;
     QWidget *w = new QWidget;
     QVBoxLayout *v = new QVBoxLayout;
     QWidget *sw = new QWidget;
 
+    // 表格布局
     QFormLayout *fl = new QFormLayout;
     fl->setRowWrapPolicy(QFormLayout::WrapAllRows);
     fl->setSpacing(4);
@@ -1417,8 +1429,10 @@ void MainWindow_Radar::update_Comp_property(AlgorithmComp ac)
         fl->addRow(it.key(), ql);
     }
 
-    QMap<QString, QMap<QString, QString>> para_map = ac.getParam();
+    QLineEdit *desc_ = new QLineEdit(ac.getDesc(), sw);
+    fl->addRow("Description", desc_);
 
+    QMap<QString, QMap<QString, QString>> para_map = ac.getParam();
     for ( QMap<QString, QMap<QString, QString>>::iterator itt = para_map.begin(); itt != para_map.end(); ++itt ) {
         QLineEdit *desc = new QLineEdit(itt.value().value("describe"), sw);
         QLineEdit *val = new QLineEdit(itt.value().value("value"), sw);
@@ -1499,4 +1513,13 @@ void MainWindow_Radar::xy_show(double x, double y)
 MainWindow_Radar::~MainWindow_Radar()
 {
     delete ui;
+}
+
+void MainWindow_Radar::on_actionproperty_triggered(bool checked)
+{
+    if(checked){
+        ui->dockWidget->show();
+    }else{
+        ui->dockWidget->hide();
+    }
 }
