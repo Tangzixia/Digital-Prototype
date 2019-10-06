@@ -66,19 +66,21 @@ void RadarCompDraglistWidget::addDragItem(QListWidgetItem*item){
 */
 void RadarCompDraglistWidget::createNewComp()
 {
+    AlgorithmComp ac;
     // 新建
-    ParamEditRadarDialog dlg("null");
+    ParamEditRadarDialog dlg(ac);
     if(dlg.exec() == QDialog::Accepted)
     {
-        qDebug() << "确定";
+        qDebug() << "确定新建";
         algorithms.insert(dlg.ac.getInfo()["ID"], dlg.ac);
         qDebug() << "刚增加的id:" << dlg.ac.getInfo()["ID"];
         qDebug() << "algorithms大小： " << algorithms.size();
         Utils::writeAlgorithmComp2Xml(dlg.ac);
         emit add_one_Comp(dlg.ac);
         emit toRefreshCompList(); //刷新列表
+        Utils::alert(QApplication::desktop()->screen()->rect(), "添加组件成功!");
     }else{
-        qDebug() << "取消";
+        qDebug() << "取消新建";
     }
 }
 
@@ -141,18 +143,17 @@ void RadarCompDraglistWidget::editItemParamSlot()
     if( item == nullptr )
         return;
     qDebug() << "要编辑的组件名字为: " << item->text();
-    ParamEditRadarDialog dlg(item->text());
+    AlgorithmComp ac;
+    ac = algorithms.value(item->data(Qt::UserRole+2).toString());
+    ParamEditRadarDialog dlg(ac);
     if(dlg.exec() == QDialog::Accepted)
     {
-        qDebug() << "确定";
-        algorithms.insert(dlg.ac.getInfo()["ID"], dlg.ac);
-        qDebug() << "刚增加的id:" << dlg.ac.getInfo()["ID"];
-        qDebug() << "algorithms大小： " << algorithms.size();
+        qDebug() << "确定编辑";
         Utils::writeAlgorithmComp2Xml(dlg.ac);
         emit add_one_Comp(dlg.ac);
         emit toRefreshCompList(); //刷新列表
     }else{
-        qDebug() << "取消";
+        qDebug() << "取消编辑";
     }
 }
 
@@ -254,7 +255,7 @@ void RadarCompDraglistWidget::mousePressEvent(QMouseEvent *event)
             msgBox.setDefaultButton(newButton);
             int button_index=msgBox.exec();
             switch (button_index) {
-                case 2: qDebug() <<"关闭"; break;
+                case 2: qDebug() <<"不添加也不导入，关闭"; break;
                 case 0:{
                     createNewComp();
 //                    int flag = 0;
@@ -298,19 +299,25 @@ void RadarCompDraglistWidget::mousePressEvent(QMouseEvent *event)
                 const QString fileName = QFileDialog::getOpenFileName(this, tr("打开组件xml"), QString(dirpath), tr("xml files (*.xml)"));
 //                qDebug() << fileName;
                 AlgorithmComp ac = Utils::readPluginXmlFile(fileName);
-                algorithms.insert(ac.getInfo()["ID"], ac);
-                QListWidgetItem *item1 = new QListWidgetItem();
-                item1->setIcon(QIcon(":/img/component.png"));
-                item1->setText(tr(ac.getInfo()["Name"].toUtf8().data()));
-                //这里的用户角色存储用户数据
-                item1->setData(Qt::UserRole, QPixmap(":/img/component.png"));
-                item1->setData(Qt::UserRole+1, ac.getInfo()["Name"]);
-                // TODO 向这里的id和之前写的id全要改，以xml中的id为准，唯一标识
-                item1->setData(Qt::UserRole+2, ac.getInfo()["ID"]);
-                item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
-                this->addDragItem(item1);
-                emit add_one_Comp(ac);
-                qDebug() << "列表的大小：" << algorithms.size();
+
+                // 已经有了
+                if(algorithms.contains(ac.getInfo()["ID"])){
+                    qDebug() << "已经导入了! id:" << ac.getInfo()["ID"] << "名字: " << ac.getInfo()["Name"];
+                }else{
+                    algorithms.insert(ac.getInfo()["ID"], ac);
+                    QListWidgetItem *item1 = new QListWidgetItem();
+                    item1->setIcon(QIcon(":/img/component.png"));
+                    item1->setText(tr(ac.getInfo()["Name"].toUtf8().data()));
+                    //这里的用户角色存储用户数据
+                    item1->setData(Qt::UserRole, QPixmap(":/img/component.png"));
+                    item1->setData(Qt::UserRole+1, ac.getInfo()["Name"]);
+                    // TODO 向这里的id和之前写的id全要改，以xml中的id为准，唯一标识
+                    item1->setData(Qt::UserRole+2, ac.getInfo()["ID"]);
+                    item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
+                    this->addDragItem(item1);
+                    emit add_one_Comp(ac);
+                    qDebug() << "列表的大小：" << algorithms.size();
+                }
                 break;
             }
         }else if(m_dragItem){

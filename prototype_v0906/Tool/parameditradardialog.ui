@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>组件编辑</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
@@ -114,7 +114,7 @@
           <date>
            <year>2018</year>
            <month>12</month>
-           <day>30</day>
+           <day>29</day>
           </date>
          </property>
          <property name="calendarPopup">

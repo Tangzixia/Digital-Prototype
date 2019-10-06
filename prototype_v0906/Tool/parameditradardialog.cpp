@@ -8,10 +8,12 @@
 #include "utils.h"
 #include <QApplication>
 #include <QDesktopWidget>
-ParamEditRadarDialog::ParamEditRadarDialog(QString fname, QWidget *parent) :
+//ParamEditRadarDialog::ParamEditRadarDialog(QString fname, QWidget *parent) :
+ParamEditRadarDialog::ParamEditRadarDialog(AlgorithmComp ac, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::ParamEditRadarDialog),
-    fname(fname)
+    ac(ac),
+    ui(new Ui::ParamEditRadarDialog)
+//    fname(fname),
 {
     ui->setupUi(this);
     // 重新设置时间，不然不对
@@ -41,10 +43,15 @@ ParamEditRadarDialog::ParamEditRadarDialog(QString fname, QWidget *parent) :
     ui->pushButton_Path->setFixedWidth(335);
     // 双击可修改
     ui->tableWidget_Param->setEditTriggers(QAbstractItemView::DoubleClicked);
-    if(fname.compare("null")){
-        AlgorithmComp ac = Utils::readPluginXmlFile(QDir::currentPath()+"/algoXml/"+fname+".xml");
+
+    // 每次重新读取文件不行，应该获取id，从algorithms里面找到ac
+//    if(fname.compare("null")){
+//        AlgorithmComp ac = Utils::readPluginXmlFile(QDir::currentPath()+"/algoXml/"+fname+".xml");
+    if(!ac.getInfo()["ID"].isEmpty()){
         QString id = ac.getInfo()["ID"];
-        this->ui->lineEdit_Name->setText(fname);
+        this->ui->lineEdit_Name->setText(ac.getInfo()["Name"]);
+        // WARNING 不能编辑xml文件名字，因为它是组件的名字，修改了的话保存的时候以新名字为准，就会重新生成一个新的组件文件
+        ui->lineEdit_Name->setReadOnly(true);
         ui->lineEdit_ID->setText(id);
         ui->pushButton_Path->setText(ac.getInfo()["Path"]);
         ui->textEdit->setText(ac.getDesc());
@@ -62,9 +69,6 @@ ParamEditRadarDialog::ParamEditRadarDialog(QString fname, QWidget *parent) :
             itemName->setTextAlignment(Qt::AlignHCenter|Qt::AlignVCenter); //居中
             itemDesc->setTextAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
             itemValue->setTextAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
-//            if(j.key().size()>0){
-//                qDebug() << "size: " << j.key().size();
-//            }
 
             QString txt = QString("%1").arg(j.key());
             itemName->setText(txt);
@@ -78,6 +82,7 @@ ParamEditRadarDialog::ParamEditRadarDialog(QString fname, QWidget *parent) :
             row++;
         }
     }
+
 }
 
 ParamEditRadarDialog::~ParamEditRadarDialog()

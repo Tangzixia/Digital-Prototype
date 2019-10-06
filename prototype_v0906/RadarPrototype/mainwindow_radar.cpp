@@ -227,7 +227,6 @@ void MainWindow_Radar::loadCompByName(QString strText)
             item0->setData(Qt::UserRole+2, id);
             item0->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
             ui->listWidget->addDragItem(item0);
-//            update_Comp_property(fileName);
             break;
         }
     }
@@ -264,7 +263,7 @@ void MainWindow_Radar::loadAllComps()
         QString fileName = fileInfo.baseName();/*获取文件后名(不带后缀的文件名)*/
         if(!ui->listWidget->nameList.contains(fileName)){
             ui->listWidget->nameList.append(fileName);
-            qDebug() << "加入fileName: " << fileName;
+            qDebug() << "加入文件名:"<< fileName;
         }else {
             qDebug() << "有重复的文件名存在，文件名： " << fileName;
         }
@@ -280,7 +279,6 @@ void MainWindow_Radar::loadAllComps()
         item0->setData(Qt::UserRole+2, ac.getInfo()["ID"]);
         item0->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
         ui->listWidget->addDragItem(item0);
-//        update_Comp_property(ac);
     }
 }
 
@@ -1426,16 +1424,20 @@ void MainWindow_Radar::update_Comp_property(AlgorithmComp ac)
     fl->setLabelAlignment(Qt::AlignLeft);//设置标签的对齐方式
     for ( it = info_map.begin(); it != info_map.end(); ++it ) {
         QLineEdit *ql = new QLineEdit(it.value(), sw);
+        ql->setReadOnly(true);
         fl->addRow(it.key(), ql);
     }
 
     QLineEdit *desc_ = new QLineEdit(ac.getDesc(), sw);
+    desc_->setReadOnly(true);
     fl->addRow("Description", desc_);
 
     QMap<QString, QMap<QString, QString>> para_map = ac.getParam();
     for ( QMap<QString, QMap<QString, QString>>::iterator itt = para_map.begin(); itt != para_map.end(); ++itt ) {
         QLineEdit *desc = new QLineEdit(itt.value().value("describe"), sw);
+        desc->setReadOnly(true);
         QLineEdit *val = new QLineEdit(itt.value().value("value"), sw);
+        val->setReadOnly(true);
         QLabel *l = new QLabel();
         fl->addRow(itt.key(), l);
         fl->addRow("describe", desc);
