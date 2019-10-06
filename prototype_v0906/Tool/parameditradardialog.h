@@ -15,8 +15,11 @@ class ParamEditRadarDialog : public QDialog
 
 public:
     explicit ParamEditRadarDialog(QWidget *parent = nullptr);
+    explicit ParamEditRadarDialog(QString fname, QWidget *parent = nullptr);
     ~ParamEditRadarDialog();
+    // 保存用户填写的信息
     AlgorithmComp ac;
+    // 保存信息
     QMap<QString, QString> mp;
 
 private slots:
@@ -32,7 +35,10 @@ private slots:
 
 private:
     Ui::ParamEditRadarDialog *ui;
+    // 当前参数有几行
     int row=0;
+    // 保存编辑文件的名字
+    QString fname;
 };
 
 #endif // PARAMEDITRADARDIALOG_H

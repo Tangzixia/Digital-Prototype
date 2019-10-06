@@ -67,7 +67,7 @@ void RadarCompDraglistWidget::addDragItem(QListWidgetItem*item){
 void RadarCompDraglistWidget::createNewComp()
 {
     // 新建
-    ParamEditRadarDialog dlg;
+    ParamEditRadarDialog dlg("null");
     if(dlg.exec() == QDialog::Accepted)
     {
         qDebug() << "确定";
@@ -127,9 +127,9 @@ void RadarCompDraglistWidget::deleteItemSlot()
     QString na = item->text();
     qDebug() << "删除组件: " << na;
     takeItem(row(item));
-    // TODO nameList删除
+    // nameList删除
     nameList.removeOne(na);
-    // TODO 文件也要删除
+    // 文件也要删除
     QFile file(QDir::currentPath()+"/algoXml/"+na+".xml");
     file.remove();
     delete item;
@@ -141,7 +141,19 @@ void RadarCompDraglistWidget::editItemParamSlot()
     if( item == nullptr )
         return;
     qDebug() << "要编辑的组件名字为: " << item->text();
-
+    ParamEditRadarDialog dlg(item->text());
+    if(dlg.exec() == QDialog::Accepted)
+    {
+        qDebug() << "确定";
+        algorithms.insert(dlg.ac.getInfo()["ID"], dlg.ac);
+        qDebug() << "刚增加的id:" << dlg.ac.getInfo()["ID"];
+        qDebug() << "algorithms大小： " << algorithms.size();
+        Utils::writeAlgorithmComp2Xml(dlg.ac);
+        emit add_one_Comp(dlg.ac);
+        emit toRefreshCompList(); //刷新列表
+    }else{
+        qDebug() << "取消";
+    }
 }
 
 void RadarCompDraglistWidget::createItemParamSlot()

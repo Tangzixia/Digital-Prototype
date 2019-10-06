@@ -79,5 +79,6 @@
         <file>img/close-all.png</file>
         <file>img/close-pro.png</file>
         <file>img/save-all.png</file>
+        <file>img/path.png</file>
     </qresource>
 </RCC>

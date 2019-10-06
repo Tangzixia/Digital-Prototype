@@ -5,11 +5,17 @@
 #include <QFileDialog>
 #include <QHeaderView>
 #include <QTableWidget>
-ParamEditRadarDialog::ParamEditRadarDialog(QWidget *parent) :
+#include "utils.h"
+#include <QApplication>
+#include <QDesktopWidget>
+ParamEditRadarDialog::ParamEditRadarDialog(QString fname, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::ParamEditRadarDialog)
+    ui(new Ui::ParamEditRadarDialog),
+    fname(fname)
 {
     ui->setupUi(this);
+    // 重新设置时间，不然不对
+    ui->dateTimeEdit->setDateTime(QDateTime::currentDateTime());
     // 必须要设置有多少行，在ui中设置也行
 //    ui->tableWidget_Param->setRowCount(20);
 //    ui->tableWidget_Param->setColumnCount(3);
@@ -31,9 +37,47 @@ ParamEditRadarDialog::ParamEditRadarDialog(QWidget *parent) :
 //    ui->tableWidget_Param->setSelectionMode(QAbstractItemView::MultiSelection);
     // 正常情况下是单选，按下Ctrl键后，可以多选
     ui->tableWidget_Param->setSelectionMode(QAbstractItemView::ExtendedSelection);
-
+    // 固定宽度先
+    ui->pushButton_Path->setFixedWidth(335);
     // 双击可修改
     ui->tableWidget_Param->setEditTriggers(QAbstractItemView::DoubleClicked);
+    if(fname.compare("null")){
+        AlgorithmComp ac = Utils::readPluginXmlFile(QDir::currentPath()+"/algoXml/"+fname+".xml");
+        QString id = ac.getInfo()["ID"];
+        this->ui->lineEdit_Name->setText(fname);
+        ui->lineEdit_ID->setText(id);
+        ui->pushButton_Path->setText(ac.getInfo()["Path"]);
+        ui->textEdit->setText(ac.getDesc());
+//        qDebug() << QDateTime::fromString(QString(ac.getInfo()["Time"]), "M/d/yyyy h:mm AP");
+        ui->dateTimeEdit->setDateTime(QDateTime::fromString(QString(ac.getInfo()["Time"]), "M/d/yyyy h:mm AP"));
+        QMap<QString, QMap<QString, QString>> paraMap = ac.getParam();
+        for (QMap<QString, QMap<QString, QString>>::iterator j =paraMap.begin();j!=paraMap.end();j++) {
+            int r = ui->tableWidget_Param->rowCount();//获取表格中当前总行数
+            ui->tableWidget_Param->setRowCount(r+1);//添加一行
+            row = r;
+            QTableWidgetItem *itemName, *itemDesc, *itemValue;
+            itemName = new QTableWidgetItem;
+            itemDesc = new QTableWidgetItem;
+            itemValue = new QTableWidgetItem;
+            itemName->setTextAlignment(Qt::AlignHCenter|Qt::AlignVCenter); //居中
+            itemDesc->setTextAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
+            itemValue->setTextAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
+//            if(j.key().size()>0){
+//                qDebug() << "size: " << j.key().size();
+//            }
+
+            QString txt = QString("%1").arg(j.key());
+            itemName->setText(txt);
+            ui->tableWidget_Param->setItem(row, 0, itemName);
+            txt = QString("%1").arg(j.value().value("describe"));
+            itemDesc->setText(txt);
+            ui->tableWidget_Param->setItem(row, 1, itemDesc);
+            txt = QString("%1").arg(j.value().value("value"));
+            itemValue->setText(txt);
+            ui->tableWidget_Param->setItem(row, 2, itemValue);
+            row++;
+        }
+    }
 }
 
 ParamEditRadarDialog::~ParamEditRadarDialog()
@@ -43,30 +87,36 @@ ParamEditRadarDialog::~ParamEditRadarDialog()
 
 void ParamEditRadarDialog::on_pushButton_OK_clicked()
 {
-    ac.setDesc(ui->textEdit->toPlainText());
-    mp.insert("ID", ui->lineEdit_ID->text());
-    mp.insert("Name", ui->lineEdit_Name->text());
-    mp.insert("Time", ui->dateTimeEdit->text());
-    mp.insert("Path", ui->pushButton_Path->text());
-    ac.setInfo(mp);
-    QMap<QString, QMap<QString, QString> >pmap;
-    QMap<QString, QString> m;
-    qDebug() << "参数总行数row: " << row;
-    for (int i=0;i<row;i++) {
-        // WARNING 这里填写的内容一定不能为纯数字！！！，xue的教训，会直接造成写入成功，读取失败!
-        QString  name = ui->tableWidget_Param->item(i, 0)->text();
-        QString desc = ui->tableWidget_Param->item(i, 1)->text();
-        QString value = ui->tableWidget_Param->item(i, 2)->text();
-        qDebug() << name <<": " << desc <<"; " << value;
-        m.clear();
-        m.insert("describe", desc);
-        m.insert("value", value);
-        pmap.insert(name, m);
+    // TODO 这里要判断一下id是否合法，但还没想好，目前必须是数字才行
+    if(ui->lineEdit_ID->text() == nullptr || ui->lineEdit_ID->text() == ""){
+        Utils::alert(QApplication::desktop()->screen()->rect(), "拒绝添加！id不能为空");
+        reject();
+    }else{
+        ac.setDesc(ui->textEdit->toPlainText());
+        mp.insert("ID", ui->lineEdit_ID->text());
+        mp.insert("Name", ui->lineEdit_Name->text());
+        mp.insert("Time", ui->dateTimeEdit->dateTime().toString());
+        mp.insert("Path", ui->pushButton_Path->text());
+        ac.setInfo(mp);
+        QMap<QString, QMap<QString, QString> >pmap;
+        QMap<QString, QString> m;
+        qDebug() << "参数总行数row: " << row;
+        for (int i=0;i<row;i++) {
+            // WARNING 这里填写的内容一定不能为纯数字！！！，xue的教训，会直接造成写入成功，读取失败!
+            QString  name = ui->tableWidget_Param->item(i, 0)->text();
+            QString desc = ui->tableWidget_Param->item(i, 1)->text();
+            QString value = ui->tableWidget_Param->item(i, 2)->text();
+    //        qDebug() << name <<": " << desc <<"; " << value;
+            m.clear();
+            m.insert("describe", desc);
+            m.insert("value", value);
+            pmap.insert(name, m);
+        }
+        qDebug() << "参数列表的大小: " << pmap.size();
+        ac.clearParam();
+        ac.setParam(pmap);
+        accept();
     }
-    qDebug() << "参数列表的大小: " << pmap.size();
-    ac.clearParam();
-    ac.setParam(pmap);
-    accept();
 }
 
 void ParamEditRadarDialog::on_pushButton_Cancel_clicked()
