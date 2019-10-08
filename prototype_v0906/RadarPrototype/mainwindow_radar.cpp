@@ -487,7 +487,7 @@ void MainWindow_Radar::closeEvent(QCloseEvent *event)
     }else{
 		//提醒父类更新列表
          emit iClose(this);
-        event->accept();
+         event->accept();
 //        MainWindowNew::main_radar_list.removeOne(this);
 
     }
@@ -1115,6 +1115,7 @@ void MainWindow_Radar::readXmlConf(QString xmlname)
                 qDebug() << "组件名: " << compName;
                 if(!ui->listWidget->nameList.contains(compName)){
                     qDebug() << "读取出错，缺少组件，组件" << compName << "已被删除";
+                    Utils::alert(QApplication::desktop()->screen()->rect(),"读取出错，缺少组件，组件"+compName+"已被删除");
                     for(QGraphicsItem *item: scene->items()){
                         scene->removeItem(item);
                         delete item;
@@ -1123,11 +1124,13 @@ void MainWindow_Radar::readXmlConf(QString xmlname)
                         scene->getArrs()->childNodes().item(i).clear();
                     }
                     for(int j=0;j<scene->getItems()->childNodes().size();j++){
-                        scene->getArrs()->childNodes().item(j).clear();
+                        scene->getItems()->childNodes().item(j).clear();
                     }
+                    doc.clear();
                     scene->idList.clear();
-                    qDebug() << "idList大小" << scene->idList.size();
+                    qDebug() << "idList" << scene->idList;
                     ui->actionsave->setEnabled(false);
+                    save2XmlFile();
                     return;
                 }else{
                     DiagramItem *item_ = new DiagramItem(compName, scene->getItemMenu());
