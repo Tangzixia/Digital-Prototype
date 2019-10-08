@@ -46,7 +46,8 @@ public:
     void toggleSaveXml(int flag);
     // 初始化5个算法组件
     void init5Comp();
-    void init1Comp(QString comPName, QMenu *itemMenu, DiagramItem::DiagramType diagramType);
+//    void init1Comp(QString comPName, QMenu *itemMenu, DiagramItem::DiagramType diagramType);
+    void init1Comp(QString comPName, QMenu *itemMenu, QString iconName);
     void loadCompByName(QString strText);
 
 protected:
@@ -92,7 +93,8 @@ private slots:
      // 更新右面的雷达组件的属性
      void update_Comp_property(AlgorithmComp ac);
 
-     void setComp_typeandMode(int id);
+//     void setComp_typeandMode(int id);
+     void setComp_typeandMode(QString iconName);
      void search();
      void editComplete();
 

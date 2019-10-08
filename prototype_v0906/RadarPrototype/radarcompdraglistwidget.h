@@ -35,7 +35,8 @@ public slots:
 
 signals:
     void add_one_Comp(AlgorithmComp algo);
-    void setComp_typeandMode(int id);
+//    void setComp_typeandMode(int id);
+    void setComp_typeandMode(QString iconName);
     void toRefreshCompList();
 
 protected:

@@ -40,3 +40,13 @@ void AlgorithmComp::clearParam()
     param.clear();
 }
 
+QString AlgorithmComp::getFileName() const
+{
+    return fileName;
+}
+
+void AlgorithmComp::setFileName(const QString &value)
+{
+    fileName = value;
+}
+

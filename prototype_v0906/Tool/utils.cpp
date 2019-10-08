@@ -72,7 +72,7 @@ int Utils::saveFile(QWidget *qw, QString dirp, QString filename, RadarScene *sce
             file.close();
         }else{
             QTextStream out(&file);
-            scene->getDoc().save(out, 4); //EncodingFromDocument
+            scene->getDoc()->save(out, 4); //EncodingFromDocument
             file.close();
             qDebug() << "场景保存成功!路径为："+spath;
         }
@@ -86,7 +86,7 @@ int Utils::saveFile(QWidget *qw, QString dirp, QString filename, RadarScene *sce
             return -1;
         }else{
             QTextStream out(&file);
-            scene->getDoc().save(out, 4); //EncodingFromDocument
+            scene->getDoc()->save(out, 4); //EncodingFromDocument
             file.close();
             qDebug() << "路径为："+directory;
             return 1;
@@ -216,6 +216,10 @@ AlgorithmComp Utils::readPluginXmlFile(QString fileName)
             m1 = m1.nextSibling();
         }
         ac.setParam(paramap);
+        QFileInfo fi = QFileInfo(fileName);
+        QString file_name = fi.fileName().split(".")[0];  //获取文件名
+//        qDebug() << "短名字： " << file_name;
+        ac.setFileName(file_name);
 //        qDebug() << ac.getInfo()["ID"];
         return ac;
     }else {
@@ -265,13 +269,13 @@ void Utils::writeAlgorithmComp2Xml(AlgorithmComp ac)
         QDomAttr describe = doc.createAttribute("describe");
         QDomAttr value = doc.createAttribute("value");
         describe.setValue(j.value().value("describe"));
-        qDebug() << j.value().toStdMap();
+        qDebug() << "参数Map：" << j.value().toStdMap();
         value.setValue(j.value().value("value"));
         para.setAttributeNode(describe);
         para.setAttributeNode(value);
         Param.appendChild(para);
     }
-    QString filename = savePath+ac.getInfo()["Name"]+".xml";
+    QString filename = savePath+ac.getFileName()+".xml";
     QFile file(filename); // 这个斜杠很关键
     if(!file.open(QIODevice::WriteOnly | QIODevice::Truncate)){
         file.close();
@@ -293,12 +297,17 @@ void Utils::writeAlgorithmComp2Xml(AlgorithmComp ac)
 bool Utils::modifyFileName(QString fileName, QString newName)
 {
     QString filePath = QDir::currentPath()+"/algoXml/"+fileName+".xml";
-    qDebug() << filePath;
+    qDebug() << "修改文件名前文件完整路径： " << filePath;
+    AlgorithmComp ac = readPluginXmlFile(filePath);
+    ac.setFileName(newName);
     if(QFile::exists(filePath)){
-        bool b = QFile::rename(filePath, QDir::currentPath()+"/algoXml/"+newName+".xml");
-        return b;
+//        bool b = QFile::rename(filePath, QDir::currentPath()+"/algoXml/"+newName+".xml");
+//        return b;
+        QFile::remove(filePath);
     }else{
-        qDebug() << "文件不存在!";
-        return false;
+        qDebug() << "源文件不存在!";
+//        return false;
     }
+    writeAlgorithmComp2Xml(ac);
+    return true;
 }

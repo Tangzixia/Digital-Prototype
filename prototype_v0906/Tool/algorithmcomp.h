@@ -24,10 +24,14 @@ public:
 
     void clearParam();
 
+    QString getFileName() const;
+    void setFileName(const QString &value);
+
 private:
     QMap<QString, QString> info;
     QMap<QString, QMap<QString, QString>> param;
     QString desc;
+    QString fileName;
 };
 
 #endif // ALGORITHMCOMP_H

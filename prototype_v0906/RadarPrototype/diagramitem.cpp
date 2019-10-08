@@ -15,17 +15,20 @@
 * @date          2019-08-12
 */
 
-DiagramItem::DiagramItem(DiagramType diagramType, QMenu *contextMenu,
-             QGraphicsItem *parent): QGraphicsPolygonItem(parent)
+//DiagramItem::DiagramItem(DiagramType diagramType, QMenu *contextMenu,
+//             QGraphicsItem *parent): QGraphicsPolygonItem(parent)
+//{
+//    myDiagramType = diagramType;
+DiagramItem::DiagramItem(QString iconName, QMenu *contextMenu, QGraphicsItem *parent)
+: QGraphicsPolygonItem(parent), iconName(iconName)
 {
-    myDiagramType = diagramType;
     myContextMenu = contextMenu;
-
     QPainterPath path;
+
     //这里元素的大小和在场景中是一样的，修改了都会变。
-    switch (myDiagramType) {
+//    switch (myDiagramType) {
         //暂不使用
-        case Comp3:
+//        case Comp3:
 //            path.moveTo(200, 50);
 //            path.arcTo(150, 0, 50, 50, 0, 90);
 //            path.arcTo(50, 0, 50, 50, 90, 90);
@@ -34,23 +37,23 @@ DiagramItem::DiagramItem(DiagramType diagramType, QMenu *contextMenu,
 //            path.lineTo(200, 25);
 //            myPolygon = path.toFillPolygon();
         //统一形状
-            myPolygon << QPointF(-50, -50) << QPointF(50, -50)
-                      << QPointF(50, 50) << QPointF(-50, 50)
-                      << QPointF(-50, -50);
-            break;
-        //立着正方形
-        case Comp2:
+//            myPolygon << QPointF(-50, -50) << QPointF(50, -50)
+//                      << QPointF(50, 50) << QPointF(-50, 50)
+//                      << QPointF(-50, -50);
+//            break;
+//        立着正方形
+//        case Comp2:
 //            myPolygon << QPointF(-50, 0) << QPointF(0, 50)
 //                      << QPointF(50, 0) << QPointF(0, -50)
 //                      << QPointF(-50, 0);
 
         //统一形状
-            myPolygon << QPointF(-50, -50) << QPointF(50, -50)
-                      << QPointF(50, 50) << QPointF(-50, 50)
-                      << QPointF(-50, -50);
-            break;
+//            myPolygon << QPointF(-50, -50) << QPointF(50, -50)
+//                      << QPointF(50, 50) << QPointF(-50, 50)
+//                      << QPointF(-50, -50);
+//            break;
         //正方形
-        case Comp1:
+//        case Comp1:
 //            path.moveTo(-50, -50);
 //            path.addText(QPointF(0,0),QFont("Helvetica", 20),QString("hhh"));
 //            path.moveTo(50, -50);
@@ -60,28 +63,33 @@ DiagramItem::DiagramItem(DiagramType diagramType, QMenu *contextMenu,
 //            path.lineTo(-50, -50);
 
         //统一形状
-            myPolygon << QPointF(-50, -50) << QPointF(50, -50)
-                      << QPointF(50, 50) << QPointF(-50, 50)
-                      << QPointF(-50, -50);
+//            myPolygon << QPointF(-50, -50) << QPointF(50, -50)
+//                      << QPointF(50, 50) << QPointF(-50, 50)
+//                      << QPointF(-50, -50);
 //            myPolygon = path.toFillPolygon();
-            break;
+//            break;
         //默认 菱形，IO
-        default:
+//        default:
 //            myPolygon << QPointF(-60, -40) << QPointF(-35, 40)
 //                      << QPointF(60, 40) << QPointF(35, -40)
 //                      << QPointF(-60, -40);
         //统一形状
-            myPolygon << QPointF(-50, -50) << QPointF(50, -50)
-                      << QPointF(50, 50) << QPointF(-50, 50)
-                      << QPointF(-50, -50);
-            break;
-    }
+//            myPolygon << QPointF(-50, -50) << QPointF(50, -50)
+//                      << QPointF(50, 50) << QPointF(-50, 50)
+//                      << QPointF(-50, -50);
+//            break;
+//    }
+
+    // 统一形状
+    myPolygon << QPointF(-50, -50) << QPointF(50, -50)
+          << QPointF(50, 50) << QPointF(-50, 50)
+          << QPointF(-50, -50);
     setPolygon(myPolygon);
     setFlag(QGraphicsItem::ItemIsFocusable, true);
     setFlag(QGraphicsItem::ItemIsMovable, true);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     setAcceptHoverEvents(true);
-    //坐标变化
+    // 坐标变化
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
 }
 
@@ -94,19 +102,21 @@ QRectF DiagramItem::boundingRect()
 void DiagramItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
     painter->drawRect(-50,-50,100,100);
-    myDiagramType = diagramType();
-    switch (myDiagramType) {
-        case Comp1: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/FDPC.png"));;
-            break;
-        case Comp2: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/CFAR.png"));;
-            break;
-        case Comp4: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/MTD.png"));;
-            break;
-        case Comp3: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/input.png"));;
-            break;
-        case Comp5: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/output.png"));;
-            break;
-    }
+    painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/"+iconName));
+
+//    myDiagramType = diagramType();
+//    switch (myDiagramType) {
+//        case Comp1: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/FDPC.png"));
+//            break;
+//        case Comp2: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/CFAR.png"));
+//            break;
+//        case Comp4: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/MTD.png"));
+//            break;
+//        case Comp3: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/input.png"));
+//            break;
+//        case Comp5: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/output.png"));
+//            break;
+//    }
 }
 void DiagramItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
@@ -144,24 +154,24 @@ QPixmap DiagramItem::image() const
 {
     QPixmap pixmap(250, 250);
 //    pixmap.fill(Qt::transparent);
-    QString iconName;
-    switch (diagramType()) {
-        case DiagramItem::DiagramType::Comp1 :
-            iconName = "FDPC";
-            break;
-        case DiagramItem::DiagramType::Comp2 :
-            iconName = "CFAR";
-            break;
-        case DiagramItem::DiagramType::Comp4 :
-            iconName = "MTD";
-            break;
-        case DiagramItem::DiagramType::Comp3 :
-            iconName = "INPUT";
-            break;
-        case DiagramItem::DiagramType::Comp5 :
-            iconName = "OUTPUT";
-            break;
-    }
+//    QString iconName;
+//    switch (diagramType()) {
+//        case DiagramItem::DiagramType::Comp1 :
+//            iconName = "FDPC";
+//            break;
+//        case DiagramItem::DiagramType::Comp2 :
+//            iconName = "CFAR";
+//            break;
+//        case DiagramItem::DiagramType::Comp4 :
+//            iconName = "MTD";
+//            break;
+//        case DiagramItem::DiagramType::Comp3 :
+//            iconName = "INPUT";
+//            break;
+//        case DiagramItem::DiagramType::Comp5 :
+//            iconName = "OUTPUT";
+//            break;
+//    }
     QString itemIcon = ":/img/" +iconName+".ico";
     pixmap.convertFromImage(QImage(itemIcon));
     QPainter painter(&pixmap);
@@ -172,7 +182,15 @@ QPixmap DiagramItem::image() const
     return pixmap;
 }
 
-//????
+QString DiagramItem::getIconName() const
+{
+    return iconName;
+}
+
+void DiagramItem::setIconName(const QString &value)
+{
+    iconName = value;
+}
 
 //void DiagramItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *)
 //{
@@ -226,6 +244,7 @@ void DiagramItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     // 菜单可用
     myContextMenu->setEnabled(true);
     qDebug() << "myContextMenu设置为true" << myContextMenu->isEnabled();
+    // 鼠标是不是在场景里
     bool is = dynamic_cast<RadarScene*>(this->scene())->isSelected;
     if(!is){
         dynamic_cast<RadarScene*>(this->scene())->setIsSelected(true);
@@ -234,6 +253,13 @@ void DiagramItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     myContextMenu->exec(event->screenPos());
 }
 
+// This is an auto-generated comment.
+/**
+* @projectName   prototype_v0906
+* @brief         简介 位置变化
+* @author        Antrn
+* @date          2019-10-07
+*/
 QVariant DiagramItem::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     //检测位置发生变化
@@ -244,6 +270,7 @@ QVariant DiagramItem::itemChange(GraphicsItemChange change, const QVariant &valu
             RadarScene *scene = dynamic_cast<RadarScene *>(this->scene());
             scene->updateXmlItemsPos(this->pos(), this);
         }else{
+            // 初始化的时候，不用更新位置
             init_pos_set = 1;
         }
         foreach (Arrow *arrow, arrows) {

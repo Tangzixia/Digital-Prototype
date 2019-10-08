@@ -51,7 +51,7 @@ ParamEditRadarDialog::ParamEditRadarDialog(AlgorithmComp ac, QWidget *parent) :
         QString id = ac.getInfo()["ID"];
         this->ui->lineEdit_Name->setText(ac.getInfo()["Name"]);
         // WARNING 不能编辑xml文件名字，因为它是组件的名字，修改了的话保存的时候以新名字为准，就会重新生成一个新的组件文件
-        ui->lineEdit_Name->setReadOnly(true);
+//        ui->lineEdit_Name->setReadOnly(true);
         ui->lineEdit_ID->setText(id);
         ui->pushButton_Path->setText(ac.getInfo()["Path"]);
         ui->textEdit->setText(ac.getDesc());
@@ -100,6 +100,10 @@ void ParamEditRadarDialog::on_pushButton_OK_clicked()
         ac.setDesc(ui->textEdit->toPlainText());
         mp.insert("ID", ui->lineEdit_ID->text());
         mp.insert("Name", ui->lineEdit_Name->text());
+        // 只有第一次初始化用这个，后面的编辑就不改变了
+        if(ac.getFileName().isEmpty() || ac.getFileName().isNull()){
+            ac.setFileName(ui->lineEdit_Name->text());
+        }
         mp.insert("Time", ui->dateTimeEdit->dateTime().toString());
         mp.insert("Path", ui->pushButton_Path->text());
         ac.setInfo(mp);
@@ -117,7 +121,7 @@ void ParamEditRadarDialog::on_pushButton_OK_clicked()
             m.insert("value", value);
             pmap.insert(name, m);
         }
-        qDebug() << "参数列表的大小: " << pmap.size();
+//        qDebug() << "参数列表的大小: " << pmap.size();
         ac.clearParam();
         ac.setParam(pmap);
         accept();

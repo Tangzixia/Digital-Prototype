@@ -20,28 +20,32 @@ class DiagramItem : public QObject, public QGraphicsPolygonItem
 public:
     enum { Type = UserType + 15 };
 
-    enum DiagramType { Comp1, Comp2, Comp3, Comp4, Comp5};
-    Q_ENUM(DiagramType)
+//    enum DiagramType { Comp1, Comp2, Comp3, Comp4, Comp5};
+//    Q_ENUM(DiagramType)
 
-    DiagramType diagramType() const { return myDiagramType; }
+//    DiagramType diagramType() const { return myDiagramType; }
 
-    DiagramItem(DiagramType diagramType, QMenu *contextMenu, QGraphicsItem *parent = nullptr);
-
+//    DiagramItem(DiagramType diagramType, QMenu *contextMenu, QGraphicsItem *parent = nullptr);
+    DiagramItem(QString iconName, QMenu *contextMenu, QGraphicsItem *parent = nullptr);
     void removeArrow(Arrow *arrow);
     void removeArrows();
     QPolygonF polygon() const { return myPolygon; }
     void addArrow(Arrow *arrow);
     QPixmap image() const;
     int type() const override { return Type;}
+    // 唯一id
     int itemId;
-    QString iconName;
-    int init_pos_set=0;
+    QString iconName; //组件小图标
+    int init_pos_set=0;  // 是否初始化的标志
     QRectF boundingRect();
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr);
 
+    QString getIconName() const;
+    void setIconName(const QString &value);
+
 protected:
     // 鼠标事件，会导致一些奇怪的bug，一起运动
-//    void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
+    //    void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
 //    void mousePressEvent(QGraphicsSceneMouseEvent *) override;
 //    void KeyPressEvent(QKeyEvent *event);
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
@@ -54,7 +58,7 @@ signals:
 
 
 private:
-    DiagramType myDiagramType;
+//    DiagramType myDiagramType;
     //自定义绘制多边形
     QPolygonF myPolygon;
     //保存的右键菜单，和菜单栏中的一致

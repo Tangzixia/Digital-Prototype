@@ -21,8 +21,8 @@ RadarScene::RadarScene(QMenu *itemMenu, QObject *parent)
 {
     myItemMenu = itemMenu;
     myMode = MoveItem;
-    //默认Step
-    myItemType = DiagramItem::Comp1;
+//    myItemType = DiagramItem::Comp1;
+
     line = nullptr;
     textItem = nullptr;
     myItemColor = Qt::white;
@@ -97,10 +97,12 @@ void RadarScene::setFont(const QFont &font)
 void RadarScene::modifyXmlItems(QPointF pos, DiagramItem *item)
 {
     QDomElement comp;
-    QMetaObject mo = DiagramItem::staticMetaObject;
-    int index = mo.indexOfEnumerator("DiagramType");
-    QMetaEnum metaEnum = mo.enumerator(index);
-    comp = doc.createElement(metaEnum.valueToKey(item->diagramType()));
+//    QMetaObject mo = DiagramItem::staticMetaObject;
+//    int index = mo.indexOfEnumerator("DiagramType");
+//    QMetaEnum metaEnum = mo.enumerator(index);
+//    comp = doc.createElement(metaEnum.valueToKey(item->diagramType()));
+    // TODO　以iconName命名节点名称？
+    comp = doc.createElement(item->getIconName());
 //    switch (item->diagramType()) {
 //        case DiagramItem::DiagramType::Comp1:
 //            comp = doc.createElement("Comp1");
@@ -182,10 +184,15 @@ void RadarScene::setMode(Mode mode)
     myMode = mode;
 }
 
-void RadarScene::setItemType(DiagramItem::DiagramType type)
+void RadarScene::setMyItemIconName(QString value)
 {
-    myItemType = type;
+    myItemIconName = value;
 }
+
+//void RadarScene::setItemType(DiagramItem::DiagramType type)
+//{
+//    myItemType = type;
+//}
 //文本框
 void RadarScene::editorLostFocus(DiagramTextItem *item)
 {
@@ -240,7 +247,8 @@ void RadarScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     DiagramItem *item;
     switch (myMode) {
         case InsertItem:{
-            item = new DiagramItem(myItemType, myItemMenu);
+//            item = new DiagramItem(myItemType, myItemMenu);
+            item = new DiagramItem(myItemIconName, myItemMenu);
 //            item->(myItemColor);
             item->setBrush(myItemColor);
             item->itemId = generateUniqueid();
@@ -361,7 +369,8 @@ void RadarScene::dropEvent(QGraphicsSceneDragDropEvent *event)
     if (event->mimeData()->hasFormat(RadarCompDraglistWidget::puzzleMimeType())){
         event->acceptProposedAction();
 
-        DiagramItem *item = new DiagramItem(myItemType, myItemMenu);
+//        DiagramItem *item = new DiagramItem(myItemType, myItemMenu);
+        DiagramItem *item = new DiagramItem(myItemIconName, myItemMenu);
         item->setBrush(myItemColor);
         item->itemId = generateUniqueid();
         addItem(item);
@@ -403,4 +412,34 @@ bool RadarScene::isItemChange(int type)
             return true;
     }
     return false;
+}
+
+QDomElement *RadarScene::getItems()
+{
+    return &Items;
+}
+
+void RadarScene::setItems(const QDomElement &value)
+{
+    Items = value;
+}
+
+QDomElement *RadarScene::getArrs()
+{
+    return &Arrs;
+}
+
+void RadarScene::setArrs(const QDomElement &value)
+{
+    Arrs = value;
+}
+
+void RadarScene::setDoc(const QDomDocument &value)
+{
+    doc = value;
+}
+
+QString RadarScene::getMyItemIconName() const
+{
+    return myItemIconName;
 }

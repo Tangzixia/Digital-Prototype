@@ -161,11 +161,11 @@ void MainWindow_Radar::toggleSaveXml(int flag){
 */
 void MainWindow_Radar::init5Comp()
 {
-    init1Comp(tr("脉冲压缩"), itemMenu, DiagramItem::Comp1);
-    init1Comp(tr("恒虚警率"), itemMenu, DiagramItem::Comp2);
-    init1Comp(tr("输入"), itemMenu, DiagramItem::Comp3);
-    init1Comp(tr("动目标检测"), itemMenu, DiagramItem::Comp4);
-    init1Comp(tr("输出"), itemMenu, DiagramItem::Comp5);
+//    init1Comp(tr("脉冲压缩"), itemMenu, DiagramItem::Comp1);
+//    init1Comp(tr("恒虚警率"), itemMenu, DiagramItem::Comp2);
+//    init1Comp(tr("输入"), itemMenu, DiagramItem::Comp3);
+//    init1Comp(tr("动目标检测"), itemMenu, DiagramItem::Comp4);
+//    init1Comp(tr("输出"), itemMenu, DiagramItem::Comp5);
 }
 
 // This is available in all editors.
@@ -175,10 +175,11 @@ void MainWindow_Radar::init5Comp()
 * @author        Antrn
 * @date          2019-10-03
 */
-void MainWindow_Radar::init1Comp(QString comPName, QMenu *itemMenu, DiagramItem::DiagramType diagramType)
+//void MainWindow_Radar::init1Comp(QString comPName, QMenu *itemMenu, DiagramItem::DiagramType diagramType)
+void MainWindow_Radar::init1Comp(QString comPName, QMenu *itemMenu, QString iconName)
 {
     QListWidgetItem *item = new QListWidgetItem();
-    DiagramItem ditem(diagramType, itemMenu);
+    DiagramItem ditem(iconName, itemMenu);
     QIcon icon5(ditem.image());
     item->setIcon(icon5);
     item->setText(tr(comPName.toUtf8().data()));
@@ -188,7 +189,6 @@ void MainWindow_Radar::init1Comp(QString comPName, QMenu *itemMenu, DiagramItem:
     item->setData(Qt::UserRole+2, ui->listWidget->count());
     item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
     ui->listWidget->addDragItem(item);
-//    update_Comp_property(comPName);
 }
 
 // This is available in all editors.
@@ -307,7 +307,7 @@ void MainWindow_Radar::textInserted(QGraphicsTextItem *)
 // 删除doc中的箭头和图形项
 void MainWindow_Radar::deleteItemArrowById(int id)
 {
-    QDomNode itemNode = scene->getDoc().elementsByTagName("Items").at(0);
+    QDomNode itemNode = scene->getDoc()->elementsByTagName("Items").at(0);
     QDomNodeList nodeList = itemNode.childNodes();
     for (int i=0; i<nodeList.size(); i++) {
         if(nodeList.at(i).isElement()){
@@ -322,7 +322,7 @@ void MainWindow_Radar::deleteItemArrowById(int id)
         }
     }
 
-    QDomNode arrowNode = scene->getDoc().elementsByTagName("Arrs").at(0);
+    QDomNode arrowNode = scene->getDoc()->elementsByTagName("Arrs").at(0);
     /**
      * 注意这里面不能先定义变量QDomNodeList arrowList = arrowNode.childNodes()；，然后下面使用arrowList，
      * 因为当你删除一个标签节点之后，总长度size变了，每次都要重新获取size，而且找到一次之后index从0开始继续遍历
@@ -346,7 +346,7 @@ void MainWindow_Radar::deleteItemArrowById(int id)
 
 void MainWindow_Radar::deleteArrowById(int id)
 {
-    QDomNode arrowNode = scene->getDoc().elementsByTagName("Arrs").at(0);
+    QDomNode arrowNode = scene->getDoc()->elementsByTagName("Arrs").at(0);
     for (int j=0; j<arrowNode.childNodes().size(); j++) {
         if(arrowNode.childNodes().at(j).isElement()){
             QDomElement elem2 = arrowNode.childNodes().at(j).toElement();
@@ -1067,6 +1067,13 @@ void MainWindow_Radar::on_actionOpenXml_triggered()
     readXmlConf(fileName);
 }
 
+// This is an auto-generated comment.
+/**
+* @projectName   prototype_v0906
+* @brief         简介 读取场景的xml文件
+* @author        Antrn
+* @date          2019-10-07
+*/
 void MainWindow_Radar::readXmlConf(QString xmlname)
 {
     QDomDocument doc;
@@ -1103,9 +1110,38 @@ void MainWindow_Radar::readXmlConf(QString xmlname)
                 QColor colour(s);
 
                 // 只能先用if/else了，switch也不能用
-                DiagramItem::DiagramType type;
-                qDebug() << "组件名: " << QString::fromStdString(tagName);
-
+//                DiagramItem::DiagramType type;
+                QString compName = QString::fromStdString(tagName);
+                qDebug() << "组件名: " << compName;
+                if(!ui->listWidget->nameList.contains(compName)){
+                    qDebug() << "读取出错，缺少组件，组件" << compName << "已被删除";
+                    for(QGraphicsItem *item: scene->items()){
+                        scene->removeItem(item);
+                        delete item;
+                    }
+                    for(int i=0;i<scene->getArrs()->childNodes().size();i++){
+                        scene->getArrs()->childNodes().item(i).clear();
+                    }
+                    for(int j=0;j<scene->getItems()->childNodes().size();j++){
+                        scene->getArrs()->childNodes().item(j).clear();
+                    }
+                    scene->idList.clear();
+                    qDebug() << "idList大小" << scene->idList.size();
+                    ui->actionsave->setEnabled(false);
+                    return;
+                }else{
+                    DiagramItem *item_ = new DiagramItem(compName, scene->getItemMenu());
+                    QPointF pos(posx, poxy);
+                    item_->setPos(pos);
+                    item_->setBrush(colour);
+                    item_->itemId = id; //id不变
+                    scene->idList.append(id);
+                    qDebug() << "scene的id列表" << scene->idList;
+                    scene->addItem(item_);
+                    emit itemInserted(item_);
+                    //更新xml
+                    scene->modifyXmlItems(pos, item_);
+                }
                 // FIXME 这部分出大问题，不可能每次都枚举吧
 //                if(tagName == "comp_1"){
 //                    type = DiagramItem::DiagramType::Comp1;
@@ -1120,9 +1156,9 @@ void MainWindow_Radar::readXmlConf(QString xmlname)
 //                }
 
                 // 成功啦
-                QMetaObject mo = DiagramItem::staticMetaObject;
-                int index = mo.indexOfEnumerator("DiagramType");
-                QMetaEnum metaEnum = mo.enumerator(index);
+//                QMetaObject mo = DiagramItem::staticMetaObject;
+//                int index = mo.indexOfEnumerator("DiagramType");
+//                QMetaEnum metaEnum = mo.enumerator(index);
                 // QMetaEnum metaEnum = QMetaEnum::fromType<DiagramItem::DiagramType>();
 //                for (int i=0; i<metaEnum.keyCount(); ++i)
 //                {
@@ -1130,18 +1166,8 @@ void MainWindow_Radar::readXmlConf(QString xmlname)
 //                    qDebug()<<  metaEnum.valueToKey(2);              //  enum转string
 //                    qDebug()<<  metaEnum.keysToValue("Comp4");       //  string转enum
 //                }
-                type = DiagramItem::DiagramType(metaEnum.keysToValue(tagName.c_str()));
-                DiagramItem *item_ = new DiagramItem(type, scene->getItemMenu());
-                QPointF pos(posx, poxy);
-                item_->setPos(pos);
-                item_->setBrush(colour);
-                item_->itemId = id; //id不变
-                scene->idList.append(id);
-                qDebug() << "scene的id列表" << scene->idList;
-                scene->addItem(item_);
-                emit itemInserted(item_);
-                //更新xml
-                scene->modifyXmlItems(pos, item_);
+
+//                type = DiagramItem::DiagramType(metaEnum.keysToValue(tagName.c_str()));
             }
             m = m.nextSibling();
         }
@@ -1182,7 +1208,8 @@ void MainWindow_Radar::readXmlConf(QString xmlname)
             m1 = m1.nextSibling();
         }
     }else {
-        // TODO 文件名为空，啥也没选，提示
+        // 文件名为空，啥也没选，提示
+        Utils::alert(QApplication::desktop()->screen()->rect(), "文件名为空！请重新选择！");
     }
 }
 
@@ -1212,9 +1239,9 @@ void MainWindow_Radar::on_actionsave_triggered()
 // TODO 新建线程保存文件
 void MainWindow_Radar::save2XmlFile(){
     ui->statusbar->showMessage("正在保存场景...", 1000);
-    qDebug() << tr("to close radar window");
+//    qDebug() << tr("to close radar window");
     // 根元素
-    QDomElement rootElem = scene->getDoc().documentElement();
+    QDomElement rootElem = scene->getDoc()->documentElement();
     rootElem.setAttribute("width", scene->width());
     rootElem.setAttribute("height", scene->height());
     //[更新箭头和组件的color
@@ -1229,7 +1256,7 @@ void MainWindow_Radar::save2XmlFile(){
     //                if(d->brush().color().name() != scene->getDoc().elementById(QString::number(d->itemId)).firstChild().toElement().text()){
     //                    scene->getDoc().elementById(QString::number(d->itemId)).firstChild().setNodeValue(d->brush().color().name());
     //                }
-            QDomNodeList list = scene->getDoc().elementsByTagName("Items").at(0).childNodes();
+            QDomNodeList list = scene->getDoc()->elementsByTagName("Items").at(0).childNodes();
             for (int k=0; k<list.count(); k++) {
                 QDomElement e = list.at(k).toElement();
     //                    qDebug() << e.attribute("id") << "; " << QString::number(d->itemId);
@@ -1244,7 +1271,7 @@ void MainWindow_Radar::save2XmlFile(){
         }
         // 如果是箭头
         if((a = dynamic_cast<Arrow *>(scene->items().at(i)))){
-            QDomNodeList list = scene->getDoc().elementsByTagName("Arrs").at(0).childNodes();
+            QDomNodeList list = scene->getDoc()->elementsByTagName("Arrs").at(0).childNodes();
             for (int k=0; k<list.count(); k++) {
                 QDomElement e = list.at(k).toElement();
                 //找到id对应的元素
@@ -1452,9 +1479,11 @@ void MainWindow_Radar::update_Comp_property(AlgorithmComp ac)
     ui->dockWidget->setWidget(scroll);
 }
 
-void MainWindow_Radar::setComp_typeandMode(int id)
+//void MainWindow_Radar::setComp_typeandMode(int id)
+void MainWindow_Radar::setComp_typeandMode(QString iconName)
 {
-    scene->setItemType(DiagramItem::DiagramType(id-1));
+//    scene->setItemType(DiagramItem::DiagramType(id-1));
+    scene->setMyItemIconName(iconName);
     scene->setMode(RadarScene::InsertItem);
 }
 

@@ -74,7 +74,7 @@ void RadarCompDraglistWidget::createNewComp()
         qDebug() << "确定新建";
         algorithms.insert(dlg.ac.getInfo()["ID"], dlg.ac);
         qDebug() << "刚增加的id:" << dlg.ac.getInfo()["ID"];
-        qDebug() << "algorithms大小： " << algorithms.size();
+        qDebug() << "algorithms： " << algorithms.keys() << "; 大小： " << algorithms.size();
         Utils::writeAlgorithmComp2Xml(dlg.ac);
         emit add_one_Comp(dlg.ac);
         emit toRefreshCompList(); //刷新列表
@@ -94,7 +94,7 @@ void RadarCompDraglistWidget::onCurrentTextChanged(QListWidgetItem *item)
             Utils::alert(QApplication::desktop()->screen()->rect(), "已有重复名称存在，请重试");
         }else{
             nameList.removeOne(oldName);
-            qDebug() << oldName << "; " << lastName;
+            qDebug() << oldName << "→" << lastName;
             if(Utils::modifyFileName(oldName, lastName)){
                 qDebug() << "重命名成功!";
             }else{
@@ -118,7 +118,7 @@ void RadarCompDraglistWidget::onCurrentDoubleClicked(QListWidgetItem *item)
 void RadarCompDraglistWidget::deleteItemSlot()
 {
     int ch = QMessageBox::warning(nullptr, "提醒",
-                                      "您确定要删除此组件吗?",
+                                      "您确定要删除此组件吗?\n若已有场景中使用了此组件，您的删除会造成致命错误。",
                                       QMessageBox::Yes | QMessageBox::No,
                                       QMessageBox::No);
     if ( ch != QMessageBox::Yes )
@@ -127,10 +127,14 @@ void RadarCompDraglistWidget::deleteItemSlot()
     if( item == nullptr )
         return;
     QString na = item->text();
+    QString id = item->data(Qt::UserRole+2).toString();
     qDebug() << "删除组件: " << na;
     takeItem(row(item));
     // nameList删除
     nameList.removeOne(na);
+    // 这里面也要删
+    algorithms.take(id);
+    qDebug() << "algorithms： " << algorithms.keys() << "; 大小： " << algorithms.size();
     // 文件也要删除
     QFile file(QDir::currentPath()+"/algoXml/"+na+".xml");
     file.remove();
@@ -229,9 +233,6 @@ void RadarCompDraglistWidget::startDrag(Qt::DropActions /*supportedActions*/)
     }
 }
 
-// TODO： 属性编辑更新
-
-
 //重写鼠标点击操作.
 void RadarCompDraglistWidget::mousePressEvent(QMouseEvent *event)
 {
@@ -297,38 +298,47 @@ void RadarCompDraglistWidget::mousePressEvent(QMouseEvent *event)
                 Utils::openDirOrCreate(dirpath);
                 // 打开xml文件读取
                 const QString fileName = QFileDialog::getOpenFileName(this, tr("打开组件xml"), QString(dirpath), tr("xml files (*.xml)"));
-//                qDebug() << fileName;
+                qDebug() << "长名字：" << fileName;
+
+//                QFileInfo fi = QFileInfo(fileName);
+//                QString file_name = fi.fileName().split(".")[0];  //获取文件名
+//                qDebug() << "短名字： " << file_name;
                 AlgorithmComp ac = Utils::readPluginXmlFile(fileName);
+                QString file_name = ac.getFileName();
+                // 将这里的文件复制过来
+                QFile::copy(fileName, dirpath+file_name+".xml");
 
                 // 已经有了
                 if(algorithms.contains(ac.getInfo()["ID"])){
-                    qDebug() << "已经导入了! id:" << ac.getInfo()["ID"] << "名字: " << ac.getInfo()["Name"];
+                    qDebug() << "已经导入了! id:" << ac.getInfo()["ID"] << "组件名字: " << ac.getInfo()["Name"];
                 }else{
                     algorithms.insert(ac.getInfo()["ID"], ac);
                     QListWidgetItem *item1 = new QListWidgetItem();
                     item1->setIcon(QIcon(":/img/component.png"));
-                    item1->setText(tr(ac.getInfo()["Name"].toUtf8().data()));
+                    item1->setText(file_name); //ac.getInfo()["Name"].toUtf8().data()
                     //这里的用户角色存储用户数据
                     item1->setData(Qt::UserRole, QPixmap(":/img/component.png"));
-                    item1->setData(Qt::UserRole+1, ac.getInfo()["Name"]);
+                    item1->setData(Qt::UserRole+1, file_name); // ac.getInfo()["Name"]
                     // TODO 向这里的id和之前写的id全要改，以xml中的id为准，唯一标识
                     item1->setData(Qt::UserRole+2, ac.getInfo()["ID"]);
                     item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
                     this->addDragItem(item1);
                     emit add_one_Comp(ac);
+                    nameList.append(file_name);
                     qDebug() << "列表的大小：" << algorithms.size();
                 }
                 break;
             }
         }else if(m_dragItem){
-            // TODO 这里的ID也不对
+            // 这里的ID也不对
 //            int id = qvariant_cast<int>(m_dragItem->data(Qt::UserRole+2))-1; //从0开始
             int id = qvariant_cast<int>(m_dragItem->data(Qt::UserRole+2)); //从0开始
             qDebug() << "当前id:" << id;
             // 点击其他组件,这个id应该为xml中的ID
             emit add_one_Comp(algorithms[QString::number(id)]);
             // 获取点击的是哪个组件的id，传到radarScene中，知道该渲染出哪个组件
-            emit setComp_typeandMode(id);
+//            emit setComp_typeandMode(id);
+            emit setComp_typeandMode(qvariant_cast<QString>(m_dragItem->data(Qt::UserRole+1)));
         }
     }
     //保留原QListWidget部件的鼠标点击操作.

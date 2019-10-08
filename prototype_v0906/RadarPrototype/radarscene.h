@@ -46,7 +46,7 @@ public:
 
     QMenu *getItemMenu(){return myItemMenu;}
 
-    QDomDocument getDoc(){return doc;}
+    QDomDocument *getDoc(){return &doc;}
 
     QList<int> idList;
 
@@ -81,9 +81,20 @@ public:
         return idList.back();
     }
 
+    QString getMyItemIconName() const;
+
+    void setDoc(const QDomDocument &value);
+
+    QDomElement *getArrs();
+    void setArrs(const QDomElement &value);
+
+    QDomElement *getItems();
+    void setItems(const QDomElement &value);
+
 public slots:
     void setMode(Mode mode);
-    void setItemType(DiagramItem::DiagramType type);
+    //    void setItemType(DiagramItem::DiagramType type);
+    void setMyItemIconName(QString value);
     void editorLostFocus(DiagramTextItem *item);
     void startRunCode();
     void sendRate(float rate);
@@ -118,7 +129,8 @@ protected:
 private:
     bool isItemChange(int type);
 
-    DiagramItem::DiagramType myItemType;
+//    DiagramItem::DiagramType myItemType;
+    QString myItemIconName;
     DiagramTextItem *textItem;
     QMenu *myItemMenu;
     Mode myMode;
