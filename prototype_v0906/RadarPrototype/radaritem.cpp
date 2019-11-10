@@ -130,5 +130,11 @@ void RadarItem::itemOperateSlot(Menu_iteamOperation::OperateType operateType,QSt
         qDebug()<<"item_rename:";
         this->setRadar_id(newName);
         break;
+    case Menu_iteamOperation::ppi:
+        qDebug()<<"item_ppi:";
+        break;
+    case Menu_iteamOperation::ashow:
+        qDebug()<<"item_ashow:";
+        break;
     }
 }

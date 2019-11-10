@@ -101,8 +101,15 @@ QRectF DiagramItem::boundingRect()
 
 void DiagramItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
+    painter->setRenderHint(QPainter::Antialiasing, true);
     painter->drawRect(-50,-50,100,100);
-    painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/"+iconName));
+
+    // NOTE BUG 修改资源图片位置，为什么这里不能加后缀，试了两小时，又变成加不加后缀都可以了。。。。
+//    painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/"+iconName));
+
+    QString s = QDir::currentPath()+"/images/"+iconName;
+    painter->drawPixmap(-49,-49,98,98, QPixmap(s));
+//    qDebug() << "名字！！！" << s;
 
 //    myDiagramType = diagramType();
 //    switch (myDiagramType) {
@@ -150,37 +157,44 @@ void DiagramItem::addArrow(Arrow *arrow)
     arrows.append(arrow);
 }
 
-QPixmap DiagramItem::image() const
-{
-    QPixmap pixmap(250, 250);
-//    pixmap.fill(Qt::transparent);
-//    QString iconName;
-//    switch (diagramType()) {
-//        case DiagramItem::DiagramType::Comp1 :
-//            iconName = "FDPC";
-//            break;
-//        case DiagramItem::DiagramType::Comp2 :
-//            iconName = "CFAR";
-//            break;
-//        case DiagramItem::DiagramType::Comp4 :
-//            iconName = "MTD";
-//            break;
-//        case DiagramItem::DiagramType::Comp3 :
-//            iconName = "INPUT";
-//            break;
-//        case DiagramItem::DiagramType::Comp5 :
-//            iconName = "OUTPUT";
-//            break;
-//    }
-    QString itemIcon = ":/img/" +iconName+".ico";
-    pixmap.convertFromImage(QImage(itemIcon));
-    QPainter painter(&pixmap);
-    painter.setPen(QPen(Qt::black, 8));
-    painter.translate(125, 125);
-//    painter.drawPolyline(myPolygon);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    return pixmap;
-}
+// This is an auto-generated comment.
+/**
+* @projectName   prototype_v0906
+* @brief         简介 早期版本代码，用于列表中展示
+* @author        Antrn
+* @date          2019-11-08
+*/
+//QPixmap DiagramItem::image() const
+//{
+//    QPixmap pixmap(250, 250);
+////    pixmap.fill(Qt::transparent);
+////    QString iconName;
+////    switch (diagramType()) {
+////        case DiagramItem::DiagramType::Comp1 :
+////            iconName = "FDPC";
+////            break;
+////        case DiagramItem::DiagramType::Comp2 :
+////            iconName = "CFAR";
+////            break;
+////        case DiagramItem::DiagramType::Comp4 :
+////            iconName = "MTD";
+////            break;
+////        case DiagramItem::DiagramType::Comp3 :
+////            iconName = "INPUT";
+////            break;
+////        case DiagramItem::DiagramType::Comp5 :
+////            iconName = "OUTPUT";
+////            break;
+////    }
+//    QString itemIcon = ":/img/" +iconName+".ico";
+//    pixmap.convertFromImage(QImage(itemIcon));
+//    QPainter painter(&pixmap);
+//    painter.setPen(QPen(Qt::black, 8));
+//    painter.translate(125, 125);
+////    painter.drawPolyline(myPolygon);
+//    painter.setRenderHint(QPainter::Antialiasing, true);
+//    return pixmap;
+//}
 
 QString DiagramItem::getIconName() const
 {

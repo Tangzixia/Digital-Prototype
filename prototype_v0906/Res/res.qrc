@@ -80,5 +80,7 @@
         <file>img/close-pro.png</file>
         <file>img/save-all.png</file>
         <file>img/path.png</file>
+        <file>img/windowsicon.png</file>
+        <file>img/Ashow.png</file>
     </qresource>
 </RCC>

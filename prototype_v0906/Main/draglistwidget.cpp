@@ -1,7 +1,9 @@
 #include "draglistwidget.h"
 #include <QDrag>
 #include <QMessageBox>
-#include<QAbstractButton>
+#include <QAbstractButton>
+#include <ashowdialog.h>
+#include "ppidialog.h"
 
 /**
 * @projectName   prototype_v0719
@@ -225,76 +227,87 @@ void DragListWidget::itemOperateSlot(Menu_iteamOperation::OperateType operateTyp
         //触发就选中
         item->isSelected();
        switch (operateType){ 
-       case Menu_iteamOperation::del:
-       {
-           qDebug()<<"left_delete:"<<id;
-           if(newEditWindowList.contains(id)){
-                MainWindow_Radar *radar=newEditWindowList.find(id).value();   
-                connect(radar,&MainWindow_Radar::iClose,[=,&item](){
-                    this->removeItemWidget(item);
-                    delete item;
-                    id_item.remove(id_item.key(item));
-                    //删除后必须跟新它
-                    this->forRename.preIndex=-1;
-                });
-                 radar->close();
+           case Menu_iteamOperation::del:
+           {
+               qDebug()<<"left_delete:"<<id;
+               if(newEditWindowList.contains(id)){
+                    MainWindow_Radar *radar=newEditWindowList.find(id).value();
+                    connect(radar,&MainWindow_Radar::iClose,[=,&item](){
+                        this->removeItemWidget(item);
+                        delete item;
+                        id_item.remove(id_item.key(item));
+                        //删除后必须跟新它
+                        this->forRename.preIndex=-1;
+                    });
+                     radar->close();
+               }
+                else{
+                   this->removeItemWidget(item);
+                   delete item;
+                   id_item.remove(id_item.key(item));
+                   //删除后必须跟新它
+                   this->forRename.preIndex=-1;
+               }
+                break;
            }
-            else{
-               this->removeItemWidget(item);
-               delete item;
-               id_item.remove(id_item.key(item));
-               //删除后必须跟新它
-               this->forRename.preIndex=-1;
-           }
-            break;
-       }
-       case Menu_iteamOperation::edit:
-       {
-            qDebug()<<"left_edit:"<<id;
-            //新建或者提升编辑窗口
-            {
-                //查找是否已经创建该子类
-             if(!newEditWindowList.contains(id)){
-                //新建(每个变量命名不同)
-                MainWindow_Radar *SET_RADARNAME(id)=new MainWindow_Radar(id);
-                newEditWindowList.insert(id,SET_RADARNAME(id));
-                //窗口关闭时更新子类列表：newEditWindowList
-                connect(SET_RADARNAME(id),&MainWindow_Radar::iClose,
-                        [=](MainWindow_Radar* radar){newEditWindowList.remove(radar->getEquip_id());});
-                SET_RADARNAME(id)->setAttribute(Qt::WA_DeleteOnClose);
-                SET_RADARNAME(id)->setWindowIcon(QIcon(":/img/radar.png"));
-                SET_RADARNAME(id)->show();
-            }else {
-                //获取改item对应的mainwindow_radar
-                MainWindow_Radar*radar=newEditWindowList.find(id).value();
-                QMessageBox::warning(this,"warning","你已经打开了编辑窗口，不可以重复打开！",QMessageBox::Ok);
-                radar->showNormal();
-                radar->raise();
-                radar->showMaximized();
+           case Menu_iteamOperation::edit:
+           {
+                qDebug()<<"left_edit:"<<id;
+                //新建或者提升编辑窗口
+                {
+                    //查找是否已经创建该子类
+                 if(!newEditWindowList.contains(id)){
+                    //新建(每个变量命名不同)
+                    MainWindow_Radar *SET_RADARNAME(id)=new MainWindow_Radar(id);
+                    newEditWindowList.insert(id,SET_RADARNAME(id));
+                    //窗口关闭时更新子类列表：newEditWindowList
+                    connect(SET_RADARNAME(id),&MainWindow_Radar::iClose,
+                            [=](MainWindow_Radar* radar){newEditWindowList.remove(radar->getEquip_id());});
+                    SET_RADARNAME(id)->setAttribute(Qt::WA_DeleteOnClose);
+                    SET_RADARNAME(id)->setWindowIcon(QIcon(":/img/radar.png"));
+                    SET_RADARNAME(id)->show();
+                }else {
+                    //获取改item对应的mainwindow_radar
+                    MainWindow_Radar*radar=newEditWindowList.find(id).value();
+                    QMessageBox::warning(this,"warning","你已经打开了编辑窗口，不可以重复打开！",QMessageBox::Ok);
+                    radar->showNormal();
+                    radar->raise();
+                    radar->showMaximized();
+                }
             }
-        }
-           break;
-       }
-       case Menu_iteamOperation::rename:{
-           if(  this->id_item.contains(id)){
-               this->id_item.insert(newName,this->id_item.find(id).value());
-               this->id_item.remove(id);
+               break;
            }
-           if(  this->newEditWindowList.contains(id)){
-               MainWindow_Radar *radar=this->newEditWindowList.find(id).value();
-               radar->setEquip_id(newName);
-               this->newEditWindowList.insert(newName,radar);
-               this->newEditWindowList.remove(id);
-               radar->setWindowTitle(tr((newName+" Edit").toUtf8().data()));
-            }
-               item->setData(Qt::UserRole+1, newName);
-           break;
-       }
-       case Menu_iteamOperation::property:
-           qDebug()<<"left_property:"<<id;
-           break;
-       }
-    }
+           case Menu_iteamOperation::rename:{
+               if(  this->id_item.contains(id)){
+                   this->id_item.insert(newName,this->id_item.find(id).value());
+                   this->id_item.remove(id);
+               }
+               if(  this->newEditWindowList.contains(id)){
+                   MainWindow_Radar *radar=this->newEditWindowList.find(id).value();
+                   radar->setEquip_id(newName);
+                   this->newEditWindowList.insert(newName,radar);
+                   this->newEditWindowList.remove(id);
+                   radar->setWindowTitle(tr((newName+" Edit").toUtf8().data()));
+                }
+                   item->setData(Qt::UserRole+1, newName);
+               break;
+           }
+           case Menu_iteamOperation::property:
+               qDebug()<<"left_property:"<<id;
+               break;
+           case Menu_iteamOperation::ppi:{
+               qDebug()<<"ppi show:"<<id;
+               PPIDialog ppid;
+               ppid.exec();
+               break;
+           }
+           case Menu_iteamOperation::ashow:{
+               qDebug()<<"A show:"<<id;
+               AshowDialog ashow;
+               ashow.exec();
+           }
+     }
+}
 
 void DragListWidget::listItem_add(QString name){
     QListWidgetItem *listItem_top=new QListWidgetItem();

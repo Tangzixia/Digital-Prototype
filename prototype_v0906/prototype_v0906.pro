@@ -57,6 +57,8 @@ SOURCES += \
     RadarPrototype\radarproperty.cpp \
     RadarPrototype\radarscene.cpp \
     RadarPrototype\diagramitem.cpp \
+    RadarPrototype\ppiwidget.cpp \
+    RadarPrototype\ppidialog.cpp \
     Tool\arrow.cpp \
     RadarPrototype\diagramtextitem.cpp \
     Tool\compproperty.cpp \
@@ -76,7 +78,10 @@ SOURCES += \
     Main/menu_iteamoperation.cpp \
     Main/rightwindow_property.cpp \
     Tool/algorithmcomp.cpp \
-    Tool/parameditradardialog.cpp
+    Tool/parameditradardialog.cpp \
+    RadarPrototype/ashowdialog.cpp \
+    RadarPrototype/a_show.cpp
+
 HEADERS += \
         Main\mainwindow.h \
     Tool\myglwidget.h \
@@ -92,6 +97,8 @@ HEADERS += \
     RadarPrototype\radarproperty.h \
     RadarPrototype\radarscene.h \
     RadarPrototype\diagramitem.h \
+    RadarPrototype\ppiwidget.h \
+    RadarPrototype\ppidialog.h \
     Tool\arrow.h \
     RadarPrototype\diagramtextitem.h \
     Tool\compproperty.h \
@@ -111,14 +118,19 @@ HEADERS += \
     Main/menu_iteamoperation.h \
     Main/rightwindow_property.h \
     Tool/algorithmcomp.h \
-    Tool/parameditradardialog.h
+    Tool/parameditradardialog.h \
+    RadarPrototype/ashowdialog.h \
+    RadarPrototype/a_show.h
+
 FORMS += \
-        Main\mainwindow.ui \
+    Main\mainwindow.ui \
     Tool\opengl.ui \
     Main\hellodialog.ui \
     Main\mainwindownew.ui \
     RadarPrototype\mainwindow_radar.ui \
     RadarPrototype\radarproperty.ui \
+    RadarPrototype\ppiwidget.ui \
+    RadarPrototype\ppidialog.ui \
     Tool\compproperty.ui \
     Tool\realtimecurve.ui \
     EccmPrototype/ecmproperty.ui \
@@ -126,7 +138,9 @@ FORMS += \
     EccmPrototype/mainwindow_ecm.ui \
     Main/menu_iteamoperation.ui \
     Main/rightwindow_property.ui \
-    Tool/parameditradardialog.ui
+    Tool/parameditradardialog.ui \
+    RadarPrototype/ashowdialog.ui \
+    RadarPrototype/a_show.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

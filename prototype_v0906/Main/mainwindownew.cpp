@@ -44,7 +44,7 @@ MainWindowNew::MainWindowNew(QWidget *parent) :
     this->setWindowTitle(tr("新建工程"));
     //可以设置在视图上使用鼠标拖出橡皮筋框选择图形项
     this->ui->graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
-//      接收来之左边item的信号
+//  接收来之左边item的信号
     connect(this->ui->listWidget_rader,&DragListWidget::itemOperate,this,&MainWindowNew::itemOperateSlot);
 //  接收来之scene的item的信号
     connect (graphicsScene,&MainWindowNewScene::itemOperate,[=](Menu_iteamOperation::OperateType operate,QString id){
@@ -131,7 +131,13 @@ void MainWindowNew::on_actio_leftDock_triggered()
     }else if(operateType==Menu_iteamOperation::rename){
         this->graphicsScene->itemOperateSlot(Menu_iteamOperation::rename,id,newName);
         ui->listWidget_rader->itemOperateSlot(Menu_iteamOperation::rename,id,newName);
-    }
+    }else if(operateType==Menu_iteamOperation::ppi){
+        this->graphicsScene->itemOperateSlot(Menu_iteamOperation::ppi,id,newName);
+        ui->listWidget_rader->itemOperateSlot(Menu_iteamOperation::ppi,id,newName);
+    }else if(operateType==Menu_iteamOperation::ashow){
+            this->graphicsScene->itemOperateSlot(Menu_iteamOperation::ashow,id,newName);
+            ui->listWidget_rader->itemOperateSlot(Menu_iteamOperation::ashow,id,newName);
+        }
  }
   //属性窗口内容显示
  void MainWindowNew::propertyContent(QString id){

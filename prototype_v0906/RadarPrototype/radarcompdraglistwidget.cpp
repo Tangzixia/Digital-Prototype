@@ -339,6 +339,7 @@ void RadarCompDraglistWidget::mousePressEvent(QMouseEvent *event)
             // 获取点击的是哪个组件的id，传到radarScene中，知道该渲染出哪个组件
 //            emit setComp_typeandMode(id);
             emit setComp_typeandMode(qvariant_cast<QString>(m_dragItem->data(Qt::UserRole+1)));
+            qDebug() << "准备拖动!!!" << qvariant_cast<QString>(m_dragItem->data(Qt::UserRole+1));
         }
     }
     //保留原QListWidget部件的鼠标点击操作.

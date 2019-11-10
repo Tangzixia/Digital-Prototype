@@ -159,14 +159,14 @@ void MainWindow_Radar::toggleSaveXml(int flag){
 * @author        Antrn
 * @date          2019-10-03
 */
-void MainWindow_Radar::init5Comp()
-{
+//void MainWindow_Radar::init5Comp()
+//{
 //    init1Comp(tr("脉冲压缩"), itemMenu, DiagramItem::Comp1);
 //    init1Comp(tr("恒虚警率"), itemMenu, DiagramItem::Comp2);
 //    init1Comp(tr("输入"), itemMenu, DiagramItem::Comp3);
 //    init1Comp(tr("动目标检测"), itemMenu, DiagramItem::Comp4);
 //    init1Comp(tr("输出"), itemMenu, DiagramItem::Comp5);
-}
+//}
 
 // This is available in all editors.
 /**
@@ -176,20 +176,20 @@ void MainWindow_Radar::init5Comp()
 * @date          2019-10-03
 */
 //void MainWindow_Radar::init1Comp(QString comPName, QMenu *itemMenu, DiagramItem::DiagramType diagramType)
-void MainWindow_Radar::init1Comp(QString comPName, QMenu *itemMenu, QString iconName)
-{
-    QListWidgetItem *item = new QListWidgetItem();
-    DiagramItem ditem(iconName, itemMenu);
-    QIcon icon5(ditem.image());
-    item->setIcon(icon5);
-    item->setText(tr(comPName.toUtf8().data()));
-    //这里的用户角色存储用户数据
-    item->setData(Qt::UserRole, QPixmap(ditem.image()));
-    item->setData(Qt::UserRole+1, comPName);
-    item->setData(Qt::UserRole+2, ui->listWidget->count());
-    item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
-    ui->listWidget->addDragItem(item);
-}
+//void MainWindow_Radar::init1Comp(QString comPName, QMenu *itemMenu, QString iconName)
+//{
+//    QListWidgetItem *item = new QListWidgetItem();
+//    DiagramItem ditem(iconName, itemMenu);
+//    QIcon icon5(ditem.image());
+//    item->setIcon(icon5);
+//    item->setText(tr(comPName.toUtf8().data()));
+//    //这里的用户角色存储用户数据
+//    item->setData(Qt::UserRole, QPixmap(ditem.image()));
+//    item->setData(Qt::UserRole+1, comPName);
+//    item->setData(Qt::UserRole+2, ui->listWidget->count());
+//    item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
+//    ui->listWidget->addDragItem(item);
+//}
 
 // This is available in all editors.
 /**
@@ -671,29 +671,29 @@ void MainWindow_Radar::createCompBox()
 
 void MainWindow_Radar::createActions()
 {
-    toFrontAction = new QAction(QIcon(":/img/bringtofront.png"), tr("Bring to &Front"), this);
+    toFrontAction = new QAction(QIcon(":/img/bringtofront.png"), tr("前移一层"), this);
     toFrontAction->setShortcut(tr("Ctrl+F"));
-    toFrontAction->setStatusTip(tr("Bring item to front"));
+    toFrontAction->setStatusTip(tr("前移一层"));
     connect(toFrontAction, SIGNAL(triggered()), this, SLOT(bringToFront()));
 
-    sendBackAction = new QAction(QIcon(":/img/sendtoback.png"), tr("Send to &Back"), this);
+    sendBackAction = new QAction(QIcon(":/img/sendtoback.png"), tr("后移一层"), this);
     sendBackAction->setShortcut(tr("Ctrl+T"));
-    sendBackAction->setStatusTip(tr("Send item to back"));
+    sendBackAction->setStatusTip(tr("后移一层"));
     connect(sendBackAction, SIGNAL(triggered()), this, SLOT(sendToBack()));
 
-    deleteAction = new QAction(QIcon(":/img/delete.png"), tr("&Delete"), this);
-    deleteAction->setShortcut(tr("Delete"));
+    deleteAction = new QAction(QIcon(":/img/delete.png"), tr("删除"), this);
+    deleteAction->setShortcut(tr("删除"));
     deleteAction->setStatusTip(tr("Delete item from diagram"));
     connect(deleteAction, SIGNAL(triggered()), this, SLOT(deleteItem()));
 
-    propertyAction = new QAction(QIcon(":/img/property.png"), tr("Property"), this);
-    propertyAction->setShortcut(tr("Property"));
+    propertyAction = new QAction(QIcon(":/img/property.png"), tr("属性"), this);
+    propertyAction->setShortcut(tr("属性"));
     propertyAction->setStatusTip(tr("Show item's properties"));
     connect(propertyAction, &QAction::triggered, this, &MainWindow_Radar::showItemProperties);
 
-    exitAction = new QAction(QIcon(":/img/exit.png"), tr("E&xit"), this);
+    exitAction = new QAction(QIcon(":/img/exit.png"), tr("退出"), this);
     exitAction->setShortcuts(QKeySequence::Quit);
-    exitAction->setStatusTip(tr("Quit radar edit window"));
+    exitAction->setStatusTip(tr("离开雷达编辑窗口"));
     connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
 
     boldAction = new QAction(tr("Bold"), this);

@@ -99,7 +99,29 @@ void ParamEditRadarDialog::on_pushButton_OK_clicked()
     }else{
         ac.setDesc(ui->textEdit->toPlainText());
         mp.insert("ID", ui->lineEdit_ID->text());
-        mp.insert("Name", ui->lineEdit_Name->text());
+
+        QString nm = ui->lineEdit_Name->text();
+        mp.insert("Name", nm);
+
+        QString p = QDir::currentPath()+"/images/base.png";
+        QImage image = QPixmap(p).toImage();
+        QPainter painter(&image); //为这个QImage构造一个QPainter
+        painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+        //设置画刷的组合模式CompositionMode_SourceOut这个模式为目标图像在上。
+        //改变画笔和字体
+        QPen pen = painter.pen();
+        pen.setColor(Qt::red);
+        QFont font = painter.font();
+        font.setBold(true);//加粗
+        font.setPixelSize(10);//改变字体大小
+        painter.setPen(pen);
+        painter.setFont(font);
+        painter.drawText(image.rect(),Qt::AlignCenter, nm);
+        //将Hello写在Image的中心
+        int n = 100;//这个为图片的压缩度。0/100
+        image.save(QDir::currentPath()+"/images/"+nm+".ico", "ico", n);
+        //将画好的图片保存起来。
+
         // 只有第一次初始化用这个，后面的编辑就不改变了
         if(ac.getFileName().isEmpty() || ac.getFileName().isNull()){
             ac.setFileName(ui->lineEdit_Name->text());

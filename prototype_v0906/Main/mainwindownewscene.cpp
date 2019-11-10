@@ -423,44 +423,52 @@ void MainWindowNewScene::itemOperateSlot(Menu_iteamOperation::OperateType operat
              //仅仅适用于左边菜单栏下达的删除指令
                 case Menu_iteamOperation::del:{
 
-                 for(int j=0;j<i;j++){
-                     id=j==0?name:name+"~"+QString::number(j);
-                     item=id_gItem.find(id).value();
-                     item->destroyed();
-                     this->removeItem(item);
-                     Item_List.removeOne(item);
-                     id_gItem.remove(id);
-//                 删除对应的连线
-//                     delete_line_List.clear();
-//                     connect_to_List.clear();
-//                     connect_from_List.clear();
-//                     for(int i = 0;i<graphicsLineItem_List.length();i++){
-//                         ArrowItem*linetemp = graphicsLineItem_List.at(i);
-//                         if(linetemp->getEndItem()==item||linetemp->getBeginItem()==item){
-//                             delete_line_List.append(linetemp);
-//                         }
-//                     }
-//                     for(int i = 0;i<delete_line_List.length();i++){
-//                         this->removeItem(delete_line_List.at(i));
-//                         graphicsLineItem_List.removeOne(delete_line_List.at(i));
-//                     }
-//                     delete_line_List.clear();
-                 }
-                 break;
-             }
+                     for(int j=0;j<i;j++){
+                         id=j==0?name:name+"~"+QString::number(j);
+                         item=id_gItem.find(id).value();
+                         item->destroyed();
+                         this->removeItem(item);
+                         Item_List.removeOne(item);
+                         id_gItem.remove(id);
+                    //                 删除对应的连线
+                    //                     delete_line_List.clear();
+                    //                     connect_to_List.clear();
+                    //                     connect_from_List.clear();
+                    //                     for(int i = 0;i<graphicsLineItem_List.length();i++){
+                    //                         ArrowItem*linetemp = graphicsLineItem_List.at(i);
+                    //                         if(linetemp->getEndItem()==item||linetemp->getBeginItem()==item){
+                    //                             delete_line_List.append(linetemp);
+                    //                         }
+                    //                     }
+                    //                     for(int i = 0;i<delete_line_List.length();i++){
+                    //                         this->removeItem(delete_line_List.at(i));
+                    //                         graphicsLineItem_List.removeOne(delete_line_List.at(i));
+                    //                     }
+                    //                     delete_line_List.clear();
+                     }
+                     break;
+                }
                 case Menu_iteamOperation::rename:{
                     QString id_new;
                     for(int j=0;j<i;j++){
-                    id=j==0?name:name+"~"+QString::number(j);
-                    id_new=j==0?newName:newName+"~"+QString::number(j);
-                    item=id_gItem.find(id).value();
-                    item->itemOperateSlot(Menu_iteamOperation::rename,id_new);
-                    this->id_gItem.insert(id_new,item);
-                    this->id_gItem.remove(id);
-                 }
-                       break;
-                 }
-             default :{}
+                        id=j==0?name:name+"~"+QString::number(j);
+                        id_new=j==0?newName:newName+"~"+QString::number(j);
+                        item=id_gItem.find(id).value();
+                        item->itemOperateSlot(Menu_iteamOperation::rename,id_new);
+                        this->id_gItem.insert(id_new,item);
+                        this->id_gItem.remove(id);
+                    }
+                    break;
+                }
+                case Menu_iteamOperation::ppi:{
+                    qDebug() << "点击了场景中的ppi 显示";
+
+                    break;
+                }case Menu_iteamOperation::ashow:{
+                     qDebug() << "点击了场景中的a show显示";
+                     break;
+                }
+                default :{}
             }
         }
    }
