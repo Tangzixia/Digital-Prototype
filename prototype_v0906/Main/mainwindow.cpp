@@ -33,7 +33,7 @@ MainWindow::~MainWindow()
 void MainWindow::init()
 {
     openGL = new OpenGL();
-    openGL->setWindowTitle(tr("Open GL"));
+    openGL->setWindowTitle(tr("OpenGL"));
 }
 
 void MainWindow::on_actionOpenGL_triggered()

@@ -6,6 +6,8 @@ AshowDialog::AshowDialog(QWidget *parent) :
     ui(new Ui::AshowDialog)
 {
     ui->setupUi(this);
+    connect(ui->radioButton, SIGNAL(clicked()),ui->widget,SLOT(startPainting()));
+    connect(ui->radioButton_2, SIGNAL(clicked()),ui->widget,SLOT(stopPainting()));
 }
 
 AshowDialog::~AshowDialog()

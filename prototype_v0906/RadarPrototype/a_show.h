@@ -20,6 +20,16 @@ public slots:
 
 private:
     Ui::A_show *ui;
+    int p, t;   //p represent the x coordinate of the start point of painting, t represent the  x coordinate of time
+    QTimer *timer;
+    QPoint *point;
+    QPainterPath *path;
+
+private slots:
+    void timerUpdate();
+    void startPainting();
+    void stopPainting();
+
 };
 
 #endif // A_SHOW_H
