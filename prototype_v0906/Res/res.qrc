@@ -51,7 +51,6 @@
         <file>img/HI.png</file>
         <file>img/addComp.png</file>
         <file>img/editComp.png</file>
-        <file>res.qrc</file>
         <file>img/desert.png</file>
         <file>img/grass.png</file>
         <file>img/ocean.png</file>
@@ -82,5 +81,15 @@
         <file>img/path.png</file>
         <file>img/windowsicon.png</file>
         <file>img/Ashow.png</file>
+        <file>img/session.png</file>
+        <file>img/project.png</file>
+        <file>qss/qss_hellodialog.qss</file>
+        <file>img/down_orange.png</file>
+        <file>img/down_white.png</file>
+        <file>img/down2_white.png</file>
+        <file>img/down.png</file>
+        <file>img/close.png</file>
+        <file>img/close-hover.png</file>
+        <file>img/close-press.png</file>
     </qresource>
 </RCC>

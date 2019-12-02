@@ -80,7 +80,8 @@ SOURCES += \
     Tool/algorithmcomp.cpp \
     Tool/parameditradardialog.cpp \
     RadarPrototype/ashowdialog.cpp \
-    RadarPrototype/a_show.cpp
+    RadarPrototype/a_show.cpp \
+    Main/projectlist.cpp
 
 HEADERS += \
         Main\mainwindow.h \
@@ -120,7 +121,8 @@ HEADERS += \
     Tool/algorithmcomp.h \
     Tool/parameditradardialog.h \
     RadarPrototype/ashowdialog.h \
-    RadarPrototype/a_show.h
+    RadarPrototype/a_show.h \
+    Main/projectlist.h
 
 FORMS += \
     Main\mainwindow.ui \
@@ -140,7 +142,8 @@ FORMS += \
     Main/rightwindow_property.ui \
     Tool/parameditradardialog.ui \
     RadarPrototype/ashowdialog.ui \
-    RadarPrototype/a_show.ui
+    RadarPrototype/a_show.ui \
+    Main/projectlist.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

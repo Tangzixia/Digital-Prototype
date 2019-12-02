@@ -254,7 +254,7 @@
           <rect>
            <x>10</x>
            <y>20</y>
-           <width>261</width>
+           <width>292</width>
            <height>61</height>
           </rect>
          </property>
@@ -381,7 +381,7 @@
           <rect>
            <x>10</x>
            <y>20</y>
-           <width>261</width>
+           <width>292</width>
            <height>61</height>
           </rect>
          </property>
@@ -451,7 +451,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="Widget" name="widget" native="true">
+  <widget class="PPIWidget" name="widget" native="true">
    <property name="geometry">
     <rect>
      <x>9</x>
@@ -470,9 +470,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>Widget</class>
+   <class>PPIWIdget</class>
    <extends>QWidget</extends>
-   <header>widget.h</header>
+   <header>ppiwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

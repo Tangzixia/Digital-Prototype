@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Plugins>
+    <Information>
+        <ID>33</ID>
+        <Name>组件2</Name>
+        <Path>E:/FirstSemesterofSeniorYear/LabJob/Project_Digital_Prototype/Code/20191007/build-prototype_v0906-Desktop_Qt_5_9_8_MinGW_32bit-Debug/algoXml</Path>
+        <Time>Fri Nov 8 13:49:53 2019 GMT</Time>
+    </Information>
+    <Description>7777</Description>
+    <Parameter>
+        <ff describe="参数描述" value="参数值"/>
+    </Parameter>
+</Plugins>

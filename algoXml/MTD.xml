@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Plugins>
+    <Information>
+        <Name>动目标检测MTD</Name>
+        <ID>4</ID>
+        <Path>...............</Path>
+        <Time>Thu Oct  3 10:56:19 2019</Time>
+    </Information>
+    <Description>通过计算一维频谱的输出与噪声电平的比较识别动目标</Description>
+    <Parameter />
+</Plugins>

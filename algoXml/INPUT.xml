@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Plugins>
+    <Information>
+        <ID>10</ID>
+        <Name>INPUT</Name>
+        <Path>E:/FirstSemesterofSeniorYear/LabJob/Project_Digital_Prototype/Code/20191007/build-prototype_v0906-Desktop_Qt_5_9_8_MinGW_32bit-Debug/algoXml</Path>
+        <Time>Tue Oct 8 08:51:35 2019 GMT</Time>
+    </Information>
+    <Description>输入组件</Description>
+    <Parameter>
+        <input describe="输入参数" value="20"/>
+    </Parameter>
+</Plugins>

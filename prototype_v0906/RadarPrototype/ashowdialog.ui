@@ -680,7 +680,7 @@
   <customwidget>
    <class>A_show</class>
    <extends>QWidget</extends>
-   <header location="global">a_show.h</header>
+   <header>a_show.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

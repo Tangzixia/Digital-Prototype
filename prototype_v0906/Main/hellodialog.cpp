@@ -1,6 +1,8 @@
 #include "hellodialog.h"
 #include "ui_hellodialog.h"
 #include "mainwindownew.h"
+
+#include <QStyledItemDelegate>
 /**
 * @projectName   prototype_v0719
 * @brief         开始欢迎页面，也即是进入主程序之前的拦截界面。可以选择打开或者新建工程。
@@ -12,6 +14,18 @@ HelloDialog::HelloDialog(QWidget *parent) :
     ui(new Ui::HelloDialog)
 {
     ui->setupUi(this);
+    //应用样式 apply the qss style
+    QFile file(":/qss/qss_hellodialog.qss");
+    file.open(QFile::ReadOnly);
+    QTextStream filetext(&file);
+    QString stylesheet = filetext.readAll();
+//    qDebug() << stylesheet;
+    QStyledItemDelegate* itemDelegate = new QStyledItemDelegate();
+    ui->comboBox->setItemDelegate(itemDelegate);
+    ui->comboBox->setStyleSheet(stylesheet);
+    file.close();
+
+    ui->comboBox->setView(new QListView(this));
     //去掉页面边框和标题栏
     this->setWindowFlag(Qt::FramelessWindowHint);
     this->setWindowIcon(QIcon(":/img/HI.png"));

@@ -1063,7 +1063,7 @@ void MainWindow_Radar::on_actionOpenXml_triggered()
     QString dirpath = QDir::currentPath()+"/xmls/";
     Utils::openDirOrCreate(dirpath);
     // 打开xml文件读取
-    const QString fileName = QFileDialog::getOpenFileName(this, tr("打开xml"), QString(dirpath), tr("xml files (*.xml)"));
+    const QString fileName = QFileDialog::getOpenFileName(this, tr("打开rad"), QString(dirpath), tr("rad files (*.rad)"));
     readXmlConf(fileName);
 }
 
@@ -1291,7 +1291,7 @@ void MainWindow_Radar::save2XmlFile(){
     QRect rect = QApplication::desktop()->screen()->rect();
     // 如果之前自己选择位置存错过
     if(isSelectPath){
-        switch (Utils::saveFile(this, dirp, getEquip_id()+".xml", scene, false, userSelectPath)) {
+        switch (Utils::saveFile(this, dirp, getEquip_id()+".rad", scene, false, userSelectPath)) {
             case 1:
                 ui->statusbar->showMessage("保存成功", 1000);
                 Utils::alert(rect, "场景保存成功!");
@@ -1307,7 +1307,7 @@ void MainWindow_Radar::save2XmlFile(){
         }
     }else{
         // 弹窗用户选择存储路径， WARNING 用户不能自定义文件名
-        switch (Utils::saveFile(this, dirp, getEquip_id()+".xml", scene, true, userSelectPath)) {
+        switch (Utils::saveFile(this, dirp, getEquip_id()+".rad", scene, true, userSelectPath)) {
             case 1:
                 ui->statusbar->showMessage("保存成功", 1000);
                 Utils::alert(rect, "场景保存成功!");
