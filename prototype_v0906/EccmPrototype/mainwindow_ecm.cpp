@@ -228,7 +228,7 @@ void MainWindow_ECM::showItemProperties()
         if (item->type() == DiagramItem::Type) {
             // DELETE
             qDebug() << "Show Component Property";
-            CompProperty *p = new CompProperty();
+            CompProperty *p = new CompProperty("hahh");
             p->exec();
         }
     }

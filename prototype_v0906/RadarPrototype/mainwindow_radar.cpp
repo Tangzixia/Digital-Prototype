@@ -73,6 +73,7 @@ MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
 
     // xy坐标标签
     label_xy=new QLabel(this);
+    ui->statusbar->setStyleSheet(QString("QStatusBar::item{border: 0px}"));
     // 状态栏左下角加入xy坐标
     ui->statusbar->addWidget(label_xy);
     // 设置鼠标跟踪开启
@@ -446,8 +447,8 @@ void MainWindow_Radar::showItemProperties()
     foreach (QGraphicsItem *item, scene->selectedItems()) {
         if (item->type() == DiagramItem::Type) {
             // DELETE
-            qDebug() << "Show Component Property";
-            CompProperty *p = new CompProperty();
+            qDebug() << "Show Component Property" << dynamic_cast<DiagramItem*>(item)->iconName;
+            CompProperty *p = new CompProperty(dynamic_cast<DiagramItem*>(item)->iconName);
             p->exec();
         }
     }
@@ -718,6 +719,13 @@ void MainWindow_Radar::createActions()
     ui->actionRunRadar->setEnabled(false);
 }
 
+// This is an auto-generated comment.
+/**
+* @projectName   prototype_v0906
+* @brief         简介 创建菜单
+* @author        Antrn
+* @date          2019-12-02
+*/
 void MainWindow_Radar::createMenus()
 {
     fileMenu = menuBar()->addMenu(tr("&File"));
@@ -738,8 +746,8 @@ void MainWindow_Radar::createMenus()
     // 运行时间
     label_time=new QLabel(tr("Running： "),this);
     // 把时间标签加在状态栏中
-    ui->statusbar->addPermanentWidget(label_time);
-    ui->statusbar->addPermanentWidget(progressBar);
+//    ui->statusbar->addPermanentWidget(label_time);
+//    ui->statusbar->addPermanentWidget(progressBar);
     itemMenu->setEnabled(false);
 }
 
@@ -1374,7 +1382,7 @@ QFileInfoList MainWindow_Radar::getFileList(QString path)
     return file_list;
 }
 
-//进度条相关
+// 进度条相关
 // 当已经开始运行的时候
 void MainWindow_Radar::On_start()
 {
@@ -1382,8 +1390,12 @@ void MainWindow_Radar::On_start()
     ui->actionRunRadar->setEnabled(false);
     // 打开停止按钮和动作
 //    ui->action_Stop->setEnabled(true);
+    // TODO 主线程加入显示UI线程
+    ui->statusbar->addWidget(progressBar);
     // 进度条为0
     progressBar->setValue(0);
+    ui->statusbar->showMessage(label_time->text(), 1000);
+
 }
 
 // 当运行结束的时候

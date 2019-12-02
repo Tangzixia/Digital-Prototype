@@ -6,6 +6,7 @@
 
 QT       += core gui
 QT       += xml
+QT       += printsupport
 
 #---add manually
 INCLUDEPATH += $$PWD/AlgoLib
@@ -52,20 +53,20 @@ SOURCES += \
     Main/draglistwidget.cpp \
     Main/mainwindownewscene.cpp \
     RadarPrototype/radaritem.cpp \
-    Tool\arrowitem.cpp \
-    RadarPrototype\mainwindow_radar.cpp \
-    RadarPrototype\radarproperty.cpp \
-    RadarPrototype\radarscene.cpp \
-    RadarPrototype\diagramitem.cpp \
-    RadarPrototype\ppiwidget.cpp \
-    RadarPrototype\ppidialog.cpp \
-    Tool\arrow.cpp \
-    RadarPrototype\diagramtextitem.cpp \
-    Tool\compproperty.cpp \
-    EccmPrototype\ecmdraglistwidget.cpp \
-    EccmPrototype\ecmitem.cpp \
-    Tool\clickablelabel.cpp \
-    Tool\realtimecurve.cpp \
+    Tool/arrowitem.cpp \
+    RadarPrototype/mainwindow_radar.cpp \
+    RadarPrototype/radarproperty.cpp \
+    RadarPrototype/radarscene.cpp \
+    RadarPrototype/diagramitem.cpp \
+    RadarPrototype/ppiwidget.cpp \
+    RadarPrototype/ppidialog.cpp \
+    Tool/arrow.cpp \
+    RadarPrototype/diagramtextitem.cpp \
+    Tool/compproperty.cpp \
+    EccmPrototype/ecmdraglistwidget.cpp \
+    EccmPrototype/ecmitem.cpp \
+    Tool/clickablelabel.cpp \
+    Tool/realtimecurve.cpp \
     Tool/qudong.cpp \
     EccmPrototype/ecmproperty.cpp \
     Tool/runcompconf.cpp \
@@ -81,32 +82,34 @@ SOURCES += \
     Tool/parameditradardialog.cpp \
     RadarPrototype/ashowdialog.cpp \
     RadarPrototype/a_show.cpp \
-    Main/projectlist.cpp
+    Main/projectlist.cpp \
+    Tool/echoeswave.cpp \
+    Tool/qcustomplot.cpp
 
 HEADERS += \
-        Main\mainwindow.h \
-    Tool\myglwidget.h \
-    Tool\opengl.h \
-    Main\hellodialog.h \
-    Main\mysplashscreen.h \
-    Main\mainwindownew.h \
-    Main\draglistwidget.h \
-    Main\mainwindownewscene.h \
-    RadarPrototype\radaritem.h \
-    Tool\arrowitem.h \
-    RadarPrototype\mainwindow_radar.h \
-    RadarPrototype\radarproperty.h \
-    RadarPrototype\radarscene.h \
-    RadarPrototype\diagramitem.h \
-    RadarPrototype\ppiwidget.h \
-    RadarPrototype\ppidialog.h \
-    Tool\arrow.h \
-    RadarPrototype\diagramtextitem.h \
-    Tool\compproperty.h \
-    EccmPrototype\ecmdraglistwidget.h \
-    EccmPrototype\ecmitem.h \
-    Tool\clickablelabel.h \
-    Tool\realtimecurve.h \
+        Main/mainwindow.h \
+    Tool/myglwidget.h \
+    Tool/opengl.h \
+    Main/hellodialog.h \
+    Main/mysplashscreen.h \
+    Main/mainwindownew.h \
+    Main/draglistwidget.h \
+    Main/mainwindownewscene.h \
+    RadarPrototype/radaritem.h \
+    Tool/arrowitem.h \
+    RadarPrototype/mainwindow_radar.h \
+    RadarPrototype/radarproperty.h \
+    RadarPrototype/radarscene.h \
+    RadarPrototype/diagramitem.h \
+    RadarPrototype/ppiwidget.h \
+    RadarPrototype/ppidialog.h \
+    Tool/arrow.h \
+    RadarPrototype/diagramtextitem.h \
+    Tool/compproperty.h \
+    EccmPrototype/ecmdraglistwidget.h \
+    EccmPrototype/ecmitem.h \
+    Tool/clickablelabel.h \
+    Tool/realtimecurve.h \
     Tool/qudong.h \
     EccmPrototype/ecmproperty.h \
     Tool/runcompconf.h \
@@ -122,19 +125,21 @@ HEADERS += \
     Tool/parameditradardialog.h \
     RadarPrototype/ashowdialog.h \
     RadarPrototype/a_show.h \
-    Main/projectlist.h
+    Main/projectlist.h \
+    Tool/echoeswave.h \
+    Tool/qcustomplot.h
 
 FORMS += \
-    Main\mainwindow.ui \
-    Tool\opengl.ui \
-    Main\hellodialog.ui \
-    Main\mainwindownew.ui \
-    RadarPrototype\mainwindow_radar.ui \
-    RadarPrototype\radarproperty.ui \
-    RadarPrototype\ppiwidget.ui \
-    RadarPrototype\ppidialog.ui \
-    Tool\compproperty.ui \
-    Tool\realtimecurve.ui \
+    Main/mainwindow.ui \
+    Tool/opengl.ui \
+    Main/hellodialog.ui \
+    Main/mainwindownew.ui \
+    RadarPrototype/mainwindow_radar.ui \
+    RadarPrototype/radarproperty.ui \
+    RadarPrototype/ppiwidget.ui \
+    RadarPrototype/ppidialog.ui \
+    Tool/compproperty.ui \
+    Tool/realtimecurve.ui \
     EccmPrototype/ecmproperty.ui \
     Tool/runcompconf.ui \
     EccmPrototype/mainwindow_ecm.ui \
@@ -143,7 +148,8 @@ FORMS += \
     Tool/parameditradardialog.ui \
     RadarPrototype/ashowdialog.ui \
     RadarPrototype/a_show.ui \
-    Main/projectlist.ui
+    Main/projectlist.ui \
+    Tool/echoeswave.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

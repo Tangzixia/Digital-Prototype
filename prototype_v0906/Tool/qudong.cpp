@@ -20,26 +20,27 @@ void QuDong::startRun(QString fileName, QString outName)
 //    p1->waitForFinished();
     QStringList args;
         args.append(fileName);
-        args.append("-fopenmp");
-        args.append("-lfftw3");
-        args.append("-lm");
         args.append("-o");
         args.append(outName);
+        args.append("-lvsip");
+        args.append("-lm");
+        args.append("-lpthread");
+
         QString command = args.join(" ");
         qDebug() << "command: " << command;
 
     QProcess *p1 = new QProcess;
-    p1->start("g++", args);
+    p1->start("gcc", args);
     p1->waitForStarted();
     p1->waitForFinished();
     p1->close();
     p1->kill();
 
     QProcess *p = new QProcess;
-    QString workpath = "/home/a913/Qt_project/20190910/prototype_v0906/Projects/test/code/";
+    QString workpath = "/home/a913/Qt_project/20191130/prototype_v0906/Projects/test/code/";
     p->setWorkingDirectory(workpath);
     qDebug() << p->environment();
-    p->start("./radar_test.out");
+    p->start("./radar.out");
     p->waitForStarted();
     p->waitForFinished();
 
@@ -49,7 +50,8 @@ void QuDong::startRun(QString fileName, QString outName)
     p->close();
     p->kill();
 
-    qDebug() << strTemp << ";" << strError;
+    // 输出控制台信息
+    qDebug() << "输出信息： " << strTemp << ";" << strError;
     QMessageBox testMassage;
     testMassage.setText(strTemp+strError);
     testMassage.exec();

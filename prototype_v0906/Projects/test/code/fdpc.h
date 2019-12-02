@@ -1,6 +1,10 @@
-#include "fdpc.cpp"
-
-
-void frequencyDomainPulseCompression(fftw_complex* echo,fftw_complex* echo_pulse,fftw_complex* pc_fft,
-    fftw_complex* echo_fft,fftw_complex* coeff_fft,fftw_plan echo_plan,fftw_plan pcplan,
-    fftw_complex* pc_freq0,fftw_complex* pc_freq1,fftw_complex** pc);
+#include "fdpc.c"
+void frequencyDomainPulseCompression(vsip_cmview_f *echo, vsip_cmview_f *echo_pulse,
+                                     vsip_cmview_f *echo_fft, vsip_cmview_f *coeff_fft,
+                                     vsip_cmview_f *pc0, vsip_cmview_f *pc, vsip_cmview_f *pc_fft,
+                                     vsip_fftm_f *echoPlan, vsip_fftm_f *pcPlan);
+void frequencyDomainPulseCompression1(vsip_cmview_f *echo, vsip_cmview_f *echo_pulse,
+                                      vsip_cmview_f *echo_fft, vsip_cmview_f *coeff_fft,
+                                      vsip_cmview_f *pc0, vsip_cmview_f *pc, vsip_cmview_f *pc_fft,
+                                      vsip_fftm_f *echoPlan, vsip_fftm_f *pcPlan, threadpool thpool);
+void subfdpc(void *p);
