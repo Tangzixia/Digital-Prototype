@@ -2,6 +2,9 @@
 #include <math.h>
 #include <QPen>
 #include <QPainter>
+#include <QMenu>
+#include <QDebug>
+#include <QGraphicsSceneContextMenuEvent>
 
 const qreal Pi = 3.14;
 
@@ -22,6 +25,9 @@ Arrow::Arrow(DiagramItem *startItem, DiagramItem *endItem, QGraphicsItem *parent
     myStartItem = startItem;
     myEndItem = endItem;
     setFlag(QGraphicsItem::ItemIsSelectable, true);
+    setFlag(QGraphicsItem::ItemIsFocusable);
+    // 不能加这个
+//    setFlag(QGraphicsItem::ItemIsMovable);
     myColor = Qt::black;
     setPen(QPen(myColor, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 }

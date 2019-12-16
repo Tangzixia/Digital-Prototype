@@ -10,10 +10,12 @@
 #include <QToolButton>
 #include <utils.h>
 #include <QListWidget>
+#include <QPushButton>
 #include "diagramitem.h"
 #include "radarscene.h"
 #include "diagramitem.h"
 #include "diagramtextitem.h"
+#include "leftnavi.h"
 /**
 * @projectName   prototype_v0719
 * @brief         编辑雷达功能的主窗口。
@@ -100,7 +102,17 @@ private slots:
 
      void on_actionproperty_triggered(bool checked);
 
+     // 接收信息
+     void receiveFromSend(QString message);
+
+     void on_tabWidget_2_destroyed();
+
+     void on_tabWidget_2_tabBarClicked(int index);
+
+     void on_tabWidget_2_tabCloseRequested(int index);
+
 private:
+    QPushButton *openConsole;
      // 名字
     QString equip_id;
     Ui::MainWindow_Radar *ui;
@@ -134,6 +146,13 @@ private:
 //    QButtonGroup *buttonGroup;
     QButtonGroup *pointerTypeGroup;
     QButtonGroup *backgroundButtonGroup;
+
+    // 侧边按钮
+    QPushButton *sideButton;
+    // 左边导航栏
+    LeftNavi *lft;
+    void createToolBarNull();
+
     QToolButton *fontColorToolButton;
     QToolButton *fillColorToolButton;
     QToolButton *lineColorToolButton;
@@ -170,10 +189,14 @@ private:
     QAction *fillAction;
     QAction *lineAction;
 
+    QDockWidget *otherDoc;
+
     //看到代码这么多，我还要加，正的于心不忍
 signals:
 //    返回自己(其实暂时只用了id)
     void iClose(MainWindow_Radar*);
+    // 接收要打印到程序输出的语句
+    void send2AppOutput(QString message);
 };
 
 #endif // MAINWINDOW_RADAR_H

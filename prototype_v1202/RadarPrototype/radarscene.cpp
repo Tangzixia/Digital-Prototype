@@ -351,7 +351,7 @@ void RadarScene::focusOutEvent(QFocusEvent *)
         isSelected = false;
     }else{
         myItemMenu->setEnabled(false);
-        qDebug() << "myItemMenu设置为false" << myItemMenu->isEnabled();
+        qDebug() << "myItemMenu设置为false->" << myItemMenu->isEnabled();
     }
 }
 

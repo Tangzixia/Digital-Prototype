@@ -65,6 +65,7 @@ int Utils::saveFile(QWidget *qw, QString dirp, QString filename, RadarScene *sce
                 directory,
                 QFileDialog::ShowDirsOnly);
     }
+    // 用户选择了其他位置时执行
     if (!spath.isEmpty() && directory != spath+"/")
     {
         QFile file(spath+"/"+filename); // 这个斜杠很关键
@@ -77,7 +78,7 @@ int Utils::saveFile(QWidget *qw, QString dirp, QString filename, RadarScene *sce
             qDebug() << "场景保存成功!路径为："+spath;
         }
     }
-    // 保存到默认文件夹
+    // 保存到默认文件夹，必执行
     if (!directory.isEmpty())
     {
         QFile file(directory+"/"+filename); // 这个斜杠很关键

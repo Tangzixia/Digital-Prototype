@@ -20,6 +20,7 @@
 #include "compproperty.h"
 #include "clickablelabel.h"
 #include <QFormLayout>
+#include "leftnavi.h"
 //const int InsertTextButton = 10;
 /**
 * @projectName   prototype_v0719
@@ -36,12 +37,30 @@ MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
     ui(new Ui::MainWindow_Radar)
 {
     ui->setupUi(this);
-    this->setAttribute(Qt::WA_DeleteOnClose);
+    this->setAttribute(Qt::WA_DeleteOnClose); //关闭销毁变量
+    lft = new LeftNavi();
+    lft->setFrameStyle(QFrame::NoFrame);
+
     //最大窗口
     this->showMaximized();
     setWindowTitle(tr((this->equip_id+" Edit").toUtf8().data()));
+    // 设置这个，场景视图的位置会发生变化，坐标从0变为中点2500
+//    setCentralWidget(ui->graphicsView);
+    setCentralWidget(ui->splitter);
     //兼容性？？
     setUnifiedTitleAndToolBarOnMac(true);
+
+    // 合并dock窗口
+    otherDoc = new QDockWidget(this);
+    otherDoc->setWindowTitle(tr("其他窗口"));
+    otherDoc->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetClosable);
+    otherDoc->setAllowedAreas(Qt::AllDockWidgetAreas);
+    addDockWidget(Qt::LeftDockWidgetArea, otherDoc);
+    tabifyDockWidget(otherDoc,ui->dockCompList);
+    // 想要隐藏标题栏，没用
+//    ui->dockWidget_3->setWindowFlags(Qt::WindowTitleHint|Qt::CustomizeWindowHint);
+    // 默认显示
+    ui->dockCompList->raise();
 
     //组件列表设置(左边的窗口)
     ui->actionCom_list->setCheckable(true);
@@ -73,6 +92,9 @@ MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
 
     // xy坐标标签
     label_xy=new QLabel(this);
+    label_xy->setFixedWidth(100); //for testing
+    label_xy->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+//    label_xy->setStyleSheet("QLabel{margin-left:10px;color:white}QLabel:hover{color:#00AA00;}");
     ui->statusbar->setStyleSheet(QString("QStatusBar::item{border: 0px}"));
     // 状态栏左下角加入xy坐标
     ui->statusbar->addWidget(label_xy);
@@ -113,6 +135,75 @@ MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
     ui->dockWidget->setAllowedAreas(Qt::AllDockWidgetAreas);
     propertyAction->setChecked(false);
     ui->dockWidget->hide();
+
+    // 打印信息
+    connect(this, &MainWindow_Radar::send2AppOutput, this, &MainWindow_Radar::receiveFromSend);
+
+
+
+
+    openConsole = new QPushButton;
+    openConsole->setText(tr("console"));
+    openConsole->setObjectName("ptn_oc");
+    openConsole->setFixedWidth(60);
+    ui->statusbar->addWidget(openConsole);
+    // 下面console显示隐藏
+    connect(openConsole, &QPushButton::clicked, ui->dockWidget_3, [=](){
+        if(ui->dockWidget_3->isVisible()){
+            ui->dockWidget_3->close();
+            openConsole->setStyleSheet("");
+        }else{
+            ui->dockWidget_3->show();
+            openConsole->setStyleSheet("#ptn_oc{"
+                                            "background-color:rgb(160,160,160);"
+                                            "color:rgb(250,250,250);"
+                                            "border-style:outset;"
+                                            "border-color:rgb(0,0,0);"
+                                            "}");
+        }
+    });
+
+#if 0
+    QSplitter *mainSplitter = new QSplitter(this);
+    mainSplitter->setFrameStyle(QFrame::NoFrame);
+    mainSplitter->setHandleWidth(1);
+    mainSplitter->setStyleSheet(
+                QString("QSplitter::handle {background: qlineargradient("
+                        "x1: 0, y1: 0, x2: 0, y2: 1,"
+                        "stop: 0 %1, stop: 0.07 %2);}").
+                arg(qApp->palette().background().color().name()).
+                arg(qApp->palette().color(QPalette::Dark).name()));
+
+    mainSplitter->setChildrenCollapsible(false);
+
+    mainSplitter->addWidget(lft);
+    mainSplitter->addWidget(ui->dockWidget);
+    mainSplitter->addWidget(ui->graphicsView);
+    mainSplitter->addWidget(ui->dockCompList);
+    mainSplitter->setStretchFactor(20,80);
+    createToolBarNull();
+    QHBoxLayout *ptrHLayout = new QHBoxLayout();
+    ptrHLayout->setMargin(0);
+    ptrHLayout->setSpacing(0);
+    ptrHLayout->addWidget(sideButton);
+    ptrHLayout->addWidget(mainSplitter);
+
+    QVBoxLayout *ptrVLayout = new QVBoxLayout();//创建布局
+    ptrVLayout->addLayout(ptrHLayout);
+    ptrVLayout->setSpacing(0);  //设置间距与边缘空白
+    setLayout(ptrVLayout);
+#endif
+}
+
+void MainWindow_Radar::createToolBarNull()
+{
+    sideButton = new QPushButton(this);
+    sideButton->setObjectName("pushButtonNull");
+    sideButton->setIcon(QIcon(":/image/triangleR.png"));
+    sideButton->setFixedWidth(10);
+    sideButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    sideButton->setFocusPolicy(Qt::NoFocus);
+    sideButton->setStyleSheet("background: #E8E8E8; border: none; padding: 0px;");
 }
 
 void MainWindow_Radar::sceneScaleChanged(const QString &scale)
@@ -120,6 +211,8 @@ void MainWindow_Radar::sceneScaleChanged(const QString &scale)
     isSave = false;
     toggleSaveXml(1);
     qDebug() << "xml由于场景缩放比例变化而改变";
+    emit send2AppOutput("xml由于场景缩放比例变化而改变");
+
     double newScale = scale.left(scale.indexOf(tr("%"))).toDouble() / 100.0;
     QMatrix oldMatrix = ui->graphicsView->matrix();
     ui->graphicsView->resetMatrix();
@@ -145,6 +238,7 @@ void MainWindow_Radar::itemSelected(QGraphicsItem *item)
     underlineAction->setChecked(font.underline());
 }
 
+// 设置save按钮的可用与否
 void MainWindow_Radar::toggleSaveXml(int flag){
     if(flag == 1){
         ui->actionsave->setEnabled(true);
@@ -265,8 +359,10 @@ void MainWindow_Radar::loadAllComps()
         if(!ui->listWidget->nameList.contains(fileName)){
             ui->listWidget->nameList.append(fileName);
             qDebug() << "加入文件名:"<< fileName;
+            emit send2AppOutput(QStringLiteral("加入文件名: ")+fileName);
         }else {
             qDebug() << "有重复的文件名存在，文件名： " << fileName;
+            emit send2AppOutput(QStringLiteral("有重复的文件名存在，文件名： ")+fileName);
         }
         AlgorithmComp ac = Utils::readPluginXmlFile(m_sProjectPath+fileName+".xml");
         ui->listWidget->algorithms.insert(ac.getInfo()["ID"], ac);
@@ -288,6 +384,7 @@ void MainWindow_Radar::itemInserted(DiagramItem *)
     isSave = false;
     toggleSaveXml(1);
     qDebug() << "xml由于组件添加而改变";
+    emit send2AppOutput("xml由于组件添加而改变");
     //当有图形项插入到场景中的时候，应该将指针组改为移动指针
     pointerTypeGroup->button(int(RadarScene::MoveItem))->setChecked(true);
     scene->setMode(RadarScene::Mode(pointerTypeGroup->checkedId()));
@@ -300,6 +397,7 @@ void MainWindow_Radar::textInserted(QGraphicsTextItem *)
     isSave = false;
     toggleSaveXml(1);
     qDebug() << "xml由于文字添加而改变";
+    emit send2AppOutput("xml由于文字添加而改变");
     //取消选中状态
 //    buttonGroup->button(InsertTextButton)->setChecked(false);
     scene->setMode(RadarScene::Mode(pointerTypeGroup->checkedId()));
@@ -318,6 +416,7 @@ void MainWindow_Radar::deleteItemArrowById(int id)
                 // 将id列表中的那个id删除
                 scene->idList.removeOne(id);
                 qDebug() << "找到图形项，已删除,id=" << id;
+                emit send2AppOutput(QStringLiteral("找到图形项，已删除,id=") + id);
                 break;
             }
         }
@@ -333,11 +432,13 @@ void MainWindow_Radar::deleteItemArrowById(int id)
             QDomElement elem2 = arrowNode.childNodes().at(j).toElement();
             int arrowId = elem2.attribute("id").toInt();
             qDebug() << "start_item_id: " << elem2.attribute("start_item_id") << "end_item_id" << elem2.attribute("end_item_id");
+            emit send2AppOutput("start_item_id: " + elem2.attribute("start_item_id")+ "end_item_id" + elem2.attribute("end_item_id"));
             if(elem2.attribute("start_item_id") == QString::number(id) || elem2.attribute("end_item_id") == QString::number(id)){
                 arrowNode.removeChild(arrowNode.childNodes().at(j));
                 // 将id列表中的那个id删除
                 scene->idList.removeOne(arrowId);
                 qDebug() << "找到箭头，已删除,id=" << arrowId;
+                emit send2AppOutput(QStringLiteral("找到箭头，已删除,id=") + arrowId);
                 // NOTE 这里千万注意不要写成了0，不然会少删除item，item和arrow不对应导致程序崩溃
                 j=-1;
             }
@@ -357,6 +458,7 @@ void MainWindow_Radar::deleteArrowById(int id)
                 // 将id列表中的那个id删除
                 scene->idList.removeOne(arrowId);
                 qDebug() << "单独找到箭头将它删除,id=" << arrowId;
+                emit send2AppOutput(QStringLiteral("单独找到箭头将它删除,id=") + arrowId);
                 j=0;
             }
         }
@@ -368,12 +470,15 @@ void MainWindow_Radar::deleteItem()
 {
     if(scene->selectedItems().isEmpty()){
         qDebug() << "没有要删除的选择对象";
+        emit send2AppOutput("没有要删除的选择对象");
         QMessageBox::information(this, "alert", "请先选择组件!", QMessageBox::Ok);
     }else{
+        // 由于删除了组件，所以要设置保存状态为：否
         isSave = false;
         toggleSaveXml(1);
         qDebug() << "xml由于删除添加控件而改变";
-        //删除相连的箭头
+        emit send2AppOutput("xml由于删除添加控件而改变");
+        // 删除相连的箭头
         foreach (QGraphicsItem *item, scene->selectedItems()) {
             if (item->type() == Arrow::Type) {
                 scene->removeItem(item);
@@ -448,6 +553,7 @@ void MainWindow_Radar::showItemProperties()
         if (item->type() == DiagramItem::Type) {
             // DELETE
             qDebug() << "Show Component Property" << dynamic_cast<DiagramItem*>(item)->iconName;
+            emit send2AppOutput("Show Component Property" + dynamic_cast<DiagramItem*>(item)->iconName);
             CompProperty *p = new CompProperty(dynamic_cast<DiagramItem*>(item)->iconName);
             p->exec();
         }
@@ -461,13 +567,14 @@ void MainWindow_Radar::closeEvent(QCloseEvent *event)
     if(isSave == false){
 //        this->showNormal();
         this->raise();
-        int ret1 = QMessageBox::question(this, tr("确认"), tr("确定退出前保存场景到桌面?"), QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel);
+        int ret1 = QMessageBox::question(this, tr("确认"), tr("确定退出前保存场景?"), QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel);
         if(ret1 == QMessageBox::Yes){
             save2XmlFile();
             isSave = true;
             toggleSaveXml(0);
             ui->actionRunRadar->setEnabled(true);
             qDebug() << "保存退出";
+            emit send2AppOutput("保存退出");
              //提醒父类更新列表
 			emit iClose(this);
             event->accept();
@@ -475,8 +582,8 @@ void MainWindow_Radar::closeEvent(QCloseEvent *event)
 
         }else if(ret1 == QMessageBox::No){
             qDebug() << "do not save";
-             //提醒父类更新列表
-			 emit iClose(this);
+            //提醒父类更新列表
+            emit iClose(this);
 			// 直接退出 
             event->accept();
 //            MainWindowNew::main_radar_list.removeOne(this);
@@ -616,6 +723,8 @@ void MainWindow_Radar::createCompBox()
 
     //========布局搜索框和listWidget=============
     QVBoxLayout *searchlayout = new QVBoxLayout;
+    searchlayout->setContentsMargins(1,1,1,1);
+    ui->dockWidgetContents->setStyleSheet("#dockWidgetContents{border:1px solid gray;}");
     QHBoxLayout *pSearchLayout = new QHBoxLayout;
     m_pSearchLineEdit = new QLineEdit;
 
@@ -744,7 +853,7 @@ void MainWindow_Radar::createMenus()
     progressBar->setMaximum(100);
     progressBar->setValue(0);
     // 运行时间
-    label_time=new QLabel(tr("Running： "),this);
+//    label_time=new QLabel(tr("Running： "),this);
     // 把时间标签加在状态栏中
 //    ui->statusbar->addPermanentWidget(label_time);
 //    ui->statusbar->addPermanentWidget(progressBar);
@@ -755,7 +864,7 @@ void MainWindow_Radar::createToolbars()
 {
     editToolBar = addToolBar(tr("Edit"));
     //默认不显示
-    editToolBar->setHidden(true);
+//    editToolBar->setHidden(true);
     editToolBar->addAction(deleteAction);
     editToolBar->addAction(toFrontAction);
     editToolBar->addAction(sendBackAction);
@@ -1121,6 +1230,7 @@ void MainWindow_Radar::readXmlConf(QString xmlname)
 //                DiagramItem::DiagramType type;
                 QString compName = QString::fromStdString(tagName);
                 qDebug() << "组件名: " << compName;
+                emit send2AppOutput(QStringLiteral("组件名： ") + compName);
                 if(!ui->listWidget->nameList.contains(compName)){
                     qDebug() << "读取出错，缺少组件，组件" << compName << "已被删除";
                     Utils::alert(QApplication::desktop()->screen()->rect(),"读取出错，缺少组件，组件"+compName+"已被删除");
@@ -1148,6 +1258,7 @@ void MainWindow_Radar::readXmlConf(QString xmlname)
                     item_->itemId = id; //id不变
                     scene->idList.append(id);
                     qDebug() << "scene的id列表" << scene->idList;
+                    emit send2AppOutput(QStringLiteral("组件名： ") + compName);
                     scene->addItem(item_);
                     emit itemInserted(item_);
                     //更新xml
@@ -1356,10 +1467,12 @@ void MainWindow_Radar::autoloadXmlById(QString id)
             filepath.append(fileInfo.path());
             filepath+="/"+fname;
             qDebug() << "找到xml!" << filepath;
+            emit send2AppOutput(QStringLiteral("找到xml! ") + filepath);
             readXmlConf(filepath);
             isSave = true;
             toggleSaveXml(0);
             qDebug() << "自动读取，不算是手动保存的操作，所以恢复已保存状态";
+            emit send2AppOutput(QStringLiteral("自动读取，不算是手动保存的操作，所以恢复已保存状态"));
             ui->actionRunRadar->setEnabled(true);
             break;
         }
@@ -1394,8 +1507,7 @@ void MainWindow_Radar::On_start()
     ui->statusbar->addWidget(progressBar);
     // 进度条为0
     progressBar->setValue(0);
-    ui->statusbar->showMessage(label_time->text(), 1000);
-
+//    ui->statusbar->showMessage(label_time->text(), 1000);
 }
 
 // 当运行结束的时候
@@ -1403,7 +1515,8 @@ void MainWindow_Radar::On_over()
 {
 //    ui->action_Stop->setEnabled(false);
     ui->actionRunRadar->setEnabled(true);
-    label_time->setText(tr("Done"));
+//    label_time->setText(tr("Done"));
+    ui->statusbar->removeWidget(progressBar);
 }
 
 // 当对信号进行评估进度的时候，实时设置进度条的值
@@ -1457,6 +1570,7 @@ void MainWindow_Radar::update_Comp_property(AlgorithmComp ac)
     QScrollArea *scroll = new QScrollArea;
     QWidget *w = new QWidget;
     QVBoxLayout *v = new QVBoxLayout;
+    v->setContentsMargins(1,1,1,1);
     QWidget *sw = new QWidget;
 
     // 表格布局
@@ -1568,4 +1682,27 @@ void MainWindow_Radar::on_actionproperty_triggered(bool checked)
     }else{
         ui->dockWidget->hide();
     }
+}
+
+void MainWindow_Radar::receiveFromSend(QString message)
+{
+    ui->textEdit->append(message);//添加字符串作为一个段落到TextEdit控件中
+}
+
+void MainWindow_Radar::on_tabWidget_2_destroyed()
+{
+    qDebug() << "测试tab destroyed";
+//    ui->dockWidget_3->setEnabled(false);
+}
+
+void MainWindow_Radar::on_tabWidget_2_tabBarClicked(int index)
+{
+    qDebug() << "测试tab clicked";
+//    ui->dockWidget_3->close();
+}
+
+void MainWindow_Radar::on_tabWidget_2_tabCloseRequested(int index)
+{
+    qDebug() << "测试tab closed";
+
 }

@@ -22,7 +22,7 @@ INCLUDEPATH += $$PWD/Tool
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = prototype_v0906
+TARGET = prototype_v1202
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -84,7 +84,9 @@ SOURCES += \
     RadarPrototype/a_show.cpp \
     Main/projectlist.cpp \
     Tool/echoeswave.cpp \
-    Tool/qcustomplot.cpp
+    Tool/qcustomplot.cpp \
+    RadarPrototype/leftnavi.cpp
+
 
 HEADERS += \
         Main/mainwindow.h \
@@ -103,6 +105,7 @@ HEADERS += \
     RadarPrototype/diagramitem.h \
     RadarPrototype/ppiwidget.h \
     RadarPrototype/ppidialog.h \
+    RadarPrototype/leftnavi.h \
     Tool/arrow.h \
     RadarPrototype/diagramtextitem.h \
     Tool/compproperty.h \

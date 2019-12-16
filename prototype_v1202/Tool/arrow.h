@@ -5,6 +5,7 @@
 
 #include <QPainterPath>
 #include <QGraphicsItem>
+#include <QObject>
 /**
 * @projectName   prototype_v0719
 * @brief         用于编辑雷达页面的组件元素之间链接的箭头类。
