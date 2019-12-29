@@ -7,6 +7,7 @@
 #include "unistd.h" //usleep()
 #include "hellodialog.h"
 #include "mysplashscreen.h"
+#include <QStyleFactory>
 /**
 * @projectName   prototype_v0719
 * @brief         此程序的main函数，入口类。
@@ -16,6 +17,7 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+    app.setStyle(QStyleFactory::create("vis")); // 设置vista风格
 //    QPixmap pixmap(":/img/start_logo.gif");
     QPixmap pixmap(":/img/startup.gif");
 //    QPixmap pixmap(":/img/lixian.jpg");

@@ -85,8 +85,9 @@ SOURCES += \
     Main/projectlist.cpp \
     Tool/echoeswave.cpp \
     Tool/qcustomplot.cpp \
-    RadarPrototype/leftnavi.cpp
-
+    RadarPrototype/leftnavi.cpp \
+    Tool/algocodeedit.cpp \
+    Tool/mysyntaxhighlighter.cpp
 
 HEADERS += \
         Main/mainwindow.h \
@@ -130,7 +131,10 @@ HEADERS += \
     RadarPrototype/a_show.h \
     Main/projectlist.h \
     Tool/echoeswave.h \
-    Tool/qcustomplot.h
+    Tool/qcustomplot.h \
+    Tool/algocodeedit.h \
+    Tool/linenumberarea.h \
+    Tool/mysyntaxhighlighter.h
 
 FORMS += \
     Main/mainwindow.ui \

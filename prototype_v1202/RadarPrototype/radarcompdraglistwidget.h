@@ -30,6 +30,7 @@ public slots:
     void onCurrentDoubleClicked(QListWidgetItem *item);
     void deleteItemSlot();
     void editItemParamSlot();
+    void codeItemEditSlot();
     void createItemParamSlot();
     void contextMenuEvent ( QContextMenuEvent * event );
 

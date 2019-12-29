@@ -21,7 +21,7 @@ MainWindowNew::MainWindowNew(QWidget *parent) :
     ui->setupUi(this);
     // 设置对话框icon
     this->setWindowIcon(QIcon(":/img/fangzhen.png"));
-    this->setStyleSheet("padding:0;margin:0");
+//    this->setStyleSheet("padding:0;margin:0");
     this->setAttribute(Qt::WA_DeleteOnClose);
     graphicsScene=new MainWindowNewScene();
     // xy坐标标签
@@ -30,7 +30,7 @@ MainWindowNew::MainWindowNew(QWidget *parent) :
     ui->statusBar->addWidget(label_xy);
     // 将主窗口中的场景设置为自定义的场景
     ui->graphicsView->setScene(graphicsScene);
-    ui->graphicsView->setStyleSheet("margin:0");
+//    ui->graphicsView->setStyleSheet("margin:0");
 //     设置鼠标跟踪开启
     ui->graphicsView->setMouseTracking(true);
     ui->graphicsView->setAcceptDrops(true);

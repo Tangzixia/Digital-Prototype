@@ -59,6 +59,7 @@ MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
     tabifyDockWidget(otherDoc,ui->dockCompList);
     // 想要隐藏标题栏，没用
 //    ui->dockWidget_3->setWindowFlags(Qt::WindowTitleHint|Qt::CustomizeWindowHint);
+    ui->dockWidget_3->close();
     // 默认显示
     ui->dockCompList->raise();
 
@@ -416,7 +417,7 @@ void MainWindow_Radar::deleteItemArrowById(int id)
                 // 将id列表中的那个id删除
                 scene->idList.removeOne(id);
                 qDebug() << "找到图形项，已删除,id=" << id;
-                emit send2AppOutput(QStringLiteral("找到图形项，已删除,id=") + id);
+                emit send2AppOutput(QStringLiteral("找到图形项，已删除,id=")+QString::number(id));
                 break;
             }
         }
@@ -438,7 +439,7 @@ void MainWindow_Radar::deleteItemArrowById(int id)
                 // 将id列表中的那个id删除
                 scene->idList.removeOne(arrowId);
                 qDebug() << "找到箭头，已删除,id=" << arrowId;
-                emit send2AppOutput(QStringLiteral("找到箭头，已删除,id=") + arrowId);
+                emit send2AppOutput(QStringLiteral("找到箭头，已删除,id=")+QString::number(arrowId));
                 // NOTE 这里千万注意不要写成了0，不然会少删除item，item和arrow不对应导致程序崩溃
                 j=-1;
             }
@@ -458,7 +459,7 @@ void MainWindow_Radar::deleteArrowById(int id)
                 // 将id列表中的那个id删除
                 scene->idList.removeOne(arrowId);
                 qDebug() << "单独找到箭头将它删除,id=" << arrowId;
-                emit send2AppOutput(QStringLiteral("单独找到箭头将它删除,id=") + arrowId);
+                emit send2AppOutput(QStringLiteral("单独找到箭头将它删除,id=")+QString::number(arrowId));
                 j=0;
             }
         }

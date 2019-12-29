@@ -15,6 +15,7 @@
 #include "utils.h"
 #include <QApplication>
 #include <QDesktopWidget>
+#include <algocodeedit.h>
 // This is available in all editors.
 /**
 * @projectName   prototype_v0906
@@ -147,6 +148,7 @@ void RadarCompDraglistWidget::editItemParamSlot()
     if( item == nullptr )
         return;
     qDebug() << "要编辑的组件名字为: " << item->text();
+
     AlgorithmComp ac;
     ac = algorithms.value(item->data(Qt::UserRole+2).toString());
     ParamEditRadarDialog dlg(ac);
@@ -161,6 +163,28 @@ void RadarCompDraglistWidget::editItemParamSlot()
     }
 }
 
+void RadarCompDraglistWidget::codeItemEditSlot()
+{
+    AlgoCodeEdit *child = new AlgoCodeEdit;
+    child->setTabStopWidth(4);
+    child->setMinimumSize(800,600);
+    QListWidgetItem * item = currentItem();
+    if( item == nullptr )
+        return;
+    QString na = item->text();
+    QString id = item->data(Qt::UserRole+2).toString();
+    qDebug() << "编辑组件代码: " << na;
+    bool tof = child->loadFile(QDir::currentPath()+"/codes/"+ na +".cpp");
+    if(tof){
+        child->showNormal();
+        child->move((QApplication::desktop()->width() - child->width())/2,(QApplication::desktop()->height() - child->height())/2);
+    }
+//    connect(child, SIGNAL(copyAvailable(bool)), ui->actionCut, SLOT(setEnabled(bool)));
+//    connect(child, SIGNAL(copyAvailable(bool)), ui->actionCopy, SLOT(setEnabled(bool)));
+//    connect(child->document(), SIGNAL(undoAvailable(bool)), ui->actionUndo, SLOT(setEnabled(bool)));
+//    connect(child->document(), SIGNAL(redoAvailable(bool)), ui->actionRedo, SLOT(setEnabled(bool)));
+}
+
 void RadarCompDraglistWidget::createItemParamSlot()
 {
     createNewComp();
@@ -169,7 +193,7 @@ void RadarCompDraglistWidget::createItemParamSlot()
 // This is an auto-generated comment.
 /**
 * @projectName   prototype_v0906
-* @brief         简介 item右键菜单
+* @brief         简介 算法组件item右键菜单
 * @author        Antrn
 * @date          2019-10-05
 */
@@ -177,17 +201,22 @@ void RadarCompDraglistWidget::contextMenuEvent(QContextMenuEvent *event)
 {
     QListWidgetItem *currItem = itemAt(event->pos());
     QMenu *popMenu = new QMenu(this);
-    QAction *addAct = nullptr, *deleteAct = nullptr, *editAct = nullptr;
+    // 暂时在这里添加几个右键菜单了，包括删除、代码编辑和编辑属性
+    QAction *addAct = nullptr, *deleteAct = nullptr, *editAct = nullptr, *codeEditAction;
     if(currItem != nullptr && currItem != addCompButton){
         qDebug() << "------------" << currItem->text();
         deleteAct = new QAction(tr("删除组件"), this);
         editAct = new QAction(tr("修改参数"), this);
+        codeEditAction = new QAction(tr("修改代码"), this);
         deleteAct->setIcon(QIcon(":/img/delete.png"));
         editAct->setIcon(QIcon(":/img/editComp.png"));
+        codeEditAction->setIcon(QIcon(":/img/code.png"));
         popMenu->addAction(deleteAct);
         popMenu->addAction(editAct);
+        popMenu->addAction(codeEditAction);
         connect(deleteAct, &QAction::triggered, this, &RadarCompDraglistWidget::deleteItemSlot);
         connect(editAct, &QAction::triggered, this, &RadarCompDraglistWidget::editItemParamSlot);
+        connect(codeEditAction, &QAction::triggered, this, &RadarCompDraglistWidget::codeItemEditSlot);
     }else{
         addAct = new QAction(tr("添加组件"), this);
         addAct->setIcon(QIcon(":/img/addComp.png"));

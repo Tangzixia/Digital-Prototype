@@ -156,7 +156,7 @@ border:1px solid gray;
            <enum>QTabWidget::North</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <property name="elideMode">
            <enum>Qt::ElideNone</enum>
@@ -168,7 +168,7 @@ border:1px solid gray;
            <bool>false</bool>
           </property>
           <property name="movable">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="tabBarAutoHide">
            <bool>true</bool>
@@ -252,13 +252,13 @@ border:1px solid gray;
    </property>
    <property name="minimumSize">
     <size>
-     <width>172</width>
+     <width>180</width>
      <height>156</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
-     <width>172</width>
+     <width>180</width>
      <height>524287</height>
     </size>
    </property>
