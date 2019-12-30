@@ -19,7 +19,8 @@ MySyntaxHighlighter::MySyntaxHighlighter(QTextDocument *parent):
                     << "\\bslots\\b" << "\\bstatic\\b" << "\\bstruct\\b"
                     << "\\btemplate\\b" << "\\btypedef\\b" << "\\btypename\\b"
                     << "\\bunion\\b" << "\\bunsigned\\b" << "\\bvirtual\\b"
-                    << "\\bvoid\\b" << "\\bvolatile\\b" << "\\bbool\\b";
+                    << "\\bvoid\\b" << "\\bvolatile\\b" << "\\bbool\\b" << "\\binclude\\b"
+                    << "\\bstring\\b" << "\\breturn\\b" << "\\bnullptr\\b" << "\\busing\\b" << "\\bdelete\\b";
 
     foreach (const QString &pattern, keywordPatterns) {
         rule.pattern = QRegularExpression(pattern);
@@ -38,11 +39,16 @@ MySyntaxHighlighter::MySyntaxHighlighter(QTextDocument *parent):
     rule.format = singleLineCommentFormat;
     highlightingRules.append(rule);
 
-    multiLineCommentFormat.setForeground(Qt::red);//多行注释，只设定了样式，具体匹配在highlightBlock中设置
+    multiLineCommentFormat.setForeground(QColor(0,128,0));//多行注释，只设定了样式，具体匹配在highlightBlock中设置
 
     quotationFormat.setForeground(Qt::darkGreen);//字符串
     rule.pattern = QRegularExpression("\".*\"");
     rule.format = quotationFormat;
+    highlightingRules.append(rule);
+
+    headFileFormat.setForeground(QColor(0,128,0));//头文件
+    rule.pattern = QRegularExpression("<.*>");
+    rule.format = headFileFormat;
     highlightingRules.append(rule);
 
     functionFormat.setFontItalic(true);//函数

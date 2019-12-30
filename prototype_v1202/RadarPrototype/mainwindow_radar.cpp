@@ -59,8 +59,13 @@ MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
     tabifyDockWidget(otherDoc,ui->dockCompList);
     // 想要隐藏标题栏，没用
 //    ui->dockWidget_3->setWindowFlags(Qt::WindowTitleHint|Qt::CustomizeWindowHint);
+    QWidget* titleBar = ui->dockWidget_3->titleBarWidget();
+    QWidget* emptyWidget = new QWidget();
+    ui->dockWidget_3->setTitleBarWidget(emptyWidget);
+    delete titleBar;
+    // 默认关闭
     ui->dockWidget_3->close();
-    // 默认显示
+    // 默认显示组件列表
     ui->dockCompList->raise();
 
     //组件列表设置(左边的窗口)
@@ -139,6 +144,7 @@ MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
 
     // 打印信息
     connect(this, &MainWindow_Radar::send2AppOutput, this, &MainWindow_Radar::receiveFromSend);
+    connect(ui->listWidget, &RadarCompDraglistWidget::sendMessage, this, &MainWindow_Radar::receiveFromSend);
 
 
 
@@ -148,7 +154,7 @@ MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
     openConsole->setObjectName("ptn_oc");
     openConsole->setFixedWidth(60);
     ui->statusbar->addWidget(openConsole);
-    // 下面console显示隐藏
+    // 下面控制console显示隐藏
     connect(openConsole, &QPushButton::clicked, ui->dockWidget_3, [=](){
         if(ui->dockWidget_3->isVisible()){
             ui->dockWidget_3->close();
@@ -374,6 +380,7 @@ void MainWindow_Radar::loadAllComps()
         //这里的用户角色存储用户数据
         item0->setData(Qt::UserRole, QPixmap(":/img/component.png"));
         item0->setData(Qt::UserRole+1, fileName);
+        // 这个id不再是数字，而是uuid
         item0->setData(Qt::UserRole+2, ac.getInfo()["ID"]);
         item0->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
         ui->listWidget->addDragItem(item0);

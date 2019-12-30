@@ -39,6 +39,8 @@ signals:
 //    void setComp_typeandMode(int id);
     void setComp_typeandMode(QString iconName);
     void toRefreshCompList();
+    // 向mainwindow_radar传递消息
+    void sendMessage(QString msg);
 
 protected:
     //开始拖拽

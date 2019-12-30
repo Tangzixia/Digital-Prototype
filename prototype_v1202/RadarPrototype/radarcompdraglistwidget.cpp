@@ -12,10 +12,12 @@
 #include <qfiledialog.h>
 #include <algorithmcomp.h>
 #include <parameditradardialog.h>
+#include "mainwindow_radar.h"
 #include "utils.h"
 #include <QApplication>
 #include <QDesktopWidget>
 #include <algocodeedit.h>
+#include <codewindow.h>
 // This is available in all editors.
 /**
 * @projectName   prototype_v0906
@@ -69,19 +71,23 @@ void RadarCompDraglistWidget::createNewComp()
 {
     AlgorithmComp ac;
     // 新建
-    ParamEditRadarDialog dlg(ac);
-    if(dlg.exec() == QDialog::Accepted)
+    ParamEditRadarDialog *dlg = new ParamEditRadarDialog(ac,this);
+    // 先把要展示的消息传递给draglistWidget，再传给mainwindow_radar
+    connect(dlg, &ParamEditRadarDialog::showMessage, this, &RadarCompDraglistWidget::sendMessage);
+
+    if(dlg->exec() == QDialog::Accepted)
     {
         qDebug() << "确定新建";
-        algorithms.insert(dlg.ac.getInfo()["ID"], dlg.ac);
-        qDebug() << "刚增加的id:" << dlg.ac.getInfo()["ID"];
+        algorithms.insert(dlg->ac.getInfo()["ID"], dlg->ac);
+        qDebug() << "刚增加的id:" << dlg->ac.getInfo()["ID"];
         qDebug() << "algorithms： " << algorithms.keys() << "; 大小： " << algorithms.size();
-        Utils::writeAlgorithmComp2Xml(dlg.ac);
-        emit add_one_Comp(dlg.ac);
+        Utils::writeAlgorithmComp2Xml(dlg->ac);
+        emit add_one_Comp(dlg->ac);
         emit toRefreshCompList(); //刷新列表
         Utils::alert(QApplication::desktop()->screen()->rect(), "添加组件成功!");
     }else{
-        qDebug() << "取消新建";
+        // reject
+        qDebug() << "取消新建组件";
     }
 }
 
@@ -105,6 +111,11 @@ void RadarCompDraglistWidget::onCurrentTextChanged(QListWidgetItem *item)
     }
 }
 
+/**
+ * 双击改名字
+ * @brief RadarCompDraglistWidget::onCurrentDoubleClicked
+ * @param item
+ */
 void RadarCompDraglistWidget::onCurrentDoubleClicked(QListWidgetItem *item)
 {
     QString preName = item->text();
@@ -142,6 +153,10 @@ void RadarCompDraglistWidget::deleteItemSlot()
     delete item;
 }
 
+/**
+ * 修改组件的槽函数，用于修改参数
+ * @brief RadarCompDraglistWidget::editItemParamSlot
+ */
 void RadarCompDraglistWidget::editItemParamSlot()
 {
     QListWidgetItem * item = currentItem();
@@ -163,9 +178,18 @@ void RadarCompDraglistWidget::editItemParamSlot()
     }
 }
 
+/**
+ * 代码编辑的槽函数，弹出窗口
+ * @brief RadarCompDraglistWidget::codeItemEditSlot
+ */
 void RadarCompDraglistWidget::codeItemEditSlot()
 {
+    CodeWindow *cw = new CodeWindow(this,currentItem());
+    cw->show();
+#if 0
+    // 这里没有进行组件之间的绑定
     AlgoCodeEdit *child = new AlgoCodeEdit;
+    // 设置tab距离
     child->setTabStopWidth(4);
     child->setMinimumSize(800,600);
     QListWidgetItem * item = currentItem();
@@ -179,10 +203,11 @@ void RadarCompDraglistWidget::codeItemEditSlot()
         child->showNormal();
         child->move((QApplication::desktop()->width() - child->width())/2,(QApplication::desktop()->height() - child->height())/2);
     }
-//    connect(child, SIGNAL(copyAvailable(bool)), ui->actionCut, SLOT(setEnabled(bool)));
-//    connect(child, SIGNAL(copyAvailable(bool)), ui->actionCopy, SLOT(setEnabled(bool)));
-//    connect(child->document(), SIGNAL(undoAvailable(bool)), ui->actionUndo, SLOT(setEnabled(bool)));
-//    connect(child->document(), SIGNAL(redoAvailable(bool)), ui->actionRedo, SLOT(setEnabled(bool)));
+    connect(child, SIGNAL(copyAvailable(bool)), ui->actionCut, SLOT(setEnabled(bool)));
+    connect(child, SIGNAL(copyAvailable(bool)), ui->actionCopy, SLOT(setEnabled(bool)));
+    connect(child->document(), SIGNAL(undoAvailable(bool)), ui->actionUndo, SLOT(setEnabled(bool)));
+    connect(child->document(), SIGNAL(redoAvailable(bool)), ui->actionRedo, SLOT(setEnabled(bool)));
+#endif
 }
 
 void RadarCompDraglistWidget::createItemParamSlot()
@@ -361,10 +386,12 @@ void RadarCompDraglistWidget::mousePressEvent(QMouseEvent *event)
         }else if(m_dragItem){
             // 这里的ID也不对
 //            int id = qvariant_cast<int>(m_dragItem->data(Qt::UserRole+2))-1; //从0开始
-            int id = qvariant_cast<int>(m_dragItem->data(Qt::UserRole+2)); //从0开始
+//            int id = qvariant_cast<int>(m_dragItem->data(Qt::UserRole+2)); //从0开始
+            QString id = qvariant_cast<QString>(m_dragItem->data(Qt::UserRole+2)); //从0开始
             qDebug() << "当前id:" << id;
             // 点击其他组件,这个id应该为xml中的ID
-            emit add_one_Comp(algorithms[QString::number(id)]);
+//            emit add_one_Comp(algorithms[QString::number(id)]);
+            emit add_one_Comp(algorithms[id]);
             // 获取点击的是哪个组件的id，传到radarScene中，知道该渲染出哪个组件
 //            emit setComp_typeandMode(id);
             emit setComp_typeandMode(qvariant_cast<QString>(m_dragItem->data(Qt::UserRole+1)));

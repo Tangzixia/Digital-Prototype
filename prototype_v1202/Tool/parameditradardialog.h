@@ -33,6 +33,8 @@ private slots:
 
     void on_pushButton_Del_clicked();
 
+signals:
+    void showMessage(QString msg);
 private:
     Ui::ParamEditRadarDialog *ui;
     // 当前参数有几行

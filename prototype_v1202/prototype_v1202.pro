@@ -87,7 +87,9 @@ SOURCES += \
     Tool/qcustomplot.cpp \
     RadarPrototype/leftnavi.cpp \
     Tool/algocodeedit.cpp \
-    Tool/mysyntaxhighlighter.cpp
+    Tool/mysyntaxhighlighter.cpp \
+    Tool/codewindow.cpp
+#    Tool/codewindow.cpp
 
 HEADERS += \
         Main/mainwindow.h \
@@ -134,7 +136,9 @@ HEADERS += \
     Tool/qcustomplot.h \
     Tool/algocodeedit.h \
     Tool/linenumberarea.h \
-    Tool/mysyntaxhighlighter.h
+    Tool/mysyntaxhighlighter.h \
+    Tool/codewindow.h
+#    Tool/codewindow.h
 
 FORMS += \
     Main/mainwindow.ui \
@@ -156,7 +160,9 @@ FORMS += \
     RadarPrototype/ashowdialog.ui \
     RadarPrototype/a_show.ui \
     Main/projectlist.ui \
-    Tool/echoeswave.ui
+    Tool/echoeswave.ui \
+    Tool/codewindow.ui
+#    Tool/codewindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

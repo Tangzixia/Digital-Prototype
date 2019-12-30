@@ -29,6 +29,7 @@ private:
     QTextCharFormat multiLineCommentFormat;
     QTextCharFormat quotationFormat;
     QTextCharFormat functionFormat;
+    QTextCharFormat headFileFormat;
 };
 
 #endif // MYSYNTAXHIGHLIGHTER_H

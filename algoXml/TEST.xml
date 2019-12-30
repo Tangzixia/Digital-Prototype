@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Plugins>
+    <Information>
+        <ID>{1009cbcf-398d-4662-a012-10f6b59cc510}</ID>
+        <Name>TEST</Name>
+        <Path>E:/FirstSemesterofSeniorYear/LabJob/Project_Digital_Prototype/Code/20191214/build-prototype_v1202-Desktop_Qt_5_9_8_MinGW_32bit-Debug/algoXml</Path>
+        <Time>Mon Dec 30 22:31:29 2019 GMT</Time>
+    </Information>
+    <Description>666</Description>
+    <Parameter>
+        <参数名 describe="pp" value="12"/>
+    </Parameter>
+</Plugins>

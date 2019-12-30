@@ -102,14 +102,14 @@ private slots:
 
      void on_actionproperty_triggered(bool checked);
 
-     // 接收信息
-     void receiveFromSend(QString message);
-
      void on_tabWidget_2_destroyed();
 
      void on_tabWidget_2_tabBarClicked(int index);
 
      void on_tabWidget_2_tabCloseRequested(int index);
+public slots:
+     // 接收信息
+     void receiveFromSend(QString message);
 
 private:
     QPushButton *openConsole;

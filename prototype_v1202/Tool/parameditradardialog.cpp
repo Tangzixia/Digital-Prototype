@@ -8,7 +8,17 @@
 #include "utils.h"
 #include <QApplication>
 #include <QDesktopWidget>
+#include <radarcompdraglistwidget.h>
+
+
+
 //ParamEditRadarDialog::ParamEditRadarDialog(QString fname, QWidget *parent) :
+/**
+ * 参数编辑构造函数
+ * @brief ParamEditRadarDialog::ParamEditRadarDialog
+ * @param ac
+ * @param parent
+ */
 ParamEditRadarDialog::ParamEditRadarDialog(AlgorithmComp ac, QWidget *parent) :
     QDialog(parent),
     ac(ac),
@@ -49,6 +59,10 @@ ParamEditRadarDialog::ParamEditRadarDialog(AlgorithmComp ac, QWidget *parent) :
 //        AlgorithmComp ac = Utils::readPluginXmlFile(QDir::currentPath()+"/algoXml/"+fname+".xml");
     if(!ac.getInfo()["ID"].isEmpty()){
         QString id = ac.getInfo()["ID"];
+//        if(id.isEmpty() || id.isNull()){
+//            // 生成唯一uuid
+//            ui->lineEdit_ID->setText(QUuid::createUuid().toString());
+//        }
         this->ui->lineEdit_Name->setText(ac.getInfo()["Name"]);
         // WARNING 不能编辑xml文件名字，因为它是组件的名字，修改了的话保存的时候以新名字为准，就会重新生成一个新的组件文件
 //        ui->lineEdit_Name->setReadOnly(true);
@@ -57,8 +71,10 @@ ParamEditRadarDialog::ParamEditRadarDialog(AlgorithmComp ac, QWidget *parent) :
         ui->textEdit->setText(ac.getDesc());
 //        qDebug() << QDateTime::fromString(QString(ac.getInfo()["Time"]), "M/d/yyyy h:mm AP");
         ui->dateTimeEdit->setDateTime(QDateTime::fromString(QString(ac.getInfo()["Time"]), "M/d/yyyy h:mm AP"));
+
+        // 取出所有的参数map
         QMap<QString, QMap<QString, QString>> paraMap = ac.getParam();
-        for (QMap<QString, QMap<QString, QString>>::iterator j =paraMap.begin();j!=paraMap.end();j++) {
+        for (QMap<QString, QMap<QString, QString>>::iterator j = paraMap.begin();j!=paraMap.end();j++) {
             int r = ui->tableWidget_Param->rowCount();//获取表格中当前总行数
             ui->tableWidget_Param->setRowCount(r+1);//添加一行
             row = r;
@@ -81,8 +97,13 @@ ParamEditRadarDialog::ParamEditRadarDialog(AlgorithmComp ac, QWidget *parent) :
             ui->tableWidget_Param->setItem(row, 2, itemValue);
             row++;
         }
+    }else {
+        // 生成唯一uuid
+        ui->lineEdit_ID->setText(QUuid::createUuid().toString());
+        qDebug() << "组件的id为空，生成新的id： " << ui->lineEdit_ID->text();
     }
-
+    // 不能修改
+    ui->lineEdit_ID->setEnabled(false);
 }
 
 ParamEditRadarDialog::~ParamEditRadarDialog()
@@ -90,16 +111,26 @@ ParamEditRadarDialog::~ParamEditRadarDialog()
     delete ui;
 }
 
+/**
+ * 自动根据文字生成图片的功能在这里
+ * @brief ParamEditRadarDialog::on_pushButton_OK_clicked
+ */
 void ParamEditRadarDialog::on_pushButton_OK_clicked()
 {
-    // TODO 这里要判断一下id是否合法，但还没想好，目前必须是数字才行
-    if(ui->lineEdit_ID->text() == nullptr || ui->lineEdit_ID->text() == ""){
-        Utils::alert(QApplication::desktop()->screen()->rect(), "拒绝添加！id不能为空");
+    QString name_algo = ui->lineEdit_Name->text();
+    // 这里要判断一下name是否合法
+    if(name_algo == nullptr || name_algo.isEmpty()){
+        emit showMessage("拒绝添加！组件名不能为空");
+        reject();
+    }else if(dynamic_cast<RadarCompDraglistWidget *>(this->parent())->nameList.contains(name_algo)){
+        qDebug() << "与现有的文件名: " << name_algo << "重复，添加失败！";
+        emit showMessage("已有重复名称存在，请重新新建组件！");
         reject();
     }else{
         ac.setDesc(ui->textEdit->toPlainText());
         mp.insert("ID", ui->lineEdit_ID->text());
 
+        // 将名字写到图片上，并保存到文件夹中
         QString nm = ui->lineEdit_Name->text();
         mp.insert("Name", nm);
 
@@ -113,7 +144,7 @@ void ParamEditRadarDialog::on_pushButton_OK_clicked()
         pen.setColor(Qt::red);
         QFont font = painter.font();
         font.setBold(true);//加粗
-        font.setPixelSize(10);//改变字体大小
+        font.setPixelSize(11);//改变字体大小
         painter.setPen(pen);
         painter.setFont(font);
         painter.drawText(image.rect(),Qt::AlignCenter, nm);

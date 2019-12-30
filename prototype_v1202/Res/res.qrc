@@ -92,5 +92,6 @@
         <file>img/close-hover.png</file>
         <file>img/close-press.png</file>
         <file>img/code.png</file>
+        <file>img/saveas.png</file>
     </qresource>
 </RCC>
