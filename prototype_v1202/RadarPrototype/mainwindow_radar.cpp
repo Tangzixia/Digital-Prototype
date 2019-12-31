@@ -20,6 +20,7 @@
 #include "compproperty.h"
 #include "clickablelabel.h"
 #include <QFormLayout>
+#include <simdatagenwidget.h>
 #include "leftnavi.h"
 //const int InsertTextButton = 10;
 /**
@@ -488,7 +489,7 @@ void MainWindow_Radar::deleteItem()
     if(scene->selectedItems().isEmpty()){
         qDebug() << "没有要删除的选择对象";
         emit send2AppOutput("没有要删除的选择对象");
-        QMessageBox::information(this, "alert", "请先选择组件!", QMessageBox::Ok);
+        QMessageBox::information(this, "警告", "请先选择组件!", QMessageBox::Ok);
     }else{
         // 由于删除了组件，所以要设置保存状态为：否
         isSave = false;
@@ -1813,4 +1814,7 @@ void MainWindow_Radar::on_tabWidget_2_tabCloseRequested(int index)
 void MainWindow_Radar::on_actiongene_triggered()
 {
     qDebug() << "正在生成代码...";
+    SimDataGenWidget *sdgw = new SimDataGenWidget;
+    sdgw->setWindowModality(Qt::WindowModal);
+    sdgw->show();
 }

@@ -88,8 +88,9 @@ SOURCES += \
     RadarPrototype/leftnavi.cpp \
     Tool/algocodeedit.cpp \
     Tool/mysyntaxhighlighter.cpp \
-    Tool/codewindow.cpp
-#    Tool/codewindow.cpp
+    Tool/codewindow.cpp \
+    Tool/SimDataGen.cpp \
+    Tool/simdatagenwidget.cpp
 
 HEADERS += \
         Main/mainwindow.h \
@@ -137,8 +138,9 @@ HEADERS += \
     Tool/algocodeedit.h \
     Tool/linenumberarea.h \
     Tool/mysyntaxhighlighter.h \
-    Tool/codewindow.h
-#    Tool/codewindow.h
+    Tool/codewindow.h \
+    Tool/SimDataGen.h \
+    Tool/simdatagenwidget.h
 
 FORMS += \
     Main/mainwindow.ui \
@@ -161,7 +163,8 @@ FORMS += \
     RadarPrototype/a_show.ui \
     Main/projectlist.ui \
     Tool/echoeswave.ui \
-    Tool/codewindow.ui
+    Tool/codewindow.ui \
+    Tool/simdatagenwidget.ui
 #    Tool/codewindow.ui
 
 # Default rules for deployment.
