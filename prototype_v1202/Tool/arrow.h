@@ -15,7 +15,7 @@
 class Arrow : public QGraphicsLineItem{
 public:
     enum { Type = UserType + 4 };
-
+    int itemId;
     Arrow(DiagramItem *startItem, DiagramItem *endItem,
       QGraphicsItem *parent = nullptr);
 
@@ -26,7 +26,6 @@ public:
     QString getColor(){return myColor.name();}
     DiagramItem *startItem() const { return myStartItem; }
     DiagramItem *endItem() const { return myEndItem; }
-    int itemId;
     void updatePosition();
 
 protected:

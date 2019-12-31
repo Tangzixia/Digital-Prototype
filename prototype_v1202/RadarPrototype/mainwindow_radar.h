@@ -65,6 +65,7 @@ private slots:
      void backgroundButtonGroupClicked(QAbstractButton *button);
 //     void buttonGroupClicked(int id);
      void deleteItem();
+     void copyItem();
      void pointerGroupClicked(int id);
      void bringToFront();
      void sendToBack();
@@ -107,6 +108,8 @@ private slots:
      void on_tabWidget_2_tabBarClicked(int index);
 
      void on_tabWidget_2_tabCloseRequested(int index);
+     void on_actiongene_triggered();
+
 public slots:
      // 接收信息
      void receiveFromSend(QString message);
@@ -180,7 +183,7 @@ private:
 
     QAction *toFrontAction;
     QAction *sendBackAction;
-    QAction *aboutAction;
+    QAction *copyAction;
 
     QAction *boldAction;
     QAction *underlineAction;
@@ -197,6 +200,7 @@ signals:
     void iClose(MainWindow_Radar*);
     // 接收要打印到程序输出的语句
     void send2AppOutput(QString message);
+
 };
 
 #endif // MAINWINDOW_RADAR_H

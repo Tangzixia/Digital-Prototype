@@ -150,7 +150,7 @@ void RadarScene::updateXmlItemsPos(QPointF pos, DiagramItem *item)
                  elem.setAttribute("pos_y", pos.y());
                  MainWindow_Radar::isSave = false;
 //                 qDebug() << "xml由于位置改变而被修改";
-                 emit isSave2False(0);
+                 emit isSave2False(nullptr);
                  return;
              }
         }
@@ -237,6 +237,7 @@ void RadarScene::sendRate(float rate)
     emit rateSignal(rate);
 }
 
+#if 1
 //鼠标事件
 void RadarScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
@@ -297,6 +298,10 @@ void RadarScene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
     }
 }
 
+/**
+ * @brief 松开鼠标的时候，划箭头
+ * @param mouseEvent
+ */
 void RadarScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (line != nullptr && myMode == InsertLine) {
@@ -328,6 +333,12 @@ void RadarScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
             arrow->setZValue(-1000.0);
             addItem(arrow);
             arrow->updatePosition();
+            MainWindow_Radar *parent =  dynamic_cast<MainWindow_Radar *>(this->parent());
+
+            parent->isSave = false;
+            parent->toggleSaveXml(1);
+            qDebug() << "xml由于箭头添加而改变";
+            emit parent->send2AppOutput("xml由于箭头添加而改变");
 
             modifyXmlArrows(arrow, startItem, endItem);
         }
@@ -404,6 +415,7 @@ void RadarScene::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
     }
 }
 
+#endif
 //是否有选中的类型
 bool RadarScene::isItemChange(int type)
 {
@@ -412,6 +424,16 @@ bool RadarScene::isItemChange(int type)
             return true;
     }
     return false;
+}
+
+QColor RadarScene::getMyItemColor() const
+{
+    return myItemColor;
+}
+
+void RadarScene::setMyItemColor(const QColor &value)
+{
+    myItemColor = value;
 }
 
 QDomElement *RadarScene::getItems()

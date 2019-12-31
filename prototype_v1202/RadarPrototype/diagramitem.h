@@ -31,31 +31,24 @@ public:
     void removeArrows();
     QPolygonF polygon() const { return myPolygon; }
     void addArrow(Arrow *arrow);
-    QPixmap image() const;
+//    QPixmap image() const;
     int type() const override { return Type;}
     // 唯一id
     int itemId;
     QString iconName; //组件小图标
     int init_pos_set=0;  // 是否初始化的标志
     QRectF boundingRect();
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr);
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) ;
 
     QString getIconName() const;
     void setIconName(const QString &value);
 
 protected:
-    // 鼠标事件，会导致一些奇怪的bug，一起运动
-    //    void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
-//    void mousePressEvent(QGraphicsSceneMouseEvent *) override;
-//    void KeyPressEvent(QKeyEvent *event);
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
     void focusInEvent(QFocusEvent *) override;
     void focusOutEvent(QFocusEvent *) override;
-
-signals:
-
 
 private:
 //    DiagramType myDiagramType;

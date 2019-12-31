@@ -38,8 +38,8 @@ MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
 {
     ui->setupUi(this);
     this->setAttribute(Qt::WA_DeleteOnClose); //关闭销毁变量
-    lft = new LeftNavi();
-    lft->setFrameStyle(QFrame::NoFrame);
+//    lft = new LeftNavi();
+//    lft->setFrameStyle(QFrame::NoFrame);
 
     //最大窗口
     this->showMaximized();
@@ -150,7 +150,7 @@ MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
 
 
     openConsole = new QPushButton;
-    openConsole->setText(tr("console"));
+    openConsole->setText(tr("控制台"));
     openConsole->setObjectName("ptn_oc");
     openConsole->setFixedWidth(60);
     ui->statusbar->addWidget(openConsole);
@@ -202,6 +202,7 @@ MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
 #endif
 }
 
+#if 0
 void MainWindow_Radar::createToolBarNull()
 {
     sideButton = new QPushButton(this);
@@ -212,6 +213,7 @@ void MainWindow_Radar::createToolBarNull()
     sideButton->setFocusPolicy(Qt::NoFocus);
     sideButton->setStyleSheet("background: #E8E8E8; border: none; padding: 0px;");
 }
+#endif
 
 void MainWindow_Radar::sceneScaleChanged(const QString &scale)
 {
@@ -254,6 +256,8 @@ void MainWindow_Radar::toggleSaveXml(int flag){
         ui->actionsave->setEnabled(false);
     }
 }
+
+#if 0
 // This is available in all editors.
 /**
 * @projectName   prototype_v0906
@@ -261,14 +265,14 @@ void MainWindow_Radar::toggleSaveXml(int flag){
 * @author        Antrn
 * @date          2019-10-03
 */
-//void MainWindow_Radar::init5Comp()
-//{
-//    init1Comp(tr("脉冲压缩"), itemMenu, DiagramItem::Comp1);
-//    init1Comp(tr("恒虚警率"), itemMenu, DiagramItem::Comp2);
-//    init1Comp(tr("输入"), itemMenu, DiagramItem::Comp3);
-//    init1Comp(tr("动目标检测"), itemMenu, DiagramItem::Comp4);
-//    init1Comp(tr("输出"), itemMenu, DiagramItem::Comp5);
-//}
+void MainWindow_Radar::init5Comp()
+{
+    init1Comp(tr("脉冲压缩"), itemMenu, DiagramItem::Comp1);
+    init1Comp(tr("恒虚警率"), itemMenu, DiagramItem::Comp2);
+    init1Comp(tr("输入"), itemMenu, DiagramItem::Comp3);
+    init1Comp(tr("动目标检测"), itemMenu, DiagramItem::Comp4);
+    init1Comp(tr("输出"), itemMenu, DiagramItem::Comp5);
+}
 
 // This is available in all editors.
 /**
@@ -278,22 +282,23 @@ void MainWindow_Radar::toggleSaveXml(int flag){
 * @date          2019-10-03
 */
 //void MainWindow_Radar::init1Comp(QString comPName, QMenu *itemMenu, DiagramItem::DiagramType diagramType)
-//void MainWindow_Radar::init1Comp(QString comPName, QMenu *itemMenu, QString iconName)
-//{
-//    QListWidgetItem *item = new QListWidgetItem();
-//    DiagramItem ditem(iconName, itemMenu);
-//    QIcon icon5(ditem.image());
-//    item->setIcon(icon5);
-//    item->setText(tr(comPName.toUtf8().data()));
-//    //这里的用户角色存储用户数据
-//    item->setData(Qt::UserRole, QPixmap(ditem.image()));
-//    item->setData(Qt::UserRole+1, comPName);
-//    item->setData(Qt::UserRole+2, ui->listWidget->count());
-//    item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
-//    ui->listWidget->addDragItem(item);
-//}
+void MainWindow_Radar::init1Comp(QString comPName, QMenu *itemMenu, QString iconName)
+{
+    QListWidgetItem *item = new QListWidgetItem();
+    DiagramItem ditem(iconName, itemMenu);
+    QIcon icon5(ditem.image());
+    item->setIcon(icon5);
+    item->setText(tr(comPName.toUtf8().data()));
+    //这里的用户角色存储用户数据
+    item->setData(Qt::UserRole, QPixmap(ditem.image()));
+    item->setData(Qt::UserRole+1, comPName);
+    item->setData(Qt::UserRole+2, ui->listWidget->count());
+    item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
+    ui->listWidget->addDragItem(item);
+}
+#endif
 
-// This is available in all editors.
+
 /**
 * @projectName   prototype_v0906
 * @brief         简介 根据用户搜索名字找到组件，目前是用的xmls文件夹里的xml文件代替组件xml
@@ -387,6 +392,9 @@ void MainWindow_Radar::loadAllComps()
     }
 }
 
+/**
+ * @brief 组件添加事件处理
+ */
 void MainWindow_Radar::itemInserted(DiagramItem *)
 {
     isSave = false;
@@ -399,6 +407,7 @@ void MainWindow_Radar::itemInserted(DiagramItem *)
     //取消原按钮的选中状态
     //buttonGroup->button(int(item->diagramType()))->setChecked(false);
 }
+
 
 void MainWindow_Radar::textInserted(QGraphicsTextItem *)
 {
@@ -440,7 +449,7 @@ void MainWindow_Radar::deleteItemArrowById(int id)
             QDomElement elem2 = arrowNode.childNodes().at(j).toElement();
             int arrowId = elem2.attribute("id").toInt();
             qDebug() << "start_item_id: " << elem2.attribute("start_item_id") << "end_item_id" << elem2.attribute("end_item_id");
-            emit send2AppOutput("start_item_id: " + elem2.attribute("start_item_id")+ "end_item_id" + elem2.attribute("end_item_id"));
+//            emit send2AppOutput("start_item_id: " + elem2.attribute("start_item_id")+ "end_item_id" + elem2.attribute("end_item_id"));
             if(elem2.attribute("start_item_id") == QString::number(id) || elem2.attribute("end_item_id") == QString::number(id)){
                 arrowNode.removeChild(arrowNode.childNodes().at(j));
                 // 将id列表中的那个id删除
@@ -484,8 +493,8 @@ void MainWindow_Radar::deleteItem()
         // 由于删除了组件，所以要设置保存状态为：否
         isSave = false;
         toggleSaveXml(1);
-        qDebug() << "xml由于删除添加控件而改变";
-        emit send2AppOutput("xml由于删除添加控件而改变");
+        qDebug() << "xml由于删除控件而改变";
+        emit send2AppOutput("xml由于删除控件而改变");
         // 删除相连的箭头
         foreach (QGraphicsItem *item, scene->selectedItems()) {
             if (item->type() == Arrow::Type) {
@@ -512,7 +521,32 @@ void MainWindow_Radar::deleteItem()
         }
     }
 }
-//变换背景
+
+/**
+ * @brief 场景中复制一份组件的动作触发
+ */
+void MainWindow_Radar::copyItem()
+{
+    QGraphicsItem *item_ =  scene->selectedItems().first();
+    DiagramItem *ditem =  qgraphicsitem_cast<DiagramItem *>(item_);
+    // 复制一份，不能使用原来的那个指针
+    DiagramItem *newItem = new DiagramItem(ditem->iconName, itemMenu);
+    newItem->setBrush(scene->getMyItemColor());
+    newItem->itemId = scene->generateUniqueid();
+    // 位置向右下方偏移20像素
+    QPointF pos_(item_->pos().x()+20, item_->pos().y()+20);
+    qDebug() << "复制后的位置:" << pos_;
+    newItem->setPos(pos_);
+    scene->addItem(newItem);
+    emit itemInserted(newItem);
+    scene->modifyXmlItems(pos_, newItem);
+}
+
+
+/**
+ * @brief 通过不同的按钮变换不同的背景
+ * @param button
+ */
 void MainWindow_Radar::backgroundButtonGroupClicked(QAbstractButton *button)
 {
     QList<QAbstractButton *> buttons = backgroundButtonGroup->buttons();
@@ -538,28 +572,30 @@ void MainWindow_Radar::backgroundButtonGroupClicked(QAbstractButton *button)
     ui->graphicsView->update();
 }
 
-//void MainWindow_Radar::buttonGroupClicked(int id)
-//{
-//    QList<QAbstractButton *> buttons = buttonGroup->buttons();
-//    foreach (QAbstractButton *button, buttons) {
-//        if (buttonGroup->button(id) != button)
-//            button->setChecked(false);
-//    }
-//    //判断是否是文本框
-//    if (id == InsertTextButton) {
-//        scene->setMode(RadarScene::InsertText);
-//    } else {
-//        scene->setItemType(DiagramItem::DiagramType(id));
-//        scene->setMode(RadarScene::InsertItem);
-//    }
-//}
+#if 0
+void MainWindow_Radar::buttonGroupClicked(int id)
+{
+    QList<QAbstractButton *> buttons = buttonGroup->buttons();
+    foreach (QAbstractButton *button, buttons) {
+        if (buttonGroup->button(id) != button)
+            button->setChecked(false);
+    }
+    //判断是否是文本框
+    if (id == InsertTextButton) {
+        scene->setMode(RadarScene::InsertText);
+    } else {
+        scene->setItemType(DiagramItem::DiagramType(id));
+        scene->setMode(RadarScene::InsertItem);
+    }
+}
+#endif
 
 //弹出属性窗口
 void MainWindow_Radar::showItemProperties()
 {
+    // 当框选中多个组件，右键属性，也只会选中一个，所以没问题
     foreach (QGraphicsItem *item, scene->selectedItems()) {
         if (item->type() == DiagramItem::Type) {
-            // DELETE
             qDebug() << "Show Component Property" << dynamic_cast<DiagramItem*>(item)->iconName;
             emit send2AppOutput("Show Component Property" + dynamic_cast<DiagramItem*>(item)->iconName);
             CompProperty *p = new CompProperty(dynamic_cast<DiagramItem*>(item)->iconName);
@@ -799,15 +835,24 @@ void MainWindow_Radar::createActions()
     sendBackAction->setStatusTip(tr("后移一层"));
     connect(sendBackAction, SIGNAL(triggered()), this, SLOT(sendToBack()));
 
+    // 删除场景中的组件动作
     deleteAction = new QAction(QIcon(":/img/delete.png"), tr("删除"), this);
-    deleteAction->setShortcut(tr("删除"));
-    deleteAction->setStatusTip(tr("Delete item from diagram"));
+    deleteAction->setShortcut(tr("delete"));
+    deleteAction->setStatusTip(tr("将此组件从场景中删除"));
     connect(deleteAction, SIGNAL(triggered()), this, SLOT(deleteItem()));
 
+    copyAction = new QAction(QIcon(":/img/copy.png"), tr("复制"), this);
+    copyAction->setShortcut(tr("Ctrl+C"));
+    copyAction->setStatusTip(tr("复制一份此组件"));
+    connect(copyAction, SIGNAL(triggered()), this, SLOT(copyItem()));
+
+
+    // 查看属性动作
     propertyAction = new QAction(QIcon(":/img/property.png"), tr("属性"), this);
-    propertyAction->setShortcut(tr("属性"));
-    propertyAction->setStatusTip(tr("Show item's properties"));
+    propertyAction->setShortcut(tr("Ctrl+R"));
+    propertyAction->setStatusTip(tr("显示此组件的属性"));
     connect(propertyAction, &QAction::triggered, this, &MainWindow_Radar::showItemProperties);
+
 
     exitAction = new QAction(QIcon(":/img/exit.png"), tr("退出"), this);
     exitAction->setShortcuts(QKeySequence::Quit);
@@ -845,38 +890,47 @@ void MainWindow_Radar::createActions()
 */
 void MainWindow_Radar::createMenus()
 {
-    fileMenu = menuBar()->addMenu(tr("&File"));
+    fileMenu = menuBar()->addMenu(tr("&文件"));
     fileMenu->addAction(exitAction);
 
-    itemMenu = menuBar()->addMenu(tr("&Item"));
+    // 这里新建组件的右键菜单
+    itemMenu = menuBar()->addMenu(tr("&组件"));
     itemMenu->addAction(deleteAction);
     itemMenu->addAction(propertyAction);
     itemMenu->addSeparator();
     itemMenu->addAction(toFrontAction);
     itemMenu->addAction(sendBackAction);
+    itemMenu->addSeparator();
+    itemMenu->addAction(copyAction);
 
     // 比例条
     progressBar=new QProgressBar(this);
     progressBar->setMinimum(0);
     progressBar->setMaximum(100);
     progressBar->setValue(0);
+    // 一开始先设置不能用
+    itemMenu->setEnabled(false);
+
     // 运行时间
 //    label_time=new QLabel(tr("Running： "),this);
     // 把时间标签加在状态栏中
 //    ui->statusbar->addPermanentWidget(label_time);
 //    ui->statusbar->addPermanentWidget(progressBar);
-    itemMenu->setEnabled(false);
 }
 
+/**
+ * @brief 新建工具栏
+ */
 void MainWindow_Radar::createToolbars()
 {
-    editToolBar = addToolBar(tr("Edit"));
+    editToolBar = addToolBar(tr("编辑"));
     //默认不显示
 //    editToolBar->setHidden(true);
     editToolBar->addAction(deleteAction);
     editToolBar->addAction(toFrontAction);
     editToolBar->addAction(sendBackAction);
 
+#if 0
     fontCombo = new QFontComboBox();
     connect(fontCombo, SIGNAL(currentFontChanged(QFont)),
             this, SLOT(currentFontChanged(QFont)));
@@ -908,16 +962,18 @@ void MainWindow_Radar::createToolbars()
                                      ":/img/floodfill.png", Qt::white));
     connect(fillColorToolButton, SIGNAL(clicked()),
             this, SLOT(fillButtonTriggered()));
-
+#endif
     lineColorToolButton = new QToolButton;
     lineColorToolButton->setPopupMode(QToolButton::MenuButtonPopup);
     lineColorToolButton->setMenu(createColorMenu(SLOT(lineColorChanged()), Qt::black));
+    lineColorToolButton->setToolTip("选中改变连线的颜色");
     lineAction = lineColorToolButton->menu()->defaultAction();
     lineColorToolButton->setIcon(createColorToolButtonIcon(
                                      ":/img/linecolor.png", Qt::black));
     connect(lineColorToolButton, SIGNAL(clicked()),
             this, SLOT(lineButtonTriggered()));
 
+#if 0
     textToolBar = addToolBar(tr("Font"));
     // 默认不显示
     textToolBar->setHidden(true);
@@ -926,12 +982,14 @@ void MainWindow_Radar::createToolbars()
     textToolBar->addAction(boldAction);
     textToolBar->addAction(italicAction);
     textToolBar->addAction(underlineAction);
+#endif
 
-    colorToolBar = addToolBar(tr("Color"));
+    colorToolBar = addToolBar(tr("颜色"));
+    colorToolBar->setToolTip("选中改变连线的颜色");
     // 默认不显示
-    colorToolBar->setHidden(true);
-    colorToolBar->addWidget(fontColorToolButton);
-    colorToolBar->addWidget(fillColorToolButton);
+    colorToolBar->setHidden(false);
+//    colorToolBar->addWidget(fontColorToolButton);
+//    colorToolBar->addWidget(fillColorToolButton);
     colorToolBar->addWidget(lineColorToolButton);
 
     QToolButton *pointerButton = new QToolButton;
@@ -942,6 +1000,7 @@ void MainWindow_Radar::createToolbars()
     QToolButton *linePointerButton = new QToolButton;
     linePointerButton->setCheckable(true);
     linePointerButton->setIcon(QIcon(":/img/linepointer.png"));
+    linePointerButton->setToolTip("切换为箭头模式");
 
     pointerTypeGroup = new QButtonGroup(this);
     //后面参数是id唯一标识
@@ -951,6 +1010,7 @@ void MainWindow_Radar::createToolbars()
             this, SLOT(pointerGroupClicked(int)));
 
     sceneScaleCombo = new QComboBox;
+    sceneScaleCombo->setToolTip("改变场景的缩放比例");
     QStringList scales;
     scales << tr("50%") << tr("75%") << tr("100%") << tr("125%") << tr("150%");
     sceneScaleCombo->addItems(scales);
@@ -958,9 +1018,11 @@ void MainWindow_Radar::createToolbars()
     connect(sceneScaleCombo, SIGNAL(currentIndexChanged(QString)),
             this, SLOT(sceneScaleChanged(QString)));
 
-    pointerToolbar = addToolBar(tr("Pointer type"));
+    pointerToolbar = addToolBar(tr("鼠标"));
     pointerToolbar->addWidget(pointerButton);
+    pointerToolbar->addSeparator();
     pointerToolbar->addWidget(linePointerButton);
+    pointerToolbar->addSeparator();
     pointerToolbar->addWidget(sceneScaleCombo);
 
 }
@@ -984,26 +1046,28 @@ QWidget *MainWindow_Radar::createBackgroundCellWidget(const QString &text, const
     return widget;
 }
 
-//QWidget *MainWindow_Radar::createCellWidget(const QString &text, DiagramItem::DiagramType type)
-//{
-//    DiagramItem item(type, itemMenu);
-//    QIcon icon(item.image());
+#if 0
+QWidget *MainWindow_Radar::createCellWidget(const QString &text, DiagramItem::DiagramType type)
+{
+    DiagramItem item(type, itemMenu);
+    QIcon icon(item.image());
 
-//    QToolButton *button = new QToolButton;
-//    button->setIcon(icon);
-//    button->setIconSize(QSize(50, 50));
-//    button->setCheckable(true);
-//    buttonGroup->addButton(button, int(type));
+    QToolButton *button = new QToolButton;
+    button->setIcon(icon);
+    button->setIconSize(QSize(50, 50));
+    button->setCheckable(true);
+    buttonGroup->addButton(button, int(type));
 
-//    QGridLayout *layout = new QGridLayout;
-//    layout->addWidget(button, 0, 0, Qt::AlignHCenter);
-//    layout->addWidget(new QLabel(text), 1, 0, Qt::AlignCenter);
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(button, 0, 0, Qt::AlignHCenter);
+    layout->addWidget(new QLabel(text), 1, 0, Qt::AlignCenter);
 
-//    QWidget *widget = new QWidget;
-//    widget->setLayout(layout);
+    QWidget *widget = new QWidget;
+    widget->setLayout(layout);
 
-//    return widget;
-//}
+    return widget;
+}
+#endif
 
 QMenu *MainWindow_Radar::createColorMenu(const char *slot, QColor defaultColor)
 {
@@ -1343,6 +1407,11 @@ void MainWindow_Radar::readXmlConf(QString xmlname)
     }
 }
 
+/**
+ * @brief 通过id找到场景中某个组件
+ * @param item_id 算法组件的id
+ * @return 找到的item或者空指针
+ */
 DiagramItem *MainWindow_Radar::getDiagramItemById(int item_id)
 {
     QList<QGraphicsItem *> items = scene->items();
@@ -1487,6 +1556,11 @@ void MainWindow_Radar::autoloadXmlById(QString id)
     }
 }
 
+/**
+ * @brief 获取文件夹中所有的文件
+ * @param path 文件夹路径
+ * @return
+ */
 QFileInfoList MainWindow_Radar::getFileList(QString path)
 {
     QDir dir(path);
@@ -1556,7 +1630,7 @@ void MainWindow_Radar::On_isSave2False(QString message)
     }
     ui->actionsave->setEnabled(true);
 }
-// This is available in all editors.
+
 /**
 * @projectName   prototype_v0906
 * @brief         简介 动态更新右面属性列表，内容都是可编辑的。但是问题是怎么获取用户编辑的是哪一个呢？
@@ -1624,7 +1698,9 @@ void MainWindow_Radar::setComp_typeandMode(QString iconName)
     scene->setMode(RadarScene::InsertItem);
 }
 
-// 搜索框
+/**
+ * @brief 搜索组件，找到就显示一个，否则就全部显示
+ */
 void MainWindow_Radar::search()
 {
     QString strText = m_pSearchLineEdit->text();
@@ -1638,6 +1714,9 @@ void MainWindow_Radar::search()
     }
 }
 
+/**
+ * @brief 搜索框的自动补全
+ */
 void MainWindow_Radar::editComplete()
 {
     QString text = m_pSearchLineEdit->text();
@@ -1651,6 +1730,10 @@ void MainWindow_Radar::editComplete()
     }
 }
 
+/**
+ * @brief 获取id
+ * @return id
+ */
 QString MainWindow_Radar::getEquip_id() const
 {
     return equip_id;
@@ -1671,7 +1754,8 @@ void MainWindow_Radar::on_actionCom_list_triggered()
         ui->dockCompList->show();
     }
 }
-//左下角XY
+
+//左下角状态栏显示XY
 void MainWindow_Radar::xy_show(double x, double y)
 {
     QString str=QString("x=%1,y=%2").arg(QString::number(x)).arg(QString::number(y));
@@ -1683,6 +1767,10 @@ MainWindow_Radar::~MainWindow_Radar()
     delete ui;
 }
 
+/**
+ * @brief 属性窗口的显示与关闭
+ * @param checked
+ */
 void MainWindow_Radar::on_actionproperty_triggered(bool checked)
 {
     if(checked){
@@ -1692,6 +1780,10 @@ void MainWindow_Radar::on_actionproperty_triggered(bool checked)
     }
 }
 
+/**
+ * @brief 接收其他操作传递的信号，将消息显示在调试窗口中
+ * @param message 消息信息
+ */
 void MainWindow_Radar::receiveFromSend(QString message)
 {
     ui->textEdit->append(message);//添加字符串作为一个段落到TextEdit控件中
@@ -1713,4 +1805,12 @@ void MainWindow_Radar::on_tabWidget_2_tabCloseRequested(int index)
 {
     qDebug() << "测试tab closed";
 
+}
+
+/**
+ * @brief 根据面板场景的算法组件的连接情况进行生成代码
+ */
+void MainWindow_Radar::on_actiongene_triggered()
+{
+    qDebug() << "正在生成代码...";
 }

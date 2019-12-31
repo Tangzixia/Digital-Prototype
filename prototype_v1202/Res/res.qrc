@@ -93,5 +93,7 @@
         <file>img/close-press.png</file>
         <file>img/code.png</file>
         <file>img/saveas.png</file>
+        <file>img/generateCode.png</file>
+        <file>img/copy.png</file>
     </qresource>
 </RCC>

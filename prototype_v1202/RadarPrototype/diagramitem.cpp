@@ -109,8 +109,8 @@ void DiagramItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWi
 
     QString s = QDir::currentPath()+"/images/"+iconName;
     painter->drawPixmap(-49,-49,98,98, QPixmap(s));
-//    qDebug() << "名字！！！" << s;
 
+//    qDebug() << "名字！！！" << s;
 //    myDiagramType = diagramType();
 //    switch (myDiagramType) {
 //        case Comp1: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/FDPC.png"));
@@ -123,8 +123,10 @@ void DiagramItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWi
 //            break;
 //        case Comp5: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/output.png"));
 //            break;
-//    }
+//    }  
 }
+
+
 void DiagramItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     qDebug() << "hover 进入";
@@ -157,6 +159,7 @@ void DiagramItem::addArrow(Arrow *arrow)
     arrows.append(arrow);
 }
 
+#if 0
 // This is an auto-generated comment.
 /**
 * @projectName   prototype_v0906
@@ -164,37 +167,38 @@ void DiagramItem::addArrow(Arrow *arrow)
 * @author        Antrn
 * @date          2019-11-08
 */
-//QPixmap DiagramItem::image() const
-//{
-//    QPixmap pixmap(250, 250);
-////    pixmap.fill(Qt::transparent);
-////    QString iconName;
-////    switch (diagramType()) {
-////        case DiagramItem::DiagramType::Comp1 :
-////            iconName = "FDPC";
-////            break;
-////        case DiagramItem::DiagramType::Comp2 :
-////            iconName = "CFAR";
-////            break;
-////        case DiagramItem::DiagramType::Comp4 :
-////            iconName = "MTD";
-////            break;
-////        case DiagramItem::DiagramType::Comp3 :
-////            iconName = "INPUT";
-////            break;
-////        case DiagramItem::DiagramType::Comp5 :
-////            iconName = "OUTPUT";
-////            break;
-////    }
-//    QString itemIcon = ":/img/" +iconName+".ico";
-//    pixmap.convertFromImage(QImage(itemIcon));
-//    QPainter painter(&pixmap);
-//    painter.setPen(QPen(Qt::black, 8));
-//    painter.translate(125, 125);
-////    painter.drawPolyline(myPolygon);
-//    painter.setRenderHint(QPainter::Antialiasing, true);
-//    return pixmap;
-//}
+QPixmap DiagramItem::image() const
+{
+    QPixmap pixmap(250, 250);
+//    pixmap.fill(Qt::transparent);
+//    QString iconName;
+//    switch (diagramType()) {
+//        case DiagramItem::DiagramType::Comp1 :
+//            iconName = "FDPC";
+//            break;
+//        case DiagramItem::DiagramType::Comp2 :
+//            iconName = "CFAR";
+//            break;
+//        case DiagramItem::DiagramType::Comp4 :
+//            iconName = "MTD";
+//            break;
+//        case DiagramItem::DiagramType::Comp3 :
+//            iconName = "INPUT";
+//            break;
+//        case DiagramItem::DiagramType::Comp5 :
+//            iconName = "OUTPUT";
+//            break;
+//    }
+    QString itemIcon = ":/img/" +iconName+".ico";
+    pixmap.convertFromImage(QImage(itemIcon));
+    QPainter painter(&pixmap);
+    painter.setPen(QPen(Qt::black, 8));
+    painter.translate(125, 125);
+//    painter.drawPolyline(myPolygon);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    return pixmap;
+}
+#endif
 
 QString DiagramItem::getIconName() const
 {
@@ -205,49 +209,6 @@ void DiagramItem::setIconName(const QString &value)
 {
     iconName = value;
 }
-
-//void DiagramItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *)
-//{
-////    clearFocus();
-//    setCursor(Qt::OpenHandCursor);
-//    QGraphicsSceneMouseEvent();
-//}
-
-//void DiagramItem::mousePressEvent(QGraphicsSceneMouseEvent *e)
-//{
-//    clearFocus();
-//    setFocus();
-//    // 当移动的时候改变光标
-//    setCursor(Qt::ClosedHandCursor);
-//    QGraphicsSceneMouseEvent();
-//}
-
-//void DiagramItem::KeyPressEvent(QKeyEvent *event)
-//{
-//    if(event->key() == Qt::Key_Down){
-//        moveBy(0, 10);
-          //？为什么不是想象中的移动图形项，而是scene
-//    }
-//    switch (event->key()) {
-//        case Qt::Key_1:{
-//            QGraphicsBlurEffect *blurEffect = new QGraphicsBlurEffect;
-//            blurEffect->setBlurHints(QGraphicsBlurEffect::QualityHint);
-//            blurEffect->setBlurRadius(8);
-//            setGraphicsEffect(blurEffect);
-//            break;
-//        }
-//        case Qt::Key_5:{
-//            graphicsEffect()->setEnabled(false);
-//            break;
-//        }
-//    }
-//}
-
-//void DiagramItem::hoverEnterEvent(QGraphicsSceneHoverEvent *)
-//{
-//    setCursor(Qt::OpenHandCursor);
-//    setToolTip("component");
-//}
 
 
 //右键菜单，保持一致

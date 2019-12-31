@@ -91,6 +91,9 @@ public:
     QDomElement *getItems();
     void setItems(const QDomElement &value);
 
+    QColor getMyItemColor() const;
+    void setMyItemColor(const QColor &value);
+
 public slots:
     void setMode(Mode mode);
     //    void setItemType(DiagramItem::DiagramType type);
@@ -115,6 +118,7 @@ signals:
 
 
 protected:
+
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
@@ -125,13 +129,13 @@ protected:
     void dropEvent(QGraphicsSceneDragDropEvent *event) override;
     void dragMoveEvent(QGraphicsSceneDragDropEvent *event) override;
 
-
 private:
     bool isItemChange(int type);
 
 //    DiagramItem::DiagramType myItemType;
     QString myItemIconName;
     DiagramTextItem *textItem;
+    // 菜单
     QMenu *myItemMenu;
     Mode myMode;
     bool leftButtonDown;
