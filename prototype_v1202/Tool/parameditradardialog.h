@@ -15,10 +15,12 @@ class ParamEditRadarDialog : public QDialog
 
 public:
     explicit ParamEditRadarDialog(QWidget *parent = nullptr);
-    explicit ParamEditRadarDialog(AlgorithmComp ac, QWidget *parent = nullptr);
+    explicit ParamEditRadarDialog(AlgorithmComp ac, QWidget *parent = nullptr, int flag = 0/*0:新建组件，1:编辑组件*/);
     ~ParamEditRadarDialog();
     // 保存用户填写的信息
     AlgorithmComp ac;
+    // 判断是新建组件还是编辑组件
+    int flag = 0;
     // 保存信息
     QMap<QString, QString> mp;
 

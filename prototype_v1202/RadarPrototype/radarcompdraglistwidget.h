@@ -22,6 +22,7 @@ public:
         return QStringLiteral("image/x-Comp-piece");
     }
     QListWidgetItem *addCompButton;
+    // id, ap
     QMap<QString, AlgorithmComp> algorithms;
     QList<QString> nameList;// 存放每个导入的组件的名字
     void createNewComp();
@@ -41,6 +42,8 @@ signals:
     void toRefreshCompList();
     // 向mainwindow_radar传递消息
     void sendMessage(QString msg);
+    // 将算法信息传递到场景中，复制一份
+    void addAlgo2Scene(AlgorithmComp ap);
 
 protected:
     //开始拖拽

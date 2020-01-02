@@ -33,8 +33,10 @@ public:
     void addArrow(Arrow *arrow);
 //    QPixmap image() const;
     int type() const override { return Type;}
-    // 唯一id
-    int itemId;
+    // 一开始的方案：使用int唯一id
+//    int itemId;
+    // 后来使用uuid代替int形式
+    QString itemSuuid;
     QString iconName; //组件小图标
     int init_pos_set=0;  // 是否初始化的标志
     QRectF boundingRect();

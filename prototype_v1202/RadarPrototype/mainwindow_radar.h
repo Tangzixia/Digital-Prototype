@@ -34,9 +34,9 @@ public:
     explicit MainWindow_Radar(QWidget *parent = nullptr);
     explicit MainWindow_Radar( QString id, QWidget *parent = nullptr);
     ~MainWindow_Radar();
-    DiagramItem *getDiagramItemById(int item_id);
-    void deleteItemArrowById(int id);
-    void deleteArrowById(int id);
+    DiagramItem *getDiagramItemById(QString item_id);
+    void deleteItemArrowById(QString id);
+    void deleteArrowById(QString id);
     void autoloadXmlById(QString id);
     QFileInfoList getFileList(QString path);
     QString getEquip_id() const;
@@ -66,6 +66,8 @@ private slots:
 //     void buttonGroupClicked(int id);
      void deleteItem();
      void copyItem();
+     void addItem2Lib();
+
      void pointerGroupClicked(int id);
      void bringToFront();
      void sendToBack();
@@ -116,7 +118,7 @@ public slots:
 
 private:
     QPushButton *openConsole;
-     // 名字
+    // 名字
     QString equip_id;
     Ui::MainWindow_Radar *ui;
     QLabel *label_xy;
@@ -183,7 +185,10 @@ private:
 
     QAction *toFrontAction;
     QAction *sendBackAction;
+    // 复制场景中的组件
     QAction *copyAction;
+    // 加入组件库
+    QAction *add2CompLibraryAction;
 
     QAction *boldAction;
     QAction *underlineAction;

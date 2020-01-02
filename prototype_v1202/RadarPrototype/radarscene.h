@@ -14,6 +14,7 @@
 #include <QGraphicsScene>
 #include <QMenu>
 #include <QObject>
+#include <algorithmcomp.h>
 
 class RadarScene : public QGraphicsScene
 {
@@ -48,14 +49,14 @@ public:
 
     QDomDocument *getDoc(){return &doc;}
 
-    QList<int> idList;
-
+    QList<QString> idList;
+#if 0
     // NOTE 最多生成100个不重复的数
     int generateUniqueid()
     {
         int i,j;
         qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
-        idList.append(qrand()%100);
+        idList.append(qrand()%1000);
         for(i=0;i<idList.size();i++)
         {
             bool flag=true;
@@ -80,7 +81,7 @@ public:
         }
         return idList.back();
     }
-
+#endif
     QString getMyItemIconName() const;
 
     void setDoc(const QDomDocument &value);
@@ -94,6 +95,12 @@ public:
     QColor getMyItemColor() const;
     void setMyItemColor(const QColor &value);
 
+    QMap<QString, AlgorithmComp *> getScene_comps() const;
+    void setScene_comps(const QMap<QString, AlgorithmComp *> &value);
+
+    // 向子空间加入文件
+    void createFile2zoom(QString sid);
+
 public slots:
     void setMode(Mode mode);
     //    void setItemType(DiagramItem::DiagramType type);
@@ -101,6 +108,10 @@ public slots:
     void editorLostFocus(DiagramTextItem *item);
     void startRunCode();
     void sendRate(float rate);
+
+
+    // 接收来自radarcompdraglistwidget的算法信息
+    void receiveAlgo4listWidget(AlgorithmComp ap);
 
 signals:
     void signal_xy(double x,double y);
@@ -147,10 +158,14 @@ private:
     QColor myItemColor;
     QColor myLineColor;
 
-    //存储场景数据
+    // 存储场景数据
     QDomDocument doc;
     QDomElement Arrs;
     QDomElement Items;
+    // 场景中所有的算法存在列表中
+    QMap<QString, AlgorithmComp *> scene_comps;
+    // 临时存放listWidget在点击和拖动时传过来的对象
+    AlgorithmComp ap;
 };
 
 #endif // RADARSCENE_H

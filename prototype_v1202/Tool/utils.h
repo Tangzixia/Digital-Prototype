@@ -27,8 +27,9 @@ public:
     static int saveImage(int f, RadarScene *scene,  QGraphicsView *view,  QString path, QString name);
     static QDir openDirOrCreate(QString dirPath);
     static AlgorithmComp readPluginXmlFile(QString fileName);
-    static void writeAlgorithmComp2Xml(AlgorithmComp ac);
+    static void writeAlgorithmComp2Xml(AlgorithmComp ac, QString subPath=nullptr);
     static bool modifyFileName(QString fileName, QString newName);
+    static bool deleteXmlFileByName(QString name, QString id);
 };
 
 #endif // UTILS_H

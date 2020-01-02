@@ -44,6 +44,7 @@ MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
 
     //最大窗口
     this->showMaximized();
+    // equip_id就是雷达的名字，作为唯一标识
     setWindowTitle(tr((this->equip_id+" Edit").toUtf8().data()));
     // 设置这个，场景视图的位置会发生变化，坐标从0变为中点2500
 //    setCentralWidget(ui->graphicsView);
@@ -170,6 +171,9 @@ MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
                                             "}");
         }
     });
+
+    // 在文件夹中添加算法组件
+    connect(ui->listWidget, &RadarCompDraglistWidget::addAlgo2Scene, scene, &RadarScene::receiveAlgo4listWidget);
 
 #if 0
     QSplitter *mainSplitter = new QSplitter(this);
@@ -302,7 +306,7 @@ void MainWindow_Radar::init1Comp(QString comPName, QMenu *itemMenu, QString icon
 
 /**
 * @projectName   prototype_v0906
-* @brief         简介 根据用户搜索名字找到组件，目前是用的xmls文件夹里的xml文件代替组件xml
+* @brief         简介 根据用户搜索名字找到组件
 * @author        Antrn
 * @date          2019-09-27
 */
@@ -422,19 +426,22 @@ void MainWindow_Radar::textInserted(QGraphicsTextItem *)
 }
 
 // 删除doc中的箭头和图形项
-void MainWindow_Radar::deleteItemArrowById(int id)
+void MainWindow_Radar::deleteItemArrowById(QString id)
 {
     QDomNode itemNode = scene->getDoc()->elementsByTagName("Items").at(0);
     QDomNodeList nodeList = itemNode.childNodes();
     for (int i=0; i<nodeList.size(); i++) {
         if(nodeList.at(i).isElement()){
             QDomElement elem = nodeList.at(i).toElement();
-            if(elem.attribute("id") == QString::number(id)){
+            if(elem.attribute("id") == id){
                 itemNode.removeChild(nodeList.at(i));
                 // 将id列表中的那个id删除
                 scene->idList.removeOne(id);
                 qDebug() << "找到图形项，已删除,id=" << id;
-                emit send2AppOutput(QStringLiteral("找到图形项，已删除,id=")+QString::number(id));
+                emit send2AppOutput(QStringLiteral("找到图形项，已删除,id=")+id);
+                QString id_split = id.mid(1,id.length()-2);
+                qDebug() << "id_split: " << id_split;
+                Utils::deleteXmlFileByName(QDir::currentPath()+"/room/algoXml/", id_split);
                 break;
             }
         }
@@ -448,15 +455,15 @@ void MainWindow_Radar::deleteItemArrowById(int id)
     for (int j=0; j<arrowNode.childNodes().size(); j++) {
         if(arrowNode.childNodes().at(j).isElement()){
             QDomElement elem2 = arrowNode.childNodes().at(j).toElement();
-            int arrowId = elem2.attribute("id").toInt();
+            QString arrowId = elem2.attribute("id");
             qDebug() << "start_item_id: " << elem2.attribute("start_item_id") << "end_item_id" << elem2.attribute("end_item_id");
 //            emit send2AppOutput("start_item_id: " + elem2.attribute("start_item_id")+ "end_item_id" + elem2.attribute("end_item_id"));
-            if(elem2.attribute("start_item_id") == QString::number(id) || elem2.attribute("end_item_id") == QString::number(id)){
+            if(elem2.attribute("start_item_id") == id || elem2.attribute("end_item_id") == id){
                 arrowNode.removeChild(arrowNode.childNodes().at(j));
                 // 将id列表中的那个id删除
                 scene->idList.removeOne(arrowId);
                 qDebug() << "找到箭头，已删除,id=" << arrowId;
-                emit send2AppOutput(QStringLiteral("找到箭头，已删除,id=")+QString::number(arrowId));
+                emit send2AppOutput(QStringLiteral("找到箭头，已删除,id=")+arrowId);
                 // NOTE 这里千万注意不要写成了0，不然会少删除item，item和arrow不对应导致程序崩溃
                 j=-1;
             }
@@ -464,26 +471,28 @@ void MainWindow_Radar::deleteItemArrowById(int id)
     }
 }
 
-void MainWindow_Radar::deleteArrowById(int id)
+void MainWindow_Radar::deleteArrowById(QString id)
 {
     QDomNode arrowNode = scene->getDoc()->elementsByTagName("Arrs").at(0);
     for (int j=0; j<arrowNode.childNodes().size(); j++) {
         if(arrowNode.childNodes().at(j).isElement()){
             QDomElement elem2 = arrowNode.childNodes().at(j).toElement();
-            int arrowId = elem2.attribute("id").toInt();
-            if(elem2.attribute("id") == QString::number(id)){
+            QString arrowId = elem2.attribute("id");
+            if(elem2.attribute("id") == id){
                 arrowNode.removeChild(arrowNode.childNodes().at(j));
                 // 将id列表中的那个id删除
                 scene->idList.removeOne(arrowId);
                 qDebug() << "单独找到箭头将它删除,id=" << arrowId;
-                emit send2AppOutput(QStringLiteral("单独找到箭头将它删除,id=")+QString::number(arrowId));
+                emit send2AppOutput(QStringLiteral("单独找到箭头将它删除,id=")+arrowId);
                 j=0;
             }
         }
     }
 }
 
-//删除按钮触发
+/**
+ * @brief 删除场景中按钮触发
+ */
 void MainWindow_Radar::deleteItem()
 {
     if(scene->selectedItems().isEmpty()){
@@ -515,11 +524,12 @@ void MainWindow_Radar::deleteItem()
                   item_ = qgraphicsitem_cast<DiagramItem *>(item);
                   item_->removeArrows();
                   // 删除doc中的此图形项对应的标签
-                  deleteItemArrowById(item_->itemId);
+                  deleteItemArrowById(item_->itemSuuid);
              }
              scene->removeItem(item);
              delete item;
         }
+
     }
 }
 
@@ -533,7 +543,10 @@ void MainWindow_Radar::copyItem()
     // 复制一份，不能使用原来的那个指针
     DiagramItem *newItem = new DiagramItem(ditem->iconName, itemMenu);
     newItem->setBrush(scene->getMyItemColor());
-    newItem->itemId = scene->generateUniqueid();
+    QString sid = QUuid::createUuid().toString();
+    qDebug() << "新生成的sid: " << sid;
+    newItem->itemSuuid = sid;
+//    newItem->itemId = scene->generateUniqueid();
     // 位置向右下方偏移20像素
     QPointF pos_(item_->pos().x()+20, item_->pos().y()+20);
     qDebug() << "复制后的位置:" << pos_;
@@ -541,6 +554,19 @@ void MainWindow_Radar::copyItem()
     scene->addItem(newItem);
     emit itemInserted(newItem);
     scene->modifyXmlItems(pos_, newItem);
+}
+
+/**
+ * @brief 将场景中（组件空间）的组件添加到组件库中
+ */
+void MainWindow_Radar::addItem2Lib()
+{
+    // TODO 首先应该会去到此组件的名字、属性、等信息，然后新建xml文件，写入相关信息，再刷新组件列表，读取
+    QGraphicsItem *i_ =  scene->selectedItems().first();
+    DiagramItem *di =  qgraphicsitem_cast<DiagramItem *>(i_);
+    QString iname = di->getIconName();
+    AlgorithmComp *ac =  scene->getScene_comps().take(di->itemSuuid);
+    qDebug() << "算法:" << ac;
 }
 
 
@@ -847,6 +873,11 @@ void MainWindow_Radar::createActions()
     copyAction->setStatusTip(tr("复制一份此组件"));
     connect(copyAction, SIGNAL(triggered()), this, SLOT(copyItem()));
 
+    add2CompLibraryAction = new QAction(QIcon(":/img/add2Lib.png"), tr("加入组件库"), this);
+//    add2CompLibraryAction->setShortcut(tr("Ctrl+A"));
+    add2CompLibraryAction->setStatusTip(tr("将此组件添加到组件库"));
+    connect(add2CompLibraryAction, SIGNAL(triggered()), this, SLOT(addItem2Lib()));
+
 
     // 查看属性动作
     propertyAction = new QAction(QIcon(":/img/property.png"), tr("属性"), this);
@@ -903,6 +934,7 @@ void MainWindow_Radar::createMenus()
     itemMenu->addAction(sendBackAction);
     itemMenu->addSeparator();
     itemMenu->addAction(copyAction);
+    itemMenu->addAction(add2CompLibraryAction);
 
     // 比例条
     progressBar=new QProgressBar(this);
@@ -1247,10 +1279,12 @@ void MainWindow_Radar::lineButtonTriggered()
     scene->setLineColor(qvariant_cast<QColor>(lineAction->data()));
 }
 
-// xml相关
+/**
+ * @brief 打开.rad雷达工程文件
+ */
 void MainWindow_Radar::on_actionOpenXml_triggered()
 {
-    QString dirpath = QDir::currentPath()+"/xmls/";
+    QString dirpath = QDir::currentPath()+"/radar/";
     Utils::openDirOrCreate(dirpath);
     // 打开xml文件读取
     const QString fileName = QFileDialog::getOpenFileName(this, tr("打开rad"), QString(dirpath), tr("rad files (*.rad)"));
@@ -1285,7 +1319,7 @@ void MainWindow_Radar::readXmlConf(QString xmlname)
         // 第一个孩子是Arrs或者Items
 //        QDomNode n = docElem.firstChild();
         QDomNode itemNode = doc.elementsByTagName("Items").at(0);
-        int id;
+        QString id;
         // 子孩子就是标签名为comp_1...
         QDomNode m = itemNode.firstChild();
         while(!m.isNull()){
@@ -1293,7 +1327,7 @@ void MainWindow_Radar::readXmlConf(QString xmlname)
             if(m.isElement()){
                 // 每个元素item
                 QDomElement e = m.toElement();
-                id = e.attribute("id").toInt();
+                id = e.attribute("id");
                 qreal posx = e.attribute("pos_x").toInt();
                 qreal poxy = e.attribute("pos_y").toInt();
                 QString s = e.elementsByTagName("color").at(0).toElement().text();
@@ -1328,7 +1362,7 @@ void MainWindow_Radar::readXmlConf(QString xmlname)
                     QPointF pos(posx, poxy);
                     item_->setPos(pos);
                     item_->setBrush(colour);
-                    item_->itemId = id; //id不变
+                    item_->itemSuuid = id; //id不变
                     scene->idList.append(id);
                     qDebug() << "scene的id列表" << scene->idList;
                     emit send2AppOutput(QStringLiteral("组件名： ") + compName);
@@ -1370,16 +1404,16 @@ void MainWindow_Radar::readXmlConf(QString xmlname)
         QDomNode arrowNode = doc.elementsByTagName("Arrs").at(0);
         // 就是arrow了，因为箭头就一种
         QDomNode m1 = arrowNode.firstChild();
-        int start_item_id, end_item_id, arrow_id;
+        QString start_item_id, end_item_id, arrow_id;
 
         // 遍历所有的箭头
         while(!m1.isNull()){
             if(m1.isElement()){
                 // 每个元素item
                 QDomElement e = m1.toElement();
-                arrow_id = e.attribute("id").toInt();
-                start_item_id = e.attribute("start_item_id").toInt();
-                end_item_id = e.attribute("end_item_id").toInt();
+                arrow_id = e.attribute("id");
+                start_item_id = e.attribute("start_item_id");
+                end_item_id = e.attribute("end_item_id");
                 QString cs = e.elementsByTagName("color").at(0).toElement().text();
                 //qDebug() << "箭头颜色： " << cs;
                 QColor line_colour(cs);
@@ -1413,13 +1447,13 @@ void MainWindow_Radar::readXmlConf(QString xmlname)
  * @param item_id 算法组件的id
  * @return 找到的item或者空指针
  */
-DiagramItem *MainWindow_Radar::getDiagramItemById(int item_id)
+DiagramItem *MainWindow_Radar::getDiagramItemById(QString item_id)
 {
     QList<QGraphicsItem *> items = scene->items();
     DiagramItem *im = nullptr;
     for (int i=0; i<items.size(); i++) {
         if((im = dynamic_cast<DiagramItem*>(items.at(i)))){
-            if(item_id == im->itemId){
+            if(item_id == im->itemSuuid){
                 //qDebug() << "找到了";
                return im;
             }
@@ -1461,7 +1495,7 @@ void MainWindow_Radar::save2XmlFile(){
                 QDomElement e = list.at(k).toElement();
     //                    qDebug() << e.attribute("id") << "; " << QString::number(d->itemId);
                 //找到id对应的元素
-                if(e.attribute("id").compare(QString::number(d->itemId))==0){
+                if(e.attribute("id").compare(d->itemSuuid)==0){
     //                        e.firstChild().setNodeValue(d->brush().color().name());
     //                        qDebug() << d->brush().color().name();
     //                        qDebug() << e.elementsByTagName("color").at(0).toElement().text();
@@ -1475,7 +1509,7 @@ void MainWindow_Radar::save2XmlFile(){
             for (int k=0; k<list.count(); k++) {
                 QDomElement e = list.at(k).toElement();
                 //找到id对应的元素
-                if(e.attribute("id").compare(QString::number(a->itemId))==0){
+                if(e.attribute("id").compare(a->itemId)==0){
                     e.elementsByTagName("color").at(0).toElement().firstChild().setNodeValue(a->getColor());
                 }
             }
@@ -1484,7 +1518,7 @@ void MainWindow_Radar::save2XmlFile(){
     //]更新color
 
     // 保存雷达组件数据
-    QString dirp = QDir::currentPath() + "/xmls/";
+    QString dirp = QDir::currentPath() + "/radar/";
     QRect rect = QApplication::desktop()->screen()->rect();
     // 如果之前自己选择位置存错过
     if(isSelectPath){
@@ -1533,13 +1567,18 @@ void MainWindow_Radar::save2XmlFile(){
 //    u->alert(geometry(), tr("场景保存成功!"));
 }
 
-//打开自动读取已有的xml文件
+/**
+ * @brief 打开自动读取已有的xml文件
+ * @param id
+ */
 void MainWindow_Radar::autoloadXmlById(QString id)
 {
-    QFileInfoList list = getFileList(QDir::currentPath()+"/xmls/");
+    // 遍历文件夹
+    QFileInfoList list = getFileList(QDir::currentPath()+"/radar/");
     for (int i = 0; i < list.size(); ++i) {
         QFileInfo fileInfo = list.at(i);
         QString fname = fileInfo.fileName();
+        // 通过id筛选文件
         if(fname.startsWith(id)){
             QString filepath;
             filepath.append(fileInfo.path());
@@ -1645,11 +1684,12 @@ void MainWindow_Radar::update_Comp_property(AlgorithmComp ac)
         ui->dockWidget->show();
     }
     propertyAction->setChecked(true);
+    // 获取info
     QMap<QString, QString> info_map = ac.getInfo();
-//    qDebug() << info_map.toStdMap();
+
     QMap<QString, QString>::Iterator it;
 
-    // 注意这里不要在设计界面拖入一个ScrollArea，然后再和代码结合，我搞了一上午没解决，blgl
+    // NOTE 注意这里不要在设计界面拖入一个ScrollArea，然后再和代码结合，我搞了一上午没解决，blgl
     QScrollArea *scroll = new QScrollArea;
     QWidget *w = new QWidget;
     QVBoxLayout *v = new QVBoxLayout;
@@ -1659,7 +1699,7 @@ void MainWindow_Radar::update_Comp_property(AlgorithmComp ac)
     // 表格布局
     QFormLayout *fl = new QFormLayout;
     fl->setRowWrapPolicy(QFormLayout::WrapAllRows);
-    fl->setSpacing(4);
+    fl->setSpacing(3);
     fl->setLabelAlignment(Qt::AlignLeft);//设置标签的对齐方式
     for ( it = info_map.begin(); it != info_map.end(); ++it ) {
         QLineEdit *ql = new QLineEdit(it.value(), sw);

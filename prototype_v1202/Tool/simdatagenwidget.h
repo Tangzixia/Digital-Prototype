@@ -22,6 +22,8 @@ private slots:
 
     void on_pushButton_load_clicked();
 
+    void on_buttonBox_rejected();
+
 private:
     Ui::SimDataGenWidget *ui;
 };

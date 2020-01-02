@@ -32,7 +32,7 @@ public:
 public slots:
     void delete_item();
     void show_property();
-    void edit_radar();
+//    void edit_radar();
     void itemOperateSlot(Menu_iteamOperation::OperateType,QString newName="");
 
 signals:

@@ -234,9 +234,9 @@ border:1px solid gray;
     <addaction name="actionOpenXml"/>
     <addaction name="actionsave"/>
     <addaction name="actionRunRadar"/>
+    <addaction name="actiongene"/>
     <addaction name="actionCom_list"/>
     <addaction name="actionproperty"/>
-    <addaction name="actiongene"/>
    </widget>
    <addaction name="menu"/>
   </widget>
@@ -360,7 +360,7 @@ border:1px solid gray;
   </widget>
   <widget class="QDockWidget" name="dockWidget">
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>

@@ -95,5 +95,6 @@
         <file>img/saveas.png</file>
         <file>img/generateCode.png</file>
         <file>img/copy.png</file>
+        <file>img/add2Lib.png</file>
     </qresource>
 </RCC>

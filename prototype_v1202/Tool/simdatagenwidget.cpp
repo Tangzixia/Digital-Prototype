@@ -6,7 +6,12 @@
 #include <QException>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QDebug>
 
+/**
+ * @brief 模拟数据生成窗口
+ * @param parent 父类
+ */
 SimDataGenWidget::SimDataGenWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::SimDataGenWidget)
@@ -39,6 +44,7 @@ void SimDataGenWidget::on_pushButton_select_clicked()
  */
 void SimDataGenWidget::on_buttonBox_accepted()
 {
+    qDebug() << "ok";
     close();
 }
 
@@ -82,4 +88,10 @@ void SimDataGenWidget::on_pushButton_load_clicked()
 
     sdg.GenData();
     ui->pushButton_load->setText("数据生成完成");
+}
+
+void SimDataGenWidget::on_buttonBox_rejected()
+{
+    qDebug() << "cancle";
+    close();
 }

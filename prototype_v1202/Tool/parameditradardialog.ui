@@ -126,7 +126,7 @@
           <date>
            <year>2018</year>
            <month>12</month>
-           <day>27</day>
+           <day>26</day>
           </date>
          </property>
          <property name="calendarPopup">
@@ -265,17 +265,17 @@
          </property>
          <column>
           <property name="text">
-           <string>组件名</string>
+           <string>参数名</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>组件描述</string>
+           <string>参数描述</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>组件值</string>
+           <string>参数值</string>
           </property>
          </column>
         </widget>

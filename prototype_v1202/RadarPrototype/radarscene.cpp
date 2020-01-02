@@ -93,41 +93,47 @@ void RadarScene::setFont(const QFont &font)
     }
 }
 
-
+/**
+ * @brief 修改xml文件
+ * @param pos
+ * @param item
+ */
 void RadarScene::modifyXmlItems(QPointF pos, DiagramItem *item)
 {
     QDomElement comp;
-//    QMetaObject mo = DiagramItem::staticMetaObject;
-//    int index = mo.indexOfEnumerator("DiagramType");
-//    QMetaEnum metaEnum = mo.enumerator(index);
-//    comp = doc.createElement(metaEnum.valueToKey(item->diagramType()));
+    comp = doc.createElement(item->getIconName());
+ #if 0
+    QMetaObject mo = DiagramItem::staticMetaObject;
+    int index = mo.indexOfEnumerator("DiagramType");
+    QMetaEnum metaEnum = mo.enumerator(index);
+    comp = doc.createElement(metaEnum.valueToKey(item->diagramType()));
     // TODO　以iconName命名节点名称？
     comp = doc.createElement(item->getIconName());
-//    switch (item->diagramType()) {
-//        case DiagramItem::DiagramType::Comp1:
-//            comp = doc.createElement("Comp1");
-//            break;
-//        case DiagramItem::DiagramType::Comp2:
-//            comp = doc.createElement("Comp2");
-//            break;
-//        case DiagramItem::DiagramType::Comp4:
-//            comp = doc.createElement("Comp4");
-//            break;
-//        case DiagramItem::DiagramType::Comp3:
-//            comp = doc.createElement("Comp3");
-//            break;
-//        case DiagramItem::DiagramType::Comp5:
-//            comp = doc.createElement("Comp5");
-//            break;
-//    }
-
+    switch (item->diagramType()) {
+        case DiagramItem::DiagramType::Comp1:
+            comp = doc.createElement("Comp1");
+            break;
+        case DiagramItem::DiagramType::Comp2:
+            comp = doc.createElement("Comp2");
+            break;
+        case DiagramItem::DiagramType::Comp4:
+            comp = doc.createElement("Comp4");
+            break;
+        case DiagramItem::DiagramType::Comp3:
+            comp = doc.createElement("Comp3");
+            break;
+        case DiagramItem::DiagramType::Comp5:
+            comp = doc.createElement("Comp5");
+            break;
+    }
+#endif
     QDomElement color = doc.createElement("color");
     QDomAttr posx = doc.createAttribute("pos_x");
     QDomAttr posy = doc.createAttribute("pos_y");
     QDomAttr id = doc.createAttribute("id");
     posx.setValue(QString::number(pos.x()));
     posy.setValue(QString::number(pos.y()));
-    id.setValue(QString::number(item->itemId));
+    id.setValue(item->itemSuuid);
     comp.setAttributeNode(posx);
     comp.setAttributeNode(posy);
     comp.setAttributeNode(id);
@@ -135,8 +141,13 @@ void RadarScene::modifyXmlItems(QPointF pos, DiagramItem *item)
     color.appendChild(c);
     comp.appendChild(color);
     Items.appendChild(comp);
-}
 
+}
+/**
+ * @brief 更新元素位置信息
+ * @param pos
+ * @param item
+ */
 void RadarScene::updateXmlItemsPos(QPointF pos, DiagramItem *item)
 {
     QDomNode node = doc.elementsByTagName("Items").at(0).firstChild();
@@ -145,7 +156,7 @@ void RadarScene::updateXmlItemsPos(QPointF pos, DiagramItem *item)
     while(!node.isNull()){
         if(node.isElement()){
              elem = node.toElement();
-             if(elem.attribute("id").compare(QString::number(item->itemId))==0){
+             if(elem.attribute("id").compare(item->itemSuuid)==0){
                  elem.setAttribute("pos_x", pos.x());
                  elem.setAttribute("pos_y", pos.y());
                  MainWindow_Radar::isSave = false;
@@ -156,9 +167,15 @@ void RadarScene::updateXmlItemsPos(QPointF pos, DiagramItem *item)
         }
         node = node.nextSibling();
     }
-    qDebug() << "[warning] 未找到匹配的id=" << item->itemId;
+    qDebug() << "[warning] 未找到匹配的id=" << item->itemSuuid;
 }
 
+/**
+ * @brief 修改箭头信息
+ * @param arrow
+ * @param startItem
+ * @param endItem
+ */
 void RadarScene::modifyXmlArrows(Arrow *arrow, DiagramItem *startItem, DiagramItem *endItem)
 {
     QDomElement arr = doc.createElement("arrow");
@@ -166,9 +183,9 @@ void RadarScene::modifyXmlArrows(Arrow *arrow, DiagramItem *startItem, DiagramIt
     QDomAttr start = doc.createAttribute("start_item_id");
     QDomAttr end = doc.createAttribute("end_item_id");
     QDomAttr id = doc.createAttribute("id");
-    start.setValue(QString::number(startItem->itemId));
-    end.setValue(QString::number(endItem->itemId));
-    id.setValue(QString::number(arrow->itemId));
+    start.setValue(startItem->itemSuuid);
+    end.setValue(endItem->itemSuuid);
+    id.setValue(arrow->itemId);
     arr.setAttributeNode(start);
     arr.setAttributeNode(end);
     arr.setAttributeNode(id);
@@ -193,7 +210,11 @@ void RadarScene::setMyItemIconName(QString value)
 //{
 //    myItemType = type;
 //}
-//文本框
+
+/**
+ * @brief 文本框失去焦点
+ * @param item
+ */
 void RadarScene::editorLostFocus(DiagramTextItem *item)
 {
     //获取光标
@@ -237,11 +258,52 @@ void RadarScene::sendRate(float rate)
     emit rateSignal(rate);
 }
 
+/**
+ * @brief 将拖入/点击进入场景中的组件添加到scene的一个map中去，并生成工程空间文件
+ * @param ap
+ */
+void RadarScene::receiveAlgo4listWidget(AlgorithmComp pap)
+{
+    this->ap = pap;
+}
+
+/**
+ * @brief 当放下组件到场景空间中时候，新建文件
+ */
+void RadarScene::createFile2zoom(QString sid){
+    qDebug() << "!!!!@@@@" << this->ap.getInfo();
+    if(!this->ap.getInfo().isEmpty()){
+        // 复制一份bu是原来的那个
+        QMap<QString, QString> newm;
+        newm.insert("ID", sid);
+        newm.insert("Path", QDir::currentPath()+"/room/algoXml");
+        QDateTime *dt = new QDateTime;
+        QString dtime = dt->currentDateTime().toString();
+        newm.insert("Time", dtime);
+        newm.insert("Name", ap.getInfo().take("Name"));
+        ap.setInfo(newm);
+        qDebug() << ap.getInfo().toStdMap();
+        scene_comps.insert(sid, &ap);
+        Utils::writeAlgorithmComp2Xml(ap, "/room");
+        // 遍历Map打印一下
+        foreach(const QString ac, scene_comps.keys()){
+            qDebug() << ac << ": " << scene_comps.value(ac);
+        }
+    }
+    else{
+        qDebug() << "没有点击或者拖动";
+    }
+}
+
 #if 1
-//鼠标事件
+
+/**
+ * @brief 鼠标点击场景
+ * @param mouseEvent
+ */
 void RadarScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
-    //左键
+    //必须是左键才进行处理
     if (mouseEvent->button() != Qt::LeftButton)
         return;
 
@@ -252,11 +314,17 @@ void RadarScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
             item = new DiagramItem(myItemIconName, myItemMenu);
 //            item->(myItemColor);
             item->setBrush(myItemColor);
-            item->itemId = generateUniqueid();
+            QString sid = QUuid::createUuid().toString();
+            qDebug() << "新生成的sid: " << sid;
+            // 生成唯一id
+//            item->itemId = generateUniqueid();
+            item->itemSuuid = sid;
             addItem(item);
             item->setPos(mouseEvent->scenePos());
             emit itemInserted(item);
             modifyXmlItems(mouseEvent->scenePos(), item);
+            // 创建工程空间文件
+            createFile2zoom(sid);
             break;
         }
         case InsertLine:
@@ -326,8 +394,9 @@ void RadarScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
             DiagramItem *endItem = qgraphicsitem_cast<DiagramItem *>(endItems.first());
             Arrow *arrow = new Arrow(startItem, endItem);
             arrow->setColor(myLineColor);
-            arrow->itemId = generateUniqueid();
-            qDebug() << "新箭头的ID: " << arrow->itemId << "; " << idList;
+            QString sid = QUuid::createUuid().toString();
+            arrow->itemId = sid;
+            qDebug() << "新箭头的ID: " << sid << "; " << idList;
             startItem->addArrow(arrow);
             endItem->addArrow(arrow);
             arrow->setZValue(-1000.0);
@@ -366,6 +435,10 @@ void RadarScene::focusOutEvent(QFocusEvent *)
     }
 }
 
+/**
+ * @brief 从组件列表拖入事件
+ * @param event
+ */
 void RadarScene::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
     if (event->mimeData()->hasFormat(RadarCompDraglistWidget::puzzleMimeType()))
@@ -375,6 +448,10 @@ void RadarScene::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
     qDebug() << "组件被托入到场景中";
 }
 
+/**
+ * @brief 将算法组件放下事件
+ * @param event
+ */
 void RadarScene::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
     if (event->mimeData()->hasFormat(RadarCompDraglistWidget::puzzleMimeType())){
@@ -383,19 +460,25 @@ void RadarScene::dropEvent(QGraphicsSceneDragDropEvent *event)
 //        DiagramItem *item = new DiagramItem(myItemType, myItemMenu);
         DiagramItem *item = new DiagramItem(myItemIconName, myItemMenu);
         item->setBrush(myItemColor);
-        item->itemId = generateUniqueid();
+        QString sid = QUuid::createUuid().toString();
+        qDebug() << "新生成的sid: " << sid;
+//        item->itemId = generateUniqueid();
+        item->itemSuuid = sid;
         addItem(item);
         item->setPos(event->scenePos());
         emit itemInserted(item);
         modifyXmlItems(event->scenePos(), item);
+        // 复制文件到/room/algoXml/
 
+        createFile2zoom(sid);
 
-        QByteArray comData = event->mimeData()->data(RadarCompDraglistWidget::puzzleMimeType());
-        QDataStream dataStream(&comData, QIODevice::ReadOnly);
-        QPixmap pixmap;
-        QString str;
-        dataStream >> pixmap >> str;
-        qDebug() << pixmap << "; " << str;
+//        QByteArray comData = event->mimeData()->data(RadarCompDraglistWidget::puzzleMimeType());
+//        QDataStream dataStream(&comData, QIODevice::ReadOnly);
+//        QPixmap pixmap;
+//        QString str, id;
+//        dataStream >> pixmap >> str >> id;
+//        qDebug() << pixmap << "; " << str << "; " << id;
+
         event->setDropAction(Qt::MoveAction);
         event->accept();
     }
@@ -425,6 +508,17 @@ bool RadarScene::isItemChange(int type)
     }
     return false;
 }
+
+QMap<QString, AlgorithmComp *> RadarScene::getScene_comps() const
+{
+    return scene_comps;
+}
+
+void RadarScene::setScene_comps(const QMap<QString, AlgorithmComp *> &value)
+{
+    scene_comps = value;
+}
+
 
 QColor RadarScene::getMyItemColor() const
 {

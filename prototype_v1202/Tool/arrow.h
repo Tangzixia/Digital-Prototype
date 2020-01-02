@@ -15,7 +15,7 @@
 class Arrow : public QGraphicsLineItem{
 public:
     enum { Type = UserType + 4 };
-    int itemId;
+    QString itemId;
     Arrow(DiagramItem *startItem, DiagramItem *endItem,
       QGraphicsItem *parent = nullptr);
 

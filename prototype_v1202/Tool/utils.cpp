@@ -9,6 +9,7 @@
 #include <QTimer>
 #include <radarscene.h>
 #include <QApplication>
+#include <QDatetime>
 
 /**
 * @projectName   prototype_v0906
@@ -232,13 +233,23 @@ AlgorithmComp Utils::readPluginXmlFile(QString fileName)
 
 /**
 * @projectName   prototype_v0906
-* @brief         简介 将算法组件存到xml文件中
+* @brief         简介 将算法组件存到xml文件中,
 * @author        Antrn
 * @date          2019-10-03
+* @param ac 算法对象
+* @param subPath 子目录，代表用户拖动到场景中复制出来的算法组件
 */
-void Utils::writeAlgorithmComp2Xml(AlgorithmComp ac)
+void Utils::writeAlgorithmComp2Xml(AlgorithmComp ac, QString subPath)
 {
-    QString savePath = QDir::currentPath()+"/algoXml/";
+    QString savePath;
+    if(subPath.isNull()){
+        savePath = QDir::currentPath()+"/algoXml/";
+    }else{
+        QDir *dir = new QDir;
+        dir->mkdir(QDir::currentPath()+subPath);
+        savePath = QDir::currentPath()+ subPath +"/algoXml/";
+    }
+
     openDirOrCreate(savePath);
 
     QMap<QString, QString> infoMap = ac.getInfo();
@@ -257,14 +268,31 @@ void Utils::writeAlgorithmComp2Xml(AlgorithmComp ac)
     root.appendChild(Desc);
     Param = doc.createElement("Parameter");
     root.appendChild(Param);
+
+    // info
     for (QMap<QString, QString>::iterator i =infoMap.begin();i!=infoMap.end();i++) {
         QDomElement info = doc.createElement(i.key());
+
         QDomText c = doc.createTextNode(i.value());
+#if 0
+        // 更新时间，不为空说明是复制到工程空间的，需要更改时间和id等信息
+        if(!subPath.isNull()){
+            QString dtime;
+            if(!i.key().compare("Time")){
+                QDateTime *dt = new QDateTime;
+                dtime = dt->currentDateTime().toString();
+                c = doc.createTextNode(dtime);
+            }else{
+                c = doc.createTextNode(i.value());
+            }
+        }
+#endif
         info.appendChild(c);
         Info.appendChild(info);
     }
     QDomText d = doc.createTextNode(ac.getDesc());
     Desc.appendChild(d);
+    // params
     for (QMap<QString, QMap<QString, QString>>::iterator j =paraMap.begin();j!=paraMap.end();j++) {
         QDomElement para = doc.createElement(j.key());
         QDomAttr describe = doc.createAttribute("describe");
@@ -276,7 +304,15 @@ void Utils::writeAlgorithmComp2Xml(AlgorithmComp ac)
         para.setAttributeNode(value);
         Param.appendChild(para);
     }
-    QString filename = savePath+ac.getFileName()+".xml";
+    QString id_ = ac.getInfo().take("ID");
+
+    QString filename;
+    if(!subPath.isNull()){
+        // 当有子目录存在的时候，存在子目录中的算法组件命名为name+id,由于id两边有大括号，所以去除
+        filename = savePath+ac.getFileName()+id_.mid(1,id_.length()-2)+".xml";
+    }else{
+        filename = savePath+ac.getFileName()+".xml";
+    }
     QFile file(filename); // 这个斜杠很关键
     if(!file.open(QIODevice::WriteOnly | QIODevice::Truncate)){
         file.close();
@@ -311,4 +347,29 @@ bool Utils::modifyFileName(QString fileName, QString newName)
     }
     writeAlgorithmComp2Xml(ac);
     return true;
+}
+
+/**
+ * @brief 动态删除场景里产生的xml拷贝算法组件空间的文件
+ * @param dname 文件夹路径
+ * @return 是否成功
+ */
+bool Utils::deleteXmlFileByName(QString dname, QString id)
+{
+    QDir dir(dname);
+    QFileInfoList file_list = dir.entryInfoList(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
+    qDebug() << "id_split: " << id;
+    for(int i = 0; i < file_list.size(); ++i){
+        if(file_list.at(i).fileName().split(".")[0].endsWith(id)){
+            QFile file(file_list.at(i).absoluteFilePath());
+            qDebug() << "finfo.absoluteFilePath()： " << file_list.at(i).absoluteFilePath();
+            if (file.exists())
+            {
+                qDebug() << "shanchu !!!!!!!!!!";
+                file.remove();
+                return true;
+            }
+        }
+    }
+    return false;
 }

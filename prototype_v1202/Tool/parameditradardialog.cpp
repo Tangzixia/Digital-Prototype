@@ -19,9 +19,10 @@
  * @param ac
  * @param parent
  */
-ParamEditRadarDialog::ParamEditRadarDialog(AlgorithmComp ac, QWidget *parent) :
+ParamEditRadarDialog::ParamEditRadarDialog(AlgorithmComp ac, QWidget *parent, int flag) :
     QDialog(parent),
     ac(ac),
+    flag(flag),
     ui(new Ui::ParamEditRadarDialog)
 //    fname(fname),
 {
@@ -118,11 +119,12 @@ ParamEditRadarDialog::~ParamEditRadarDialog()
 void ParamEditRadarDialog::on_pushButton_OK_clicked()
 {
     QString name_algo = ui->lineEdit_Name->text();
+
     // 这里要判断一下name是否合法
     if(name_algo == nullptr || name_algo.isEmpty()){
         emit showMessage("拒绝添加！组件名不能为空");
         reject();
-    }else if(dynamic_cast<RadarCompDraglistWidget *>(this->parent())->nameList.contains(name_algo)){
+    }else if(dynamic_cast<RadarCompDraglistWidget *>(this->parent())->nameList.contains(name_algo) && flag == 0){
         qDebug() << "与现有的文件名: " << name_algo << "重复，添加失败！";
         emit showMessage("已有重复名称存在，请重新新建组件！");
         reject();
