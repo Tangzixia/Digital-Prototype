@@ -20,6 +20,7 @@
 #include "compproperty.h"
 #include "clickablelabel.h"
 #include <QFormLayout>
+#include <QInputDialog>
 #include <simdatagenwidget.h>
 #include "leftnavi.h"
 //const int InsertTextButton = 10;
@@ -360,7 +361,7 @@ void MainWindow_Radar::loadAllComps()
     ui->listWidget->addCompButton->setFlags(Qt::NoItemFlags);
     ui->listWidget->addCompButton->setIcon(QIcon(":/img/newradar.png"));
     ui->listWidget->addCompButton->setToolTip(tr("点击增加自定义组件"));
-    // TODO 换成读取组件文件夹里的所有组件
+    // 换成读取组件文件夹里的所有组件
 //    init5Comp();
 
     // 读取文件夹下所有的文件
@@ -540,6 +541,10 @@ void MainWindow_Radar::copyItem()
 {
     QGraphicsItem *item_ =  scene->selectedItems().first();
     DiagramItem *ditem =  qgraphicsitem_cast<DiagramItem *>(item_);
+    // 从当前组件复制
+    AlgorithmComp acp =  scene->getScene_comps().take(ditem->itemSuuid);
+    scene->receiveAlgo4listWidget(acp);
+
     // 复制一份，不能使用原来的那个指针
     DiagramItem *newItem = new DiagramItem(ditem->iconName, itemMenu);
     newItem->setBrush(scene->getMyItemColor());
@@ -554,6 +559,8 @@ void MainWindow_Radar::copyItem()
     scene->addItem(newItem);
     emit itemInserted(newItem);
     scene->modifyXmlItems(pos_, newItem);
+    // 生成文件
+    scene->createFile2zoom(sid);
 }
 
 /**
@@ -564,9 +571,45 @@ void MainWindow_Radar::addItem2Lib()
     // TODO 首先应该会去到此组件的名字、属性、等信息，然后新建xml文件，写入相关信息，再刷新组件列表，读取
     QGraphicsItem *i_ =  scene->selectedItems().first();
     DiagramItem *di =  qgraphicsitem_cast<DiagramItem *>(i_);
-    QString iname = di->getIconName();
-    AlgorithmComp *ac =  scene->getScene_comps().take(di->itemSuuid);
-    qDebug() << "算法:" << ac;
+    // 复制一份组件算法
+    AlgorithmComp ac =  scene->getScene_comps().take(di->itemSuuid);
+    qDebug() << "算法原来id:" << ac.getInfo()["ID"];
+    QString sid = QUuid::createUuid().toString();
+    qDebug() << "新生成的sid: " << sid;
+
+    QMap<QString, QString> newm;
+    newm.insert("ID", sid);
+    newm.insert("Path", QDir::currentPath()+"/algoXml");
+    QDateTime *dt = new QDateTime;
+    QString dtime = dt->currentDateTime().toString();
+    newm.insert("Time", dtime);
+
+
+    //文字对话框 输入字符串
+    QString dlgTitle="输入对话框";
+    QString txtLabel="请输入唯一组件名";
+    QString defaultInput=ac.getInfo()["Name"]; // 默认命名
+    QLineEdit::EchoMode echoMode=QLineEdit::Normal;//正常文字输入
+    bool ok=false;
+    QString text = QInputDialog::getText(this, dlgTitle,txtLabel, echoMode,defaultInput, &ok);
+    if (ok && !text.isEmpty() && text.compare(defaultInput) != 0)
+        newm.insert("Name", text);
+    else if((ok && text.isEmpty()) || (ok && text.compare(defaultInput) == 0)){
+        QMessageBox::warning(this, "警告", "加入组件库的组件名不能为空且不能重复！", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+    }else{
+        return;
+    }
+
+
+    ac.setInfo(newm);
+    qDebug() << "打印一下要加入组件库的信息： " << ac.getInfo().toStdMap();
+    ui->listWidget->algorithms.insert(sid, ac);
+
+    qDebug() << "algorithms： " << ui->listWidget->algorithms.keys() << "; 大小： " << ui->listWidget->algorithms.size();
+    Utils::writeAlgorithmComp2Xml(ac);
+    emit ui->listWidget->add_one_Comp(ac);
+    emit ui->listWidget->toRefreshCompList(); //刷新列表
+    Utils::alert(QApplication::desktop()->screen()->rect(), "添加组件入库成功!");
 }
 
 
@@ -1286,7 +1329,7 @@ void MainWindow_Radar::on_actionOpenXml_triggered()
 {
     QString dirpath = QDir::currentPath()+"/radar/";
     Utils::openDirOrCreate(dirpath);
-    // 打开xml文件读取
+    // 打开rad文件读取
     const QString fileName = QFileDialog::getOpenFileName(this, tr("打开rad"), QString(dirpath), tr("rad files (*.rad)"));
     readXmlConf(fileName);
 }
@@ -1294,7 +1337,7 @@ void MainWindow_Radar::on_actionOpenXml_triggered()
 // This is an auto-generated comment.
 /**
 * @projectName   prototype_v0906
-* @brief         简介 读取场景的xml文件
+* @brief         简介 读取场景的xml文件： .rad
 * @author        Antrn
 * @date          2019-10-07
 */
@@ -1364,6 +1407,12 @@ void MainWindow_Radar::readXmlConf(QString xmlname)
                     item_->setBrush(colour);
                     item_->itemSuuid = id; //id不变
                     scene->idList.append(id);
+                    // 读取xml文件的时候，也要恢复子空间的algorithm
+                    QString fullpath = QDir::currentPath()+"/room/algoXml/"+compName+id.mid(1,id.length()-2)+".xml";
+                    AlgorithmComp ac = Utils::readPluginXmlFile(fullpath);
+                    // 加载场景中所有的算法组件
+                    scene->add2Scene_comps(id, ac);
+
                     qDebug() << "scene的id列表" << scene->idList;
                     emit send2AppOutput(QStringLiteral("组件名： ") + compName);
                     scene->addItem(item_);
@@ -1371,32 +1420,34 @@ void MainWindow_Radar::readXmlConf(QString xmlname)
                     //更新xml
                     scene->modifyXmlItems(pos, item_);
                 }
+#if 0
                 // FIXME 这部分出大问题，不可能每次都枚举吧
-//                if(tagName == "comp_1"){
-//                    type = DiagramItem::DiagramType::Comp1;
-//                }else if(tagName == "comp_2"){
-//                    type = DiagramItem::DiagramType::Comp2;
-//                }else if(tagName == "comp_3"){
-//                    type = DiagramItem::DiagramType::Comp3;
-//                }else if(tagName == "comp_4"){
-//                    type = DiagramItem::DiagramType::Comp4;
-//                }else {
-//                    type = DiagramItem::DiagramType::Comp5;
-//                }
+                if(tagName == "comp_1"){
+                    type = DiagramItem::DiagramType::Comp1;
+                }else if(tagName == "comp_2"){
+                    type = DiagramItem::DiagramType::Comp2;
+                }else if(tagName == "comp_3"){
+                    type = DiagramItem::DiagramType::Comp3;
+                }else if(tagName == "comp_4"){
+                    type = DiagramItem::DiagramType::Comp4;
+                }else {
+                    type = DiagramItem::DiagramType::Comp5;
+                }
 
-                // 成功啦
-//                QMetaObject mo = DiagramItem::staticMetaObject;
-//                int index = mo.indexOfEnumerator("DiagramType");
-//                QMetaEnum metaEnum = mo.enumerator(index);
-                // QMetaEnum metaEnum = QMetaEnum::fromType<DiagramItem::DiagramType>();
-//                for (int i=0; i<metaEnum.keyCount(); ++i)
-//                {
-//                    qDebug() << metaEnum.key(i);
-//                    qDebug()<<  metaEnum.valueToKey(2);              //  enum转string
-//                    qDebug()<<  metaEnum.keysToValue("Comp4");       //  string转enum
-//                }
+//                 成功啦
+                QMetaObject mo = DiagramItem::staticMetaObject;
+                int index = mo.indexOfEnumerator("DiagramType");
+                QMetaEnum metaEnum = mo.enumerator(index);
+                 QMetaEnum metaEnum = QMetaEnum::fromType<DiagramItem::DiagramType>();
+                for (int i=0; i<metaEnum.keyCount(); ++i)
+                {
+                    qDebug() << metaEnum.key(i);
+                    qDebug()<<  metaEnum.valueToKey(2);              //  enum转string
+                    qDebug()<<  metaEnum.keysToValue("Comp4");       //  string转enum
+                }
 
-//                type = DiagramItem::DiagramType(metaEnum.keysToValue(tagName.c_str()));
+                type = DiagramItem::DiagramType(metaEnum.keysToValue(tagName.c_str()));
+#endif
             }
             m = m.nextSibling();
         }
@@ -1425,6 +1476,7 @@ void MainWindow_Radar::readXmlConf(QString xmlname)
                 arrow->itemId = arrow_id; // id不变
                 scene->idList.append(arrow_id);
                 qDebug() << "scene的id列表" << scene->idList;
+
                 startItem->addArrow(arrow);
                 endItem->addArrow(arrow);
                 arrow->setZValue(-1000.0);

@@ -362,10 +362,10 @@ bool Utils::deleteXmlFileByName(QString dname, QString id)
     for(int i = 0; i < file_list.size(); ++i){
         if(file_list.at(i).fileName().split(".")[0].endsWith(id)){
             QFile file(file_list.at(i).absoluteFilePath());
-            qDebug() << "finfo.absoluteFilePath()： " << file_list.at(i).absoluteFilePath();
+//            qDebug() << "finfo.absoluteFilePath()： " << file_list.at(i).absoluteFilePath();
             if (file.exists())
             {
-                qDebug() << "shanchu !!!!!!!!!!";
+                qDebug() << "删除文件--->"<<file_list.at(i).absoluteFilePath();
                 file.remove();
                 return true;
             }

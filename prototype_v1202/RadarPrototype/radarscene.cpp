@@ -283,11 +283,11 @@ void RadarScene::createFile2zoom(QString sid){
         newm.insert("Name", ap.getInfo().take("Name"));
         ap.setInfo(newm);
         qDebug() << ap.getInfo().toStdMap();
-        scene_comps.insert(sid, &ap);
+        scene_comps.insert(sid, ap);
         Utils::writeAlgorithmComp2Xml(ap, "/room");
         // 遍历Map打印一下
         foreach(const QString ac, scene_comps.keys()){
-            qDebug() << ac << ": " << scene_comps.value(ac);
+            qDebug() << "算法组件的id： " << ac << ": " << scene_comps.value(ac).getInfo().toStdMap();
         }
     }
     else{
@@ -422,6 +422,9 @@ void RadarScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 //    // 暂时无用
 //}
 
+/**
+ * @brief 场景丢失鼠标焦点
+ */
 void RadarScene::focusOutEvent(QFocusEvent *)
 {
     qDebug() << "scene focus out";
@@ -469,7 +472,6 @@ void RadarScene::dropEvent(QGraphicsSceneDragDropEvent *event)
         emit itemInserted(item);
         modifyXmlItems(event->scenePos(), item);
         // 复制文件到/room/algoXml/
-
         createFile2zoom(sid);
 
 //        QByteArray comData = event->mimeData()->data(RadarCompDraglistWidget::puzzleMimeType());
@@ -509,14 +511,19 @@ bool RadarScene::isItemChange(int type)
     return false;
 }
 
-QMap<QString, AlgorithmComp *> RadarScene::getScene_comps() const
+QMap<QString, AlgorithmComp> RadarScene::getScene_comps() const
 {
     return scene_comps;
 }
 
-void RadarScene::setScene_comps(const QMap<QString, AlgorithmComp *> &value)
+void RadarScene::setScene_comps(const QMap<QString, AlgorithmComp> &value)
 {
     scene_comps = value;
+}
+
+void RadarScene::add2Scene_comps(QString key, AlgorithmComp &a)
+{
+    this->scene_comps.insert(key, a);
 }
 
 

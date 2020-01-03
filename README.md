@@ -1,6 +1,31 @@
 # Digital-Prototype
 In order to facilitate our development. 
 
+### 工程目录变化:
+增加`/room/algoXml/`
+用于存放当前雷达工程空间（场景）的算法组件。
+
+#### 未来希望能设计成：
+```
+.codes/
+	FDPC.xml
+	CFAR.xml
+	INPUT.xml
+	OUTPUT.xml
+	MTD.xml
+.echo/
+	res.txt
+.images/
+	xxx.ico
+.radar/
+	雷达1/
+		雷达1.rad
+		room/algoXml/MTDc60666dd-3064-47ff-a3d6-67e5398dfc3d.xml
+	雷达2/
+		雷达2.rad
+		room/algoXml/FDPCa27b06a8-5104-4481-8b35-1cdb397ad79a.xml
+```
+
 # 仿真系统运行流程 
 
 ![仿真系统运行流程](https://github.com/radar-prototype/Radar-Prototype/blob/master/%E5%8E%9F%E5%9E%8B%E8%AE%BE%E8%AE%A1/svg_images/%E7%B3%BB%E7%BB%9F%E8%BF%90%E8%A1%8C%E6%B5%81%E7%A8%8B.svg)
@@ -24,4 +49,4 @@ In order to facilitate our development.
 (3) It is strongly recommended that "Pull requests", "Projects" and "Issues" be used for collaborative communication among developers.
 
 # About
-723-201906-...
+723-20200103-...

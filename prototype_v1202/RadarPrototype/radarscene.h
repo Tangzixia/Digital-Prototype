@@ -95,11 +95,13 @@ public:
     QColor getMyItemColor() const;
     void setMyItemColor(const QColor &value);
 
-    QMap<QString, AlgorithmComp *> getScene_comps() const;
-    void setScene_comps(const QMap<QString, AlgorithmComp *> &value);
+    QMap<QString, AlgorithmComp> getScene_comps() const;
+    void setScene_comps(const QMap<QString, AlgorithmComp> &value);
+    void add2Scene_comps(QString key, AlgorithmComp &a);
 
     // 向子空间加入文件
     void createFile2zoom(QString sid);
+
 
 public slots:
     void setMode(Mode mode);
@@ -162,8 +164,9 @@ private:
     QDomDocument doc;
     QDomElement Arrs;
     QDomElement Items;
+
     // 场景中所有的算法存在列表中
-    QMap<QString, AlgorithmComp *> scene_comps;
+    QMap<QString, AlgorithmComp> scene_comps;
     // 临时存放listWidget在点击和拖动时传过来的对象
     AlgorithmComp ap;
 };

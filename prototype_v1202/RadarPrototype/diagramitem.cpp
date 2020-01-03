@@ -127,9 +127,13 @@ void DiagramItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWi
 }
 
 
+/**
+ * @brief 鼠标悬悬浮于组件上方事件
+ * @param event
+ */
 void DiagramItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-    qDebug() << "hover 进入";
+    qDebug() << "鼠标进入组件上方";
     setCursor(Qt::OpenHandCursor);
     event->accept();
 }
@@ -218,12 +222,12 @@ void DiagramItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     setSelected(true);
     // 菜单可用
     myContextMenu->setEnabled(true);
-    qDebug() << "myContextMenu设置为true" << myContextMenu->isEnabled();
+    qDebug() << "myContextMenu设置为true--->" << myContextMenu->isEnabled();
     // 鼠标是不是在场景里
     bool is = dynamic_cast<RadarScene*>(this->scene())->isSelected;
     if(!is){
         dynamic_cast<RadarScene*>(this->scene())->setIsSelected(true);
-        qDebug() << "isSelected设置为true";
+        qDebug() << "isSelected设置为true，场景被选中";
     };
     myContextMenu->exec(event->screenPos());
 }
