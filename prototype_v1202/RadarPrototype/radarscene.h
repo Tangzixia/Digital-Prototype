@@ -98,6 +98,7 @@ public:
     QMap<QString, AlgorithmComp> getScene_comps() const;
     void setScene_comps(const QMap<QString, AlgorithmComp> &value);
     void add2Scene_comps(QString key, AlgorithmComp &a);
+    void deleteScene_comps(QString id);
 
     // 向子空间加入文件
     void createFile2zoom(QString sid);
@@ -129,9 +130,7 @@ signals:
     // 通知MainWindow_Radar xml已经改变
     void isSave2False(QString message);
 
-
 protected:
-
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) override;

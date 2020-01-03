@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Plugins>
     <Information>
-        <ID>{eb71a85c-e22f-4005-8191-1da1fe33987c}</ID>
+        <ID>{ccf709fa-5892-469e-932e-3e42494b1464}</ID>
         <Name>CFAR</Name>
-        <Path>E:/FirstSemesterofSeniorYear/LabJob/Project_Digital_Prototype/Code/20200103/build-prototype_v1202-Desktop_Qt_5_9_8_MinGW_32bit-Debug/algoXml</Path>
-        <Time>Fri Jan 3 20:54:08 2020</Time>
+        <Path>E:/FirstSemesterofSeniorYear/LabJob/Project_Digital_Prototype/Code/20200103/build-prototype_v1202-Desktop_Qt_5_9_8_MinGW_32bit-Debug/room/algoXml</Path>
+        <Time>Fri Jan 3 20:53:51 2020</Time>
     </Information>
     <Description>恒虚警检测是指雷达系统在保持虚警概率恒定条件下对接收机输出的信号与噪声做判别以确定目标信号是否存在的技术</Description>
     <Parameter>

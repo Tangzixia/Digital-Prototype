@@ -344,6 +344,67 @@ void MainWindow_Radar::loadCompByName(QString strText)
         }
     }
 }
+
+/**
+ * @brief 展示右边的属性Dock
+ * @param ac
+ * @param isReadonly
+ */
+void MainWindow_Radar::toShowPropertiesDock(AlgorithmComp ac, bool isReadonly)
+{
+    // 展示出属性dock
+    if(ui->dockWidget->isHidden()){
+        ui->dockWidget->show();
+    }
+    propertyAction->setChecked(true);
+    // 获取info
+    QMap<QString, QString> info_map = ac.getInfo();
+
+    QMap<QString, QString>::Iterator it;
+
+    // NOTE 注意这里不要在设计界面拖入一个ScrollArea，然后再和代码结合，我搞了一上午没解决，blgl
+    QScrollArea *scroll = new QScrollArea;
+    QWidget *w = new QWidget;
+    QVBoxLayout *v = new QVBoxLayout;
+    v->setContentsMargins(1,1,1,1);
+    QWidget *sw = new QWidget;
+
+    // 表格布局
+    QFormLayout *fl = new QFormLayout;
+    fl->setRowWrapPolicy(QFormLayout::DontWrapRows);
+    fl->setSpacing(3);
+    fl->setLabelAlignment(Qt::AlignLeft);//设置标签的对齐方式
+    for ( it = info_map.begin(); it != info_map.end(); ++it ) {
+        QLineEdit *ql = new QLineEdit(it.value(), sw);
+        ql->setReadOnly(isReadonly);
+        fl->addRow(it.key(), ql);
+    }
+
+    QLineEdit *desc_ = new QLineEdit(ac.getDesc(), sw);
+    desc_->setReadOnly(isReadonly);
+    fl->addRow("Description", desc_);
+
+    QMap<QString, QMap<QString, QString>> para_map = ac.getParam();
+    for ( QMap<QString, QMap<QString, QString>>::iterator itt = para_map.begin(); itt != para_map.end(); ++itt ) {
+        QLineEdit *desc = new QLineEdit(itt.value().value("describe"), sw);
+        desc->setReadOnly(isReadonly);
+        QLineEdit *val = new QLineEdit(itt.value().value("value"), sw);
+        val->setReadOnly(isReadonly);
+        QLabel *l = new QLabel();
+        fl->addRow(itt.key(), l);
+        fl->addRow("describe", desc);
+        fl->addRow("value", val);
+    }
+    sw->setLayout(fl);
+    v->addWidget(sw);
+//     挤上去
+    v->addStretch();
+    w->setLayout(v);
+    scroll->setWidget(w);
+    ui->dockWidget->setWidget(scroll);
+}
+
+
 // This is available in all editors.
 /**
 * @projectName   prototype_v0906
@@ -376,7 +437,7 @@ void MainWindow_Radar::loadAllComps()
         QString fileName = fileInfo.baseName();/*获取文件后名(不带后缀的文件名)*/
         if(!ui->listWidget->nameList.contains(fileName)){
             ui->listWidget->nameList.append(fileName);
-            qDebug() << "加入文件名:"<< fileName;
+            qDebug() << "加入组件名:"<< fileName;
             emit send2AppOutput(QStringLiteral("加入文件名: ")+fileName);
         }else {
             qDebug() << "有重复的文件名存在，文件名： " << fileName;
@@ -443,6 +504,9 @@ void MainWindow_Radar::deleteItemArrowById(QString id)
                 QString id_split = id.mid(1,id.length()-2);
                 qDebug() << "id_split: " << id_split;
                 Utils::deleteXmlFileByName(QDir::currentPath()+"/room/algoXml/", id_split);
+                qDebug() << "删除之前的algorithm的MAP： " << scene->getScene_comps().keys();
+                scene->deleteScene_comps(id);
+                qDebug() << "删除之后的algorithm的MAP： " << scene->getScene_comps().keys();
                 break;
             }
         }
@@ -561,6 +625,7 @@ void MainWindow_Radar::copyItem()
     scene->modifyXmlItems(pos_, newItem);
     // 生成文件
     scene->createFile2zoom(sid);
+    connect(newItem, &DiagramItem::showItemsProperties, this, &MainWindow_Radar::receiveItemsid2showProperties);
 }
 
 /**
@@ -568,12 +633,12 @@ void MainWindow_Radar::copyItem()
  */
 void MainWindow_Radar::addItem2Lib()
 {
-    // TODO 首先应该会去到此组件的名字、属性、等信息，然后新建xml文件，写入相关信息，再刷新组件列表，读取
+    // 首先应该会去到此组件的名字、属性、等信息，然后新建xml文件，写入相关信息，再刷新组件列表，读取
     QGraphicsItem *i_ =  scene->selectedItems().first();
     DiagramItem *di =  qgraphicsitem_cast<DiagramItem *>(i_);
     // 复制一份组件算法
     AlgorithmComp ac =  scene->getScene_comps().take(di->itemSuuid);
-    qDebug() << "算法原来id:" << ac.getInfo()["ID"];
+    qDebug() << "算法组件复制对象的id:" << ac.getInfo()["ID"];
     QString sid = QUuid::createUuid().toString();
     qDebug() << "新生成的sid: " << sid;
 
@@ -596,12 +661,15 @@ void MainWindow_Radar::addItem2Lib()
         newm.insert("Name", text);
     else if((ok && text.isEmpty()) || (ok && text.compare(defaultInput) == 0)){
         QMessageBox::warning(this, "警告", "加入组件库的组件名不能为空且不能重复！", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+        return;
     }else{
         return;
     }
 
-
     ac.setInfo(newm);
+    ac.setFileName(text);
+    // 生成新的Icon
+    Utils::generateIcon(text);
     qDebug() << "打印一下要加入组件库的信息： " << ac.getInfo().toStdMap();
     ui->listWidget->algorithms.insert(sid, ac);
 
@@ -660,16 +728,23 @@ void MainWindow_Radar::buttonGroupClicked(int id)
 }
 #endif
 
-//弹出属性窗口
+/**
+ * @brief 弹出属性窗口，只有输入输出组件会弹出，这里用了字符串匹配，当用户更改了INPUT和OUTPUT之后，会出问题
+ */
 void MainWindow_Radar::showItemProperties()
 {
-    // 当框选中多个组件，右键属性，也只会选中一个，所以没问题
+    // 当框选中多个组件，右键属性，也只会选中第一个，所以没问题
     foreach (QGraphicsItem *item, scene->selectedItems()) {
         if (item->type() == DiagramItem::Type) {
-            qDebug() << "Show Component Property" << dynamic_cast<DiagramItem*>(item)->iconName;
-            emit send2AppOutput("Show Component Property" + dynamic_cast<DiagramItem*>(item)->iconName);
-            CompProperty *p = new CompProperty(dynamic_cast<DiagramItem*>(item)->iconName);
-            p->exec();
+            DiagramItem *item_ = dynamic_cast<DiagramItem*>(item);
+            // FIXME 字符串匹配组件名
+            if(item_->iconName.compare("INPUT")==0 || item_->iconName.compare("OUTPUT")==0){
+                qDebug() << "Show Component Property" << item_->iconName;
+                emit send2AppOutput("Show Component Property " + item_->iconName);
+                CompProperty *p = new CompProperty(item_->iconName);
+                p->exec();
+            }
+            break;
         }
     }
 }
@@ -923,9 +998,9 @@ void MainWindow_Radar::createActions()
 
 
     // 查看属性动作
-    propertyAction = new QAction(QIcon(":/img/property.png"), tr("属性"), this);
-    propertyAction->setShortcut(tr("Ctrl+R"));
-    propertyAction->setStatusTip(tr("显示此组件的属性"));
+    propertyAction = new QAction(QIcon(":/img/property.png"), tr("输入输出"), this);
+//    propertyAction->setShortcut(tr("Ctrl+R"));
+    propertyAction->setStatusTip(tr("配置组件的输入输出"));
     connect(propertyAction, &QAction::triggered, this, &MainWindow_Radar::showItemProperties);
 
 
@@ -1419,6 +1494,7 @@ void MainWindow_Radar::readXmlConf(QString xmlname)
                     emit itemInserted(item_);
                     //更新xml
                     scene->modifyXmlItems(pos, item_);
+                    connect(item_, &DiagramItem::showItemsProperties, this, &MainWindow_Radar::receiveItemsid2showProperties);
                 }
 #if 0
                 // FIXME 这部分出大问题，不可能每次都枚举吧
@@ -1475,7 +1551,7 @@ void MainWindow_Radar::readXmlConf(QString xmlname)
                 arrow->setColor(line_colour);
                 arrow->itemId = arrow_id; // id不变
                 scene->idList.append(arrow_id);
-                qDebug() << "scene的id列表" << scene->idList;
+//                qDebug() << "scene的id列表" << scene->idList;
 
                 startItem->addArrow(arrow);
                 endItem->addArrow(arrow);
@@ -1731,57 +1807,9 @@ void MainWindow_Radar::On_isSave2False(QString message)
 */
 void MainWindow_Radar::update_Comp_property(AlgorithmComp ac)
 {
-    // 展示出属性dock
-    if(ui->dockWidget->isHidden()){
-        ui->dockWidget->show();
-    }
-    propertyAction->setChecked(true);
-    // 获取info
-    QMap<QString, QString> info_map = ac.getInfo();
-
-    QMap<QString, QString>::Iterator it;
-
-    // NOTE 注意这里不要在设计界面拖入一个ScrollArea，然后再和代码结合，我搞了一上午没解决，blgl
-    QScrollArea *scroll = new QScrollArea;
-    QWidget *w = new QWidget;
-    QVBoxLayout *v = new QVBoxLayout;
-    v->setContentsMargins(1,1,1,1);
-    QWidget *sw = new QWidget;
-
-    // 表格布局
-    QFormLayout *fl = new QFormLayout;
-    fl->setRowWrapPolicy(QFormLayout::WrapAllRows);
-    fl->setSpacing(3);
-    fl->setLabelAlignment(Qt::AlignLeft);//设置标签的对齐方式
-    for ( it = info_map.begin(); it != info_map.end(); ++it ) {
-        QLineEdit *ql = new QLineEdit(it.value(), sw);
-        ql->setReadOnly(true);
-        fl->addRow(it.key(), ql);
-    }
-
-    QLineEdit *desc_ = new QLineEdit(ac.getDesc(), sw);
-    desc_->setReadOnly(true);
-    fl->addRow("Description", desc_);
-
-    QMap<QString, QMap<QString, QString>> para_map = ac.getParam();
-    for ( QMap<QString, QMap<QString, QString>>::iterator itt = para_map.begin(); itt != para_map.end(); ++itt ) {
-        QLineEdit *desc = new QLineEdit(itt.value().value("describe"), sw);
-        desc->setReadOnly(true);
-        QLineEdit *val = new QLineEdit(itt.value().value("value"), sw);
-        val->setReadOnly(true);
-        QLabel *l = new QLabel();
-        fl->addRow(itt.key(), l);
-        fl->addRow("describe", desc);
-        fl->addRow("value", val);
-    }
-    sw->setLayout(fl);
-    v->addWidget(sw);
-//     挤上去
-    v->addStretch();
-    w->setLayout(v);
-    scroll->setWidget(w);
-    ui->dockWidget->setWidget(scroll);
+    toShowPropertiesDock(ac);
 }
+
 
 //void MainWindow_Radar::setComp_typeandMode(int id)
 void MainWindow_Radar::setComp_typeandMode(QString iconName)
@@ -1882,6 +1910,16 @@ void MainWindow_Radar::receiveFromSend(QString message)
     ui->textEdit->append(message);//添加字符串作为一个段落到TextEdit控件中
 }
 
+/**
+ * @brief 接收到item传过来的算法id，展示出来，不是只读
+ * @param sid
+ */
+void MainWindow_Radar::receiveItemsid2showProperties(QString sid)
+{
+    AlgorithmComp ap = this->scene->getScene_comps().take(sid);
+    this->toShowPropertiesDock(ap, false);
+}
+
 void MainWindow_Radar::on_tabWidget_2_destroyed()
 {
     qDebug() << "测试tab destroyed";
@@ -1897,7 +1935,6 @@ void MainWindow_Radar::on_tabWidget_2_tabBarClicked(int index)
 void MainWindow_Radar::on_tabWidget_2_tabCloseRequested(int index)
 {
     qDebug() << "测试tab closed";
-
 }
 
 /**

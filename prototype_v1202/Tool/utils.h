@@ -30,6 +30,7 @@ public:
     static void writeAlgorithmComp2Xml(AlgorithmComp ac, QString subPath=nullptr);
     static bool modifyFileName(QString fileName, QString newName);
     static bool deleteXmlFileByName(QString name, QString id);
+    static bool generateIcon(QString name);
 };
 
 #endif // UTILS_H

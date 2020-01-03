@@ -18,6 +18,9 @@ CompProperty::~CompProperty()
     delete ui;
 }
 
+/**
+ * @brief 用户选择路径
+ */
 void CompProperty::on_pushButton_clicked()
 {
     QString dirpath = "/home/a913/Qt_project/20191130/prototype_v0906/Projects/test/code/";

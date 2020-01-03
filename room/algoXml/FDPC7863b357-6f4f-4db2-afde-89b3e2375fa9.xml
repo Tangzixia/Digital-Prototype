@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Plugins>
     <Information>
-        <ID>1</ID>
+        <ID>{7863b357-6f4f-4db2-afde-89b3e2375fa9}</ID>
         <Name>FDPC</Name>
-        <Time>1/1/2019 12:00 AM</Time>
-        <Path>E:/Desktop</Path>
+        <Path>E:/FirstSemesterofSeniorYear/LabJob/Project_Digital_Prototype/Code/20200103/build-prototype_v1202-Desktop_Qt_5_9_8_MinGW_32bit-Debug/room/algoXml</Path>
+        <Time>Fri Jan 3 17:55:46 2020</Time>
     </Information>
     <Description>脉冲压缩：是就撒将数据库的咖啡店</Description>
     <Parameter>

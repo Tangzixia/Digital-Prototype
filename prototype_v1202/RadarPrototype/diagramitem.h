@@ -51,6 +51,10 @@ protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
     void focusInEvent(QFocusEvent *) override;
     void focusOutEvent(QFocusEvent *) override;
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
+
+signals:
+    void showItemsProperties(QString sid);
 
 private:
 //    DiagramType myDiagramType;

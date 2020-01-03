@@ -91,18 +91,43 @@ void RadarCompDraglistWidget::createNewComp()
     }
 }
 
+/**
+ * @brief 给雷达组件重命名
+ * @param item 当前改变的是哪个组件
+ */
 void RadarCompDraglistWidget::onCurrentTextChanged(QListWidgetItem *item)
 {
+    // 不能是添加按钮
     if(item!=addCompButton){
+        // 原来的名字
         QString lastName = item->text();
         qDebug() << "item名字变为： " << lastName << "； item内容有变化";
         if(nameList.contains(lastName)){
             qDebug() << "与现有的文件名: " << lastName << "重复!";
             Utils::alert(QApplication::desktop()->screen()->rect(), "已有重复名称存在，请重试");
         }else{
+            // 删除原来的名字
             nameList.removeOne(oldName);
             qDebug() << oldName << "→" << lastName;
             if(Utils::modifyFileName(oldName, lastName)){
+                AlgorithmComp ac;
+                ac = algorithms.value(item->data(Qt::UserRole+2).toString());
+                ac.setFileName(lastName);
+                // 新建info，只为了修改Name，真的sb
+                QMap<QString, QString> newm;
+                newm.insert("ID", ac.getInfo()["ID"]);
+                newm.insert("Path", ac.getInfo()["Path"]);
+                QDateTime *dt = new QDateTime;
+                QString dtime = dt->currentDateTime().toString();
+                newm.insert("Time", dtime);
+                newm.insert("Name", lastName);
+                ac.setInfo(newm);
+                qDebug() << "该算法的信息: " << ac.getInfo().toStdMap();
+                Utils::writeAlgorithmComp2Xml(ac);
+                // 刷新列表
+                emit toRefreshCompList();
+                // 生成新名字的icon
+                Utils::generateIcon(lastName);
                 qDebug() << "重命名成功!";
             }else{
                 qDebug() << "重命名失败";
@@ -127,6 +152,9 @@ void RadarCompDraglistWidget::onCurrentDoubleClicked(QListWidgetItem *item)
     }
 }
 
+/**
+ * @brief 在左边组件库列表删除组件时候的槽函数
+ */
 void RadarCompDraglistWidget::deleteItemSlot()
 {
     int ch = QMessageBox::warning(nullptr, "提醒",
@@ -140,13 +168,13 @@ void RadarCompDraglistWidget::deleteItemSlot()
         return;
     QString na = item->text();
     QString id = item->data(Qt::UserRole+2).toString();
-    qDebug() << "删除组件: " << na;
+    qDebug() << "组件库-删除组件: " << na;
     takeItem(row(item));
-    // nameList删除
+    // nameList名字删除
     nameList.removeOne(na);
     // 这里面也要删
     algorithms.take(id);
-    qDebug() << "algorithms： " << algorithms.keys() << "; 大小： " << algorithms.size();
+    qDebug() << "组件库列表的algorithms： " << algorithms.keys() << "; 大小： " << algorithms.size();
     // 文件也要删除
     QFile file(QDir::currentPath()+"/algoXml/"+na+".xml");
     file.remove();
@@ -229,7 +257,7 @@ void RadarCompDraglistWidget::contextMenuEvent(QContextMenuEvent *event)
     // 暂时在这里添加几个右键菜单了，包括删除、代码编辑和编辑属性
     QAction *addAct = nullptr, *deleteAct = nullptr, *editAct = nullptr, *codeEditAction;
     if(currItem != nullptr && currItem != addCompButton){
-        qDebug() << "------------" << currItem->text();
+        qDebug() << "当前组件的text： " << currItem->text();
         deleteAct = new QAction(tr("删除组件"), this);
         editAct = new QAction(tr("修改参数"), this);
         codeEditAction = new QAction(tr("修改代码"), this);
@@ -317,6 +345,7 @@ void RadarCompDraglistWidget::mousePressEvent(QMouseEvent *event)
             msgBox.addButton(tr("导入"), QMessageBox::ActionRole);
             msgBox.addButton(tr("取消"), QMessageBox::RejectRole);
             msgBox.setDefaultButton(newButton);
+            msgBox.move ((QApplication::desktop()->width() - msgBox.width())/2,(QApplication::desktop()->height() - msgBox.height())/2);
             int button_index=msgBox.exec();
             switch (button_index) {
                 case 2: qDebug() <<"不添加也不导入，关闭"; break;
@@ -373,8 +402,11 @@ void RadarCompDraglistWidget::mousePressEvent(QMouseEvent *event)
                 QFile::copy(fileName, dirpath+file_name+".xml");
 
                 // 已经有了
-                if(algorithms.contains(ac.getInfo()["ID"])){
+                if(nameList.contains(file_name)){
                     qDebug() << "已经导入了! id:" << ac.getInfo()["ID"] << "组件名字: " << ac.getInfo()["Name"];
+                    QMessageBox::warning(nullptr, "提醒",
+                                                      "不能导入具有相同名字的组件入库！",
+                                                      QMessageBox::Yes);
                 }else{
                     algorithms.insert(ac.getInfo()["ID"], ac);
                     QListWidgetItem *item1 = new QListWidgetItem();
@@ -406,6 +438,8 @@ void RadarCompDraglistWidget::mousePressEvent(QMouseEvent *event)
             emit addAlgo2Scene(algorithms[id]);
             // 获取点击的是哪个组件的id，传到radarScene中，知道该渲染出哪个组件
 //            emit setComp_typeandMode(id);
+
+            // UserRole+1是iconName
             emit setComp_typeandMode(qvariant_cast<QString>(m_dragItem->data(Qt::UserRole+1)));
             qDebug() << "准备拖动!!!" << qvariant_cast<QString>(m_dragItem->data(Qt::UserRole+1));
         }

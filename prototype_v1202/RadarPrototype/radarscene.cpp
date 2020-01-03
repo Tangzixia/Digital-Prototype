@@ -287,7 +287,7 @@ void RadarScene::createFile2zoom(QString sid){
         Utils::writeAlgorithmComp2Xml(ap, "/room");
         // 遍历Map打印一下
         foreach(const QString ac, scene_comps.keys()){
-            qDebug() << "算法组件的id： " << ac << ": " << scene_comps.value(ac).getInfo().toStdMap();
+            qDebug() << "算法组件的id： " << ac << ", 组件信息: " << scene_comps.value(ac).getInfo().toStdMap();
         }
     }
     else{
@@ -325,6 +325,7 @@ void RadarScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
             modifyXmlItems(mouseEvent->scenePos(), item);
             // 创建工程空间文件
             createFile2zoom(sid);
+            connect(item, &DiagramItem::showItemsProperties, dynamic_cast<MainWindow_Radar*>(this->parent()), &MainWindow_Radar::receiveItemsid2showProperties);
             break;
         }
         case InsertLine:
@@ -396,7 +397,7 @@ void RadarScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
             arrow->setColor(myLineColor);
             QString sid = QUuid::createUuid().toString();
             arrow->itemId = sid;
-            qDebug() << "新箭头的ID: " << sid << "; " << idList;
+            qDebug() << "新箭头的ID: " << sid << "; 所有id:" << idList;
             startItem->addArrow(arrow);
             endItem->addArrow(arrow);
             arrow->setZValue(-1000.0);
@@ -473,6 +474,7 @@ void RadarScene::dropEvent(QGraphicsSceneDragDropEvent *event)
         modifyXmlItems(event->scenePos(), item);
         // 复制文件到/room/algoXml/
         createFile2zoom(sid);
+        connect(item, &DiagramItem::showItemsProperties, dynamic_cast<MainWindow_Radar*>(this->parent()), &MainWindow_Radar::receiveItemsid2showProperties);
 
 //        QByteArray comData = event->mimeData()->data(RadarCompDraglistWidget::puzzleMimeType());
 //        QDataStream dataStream(&comData, QIODevice::ReadOnly);
@@ -521,11 +523,24 @@ void RadarScene::setScene_comps(const QMap<QString, AlgorithmComp> &value)
     scene_comps = value;
 }
 
+/**
+ * @brief 添加组件
+ * @param key 算法组件id
+ * @param a 算法
+ */
 void RadarScene::add2Scene_comps(QString key, AlgorithmComp &a)
 {
     this->scene_comps.insert(key, a);
 }
 
+/**
+ * @brief 删掉Map中一个元素
+ * @param id 算法组件id
+ */
+void RadarScene::deleteScene_comps(QString id)
+{
+    this->scene_comps.remove(id);
+}
 
 QColor RadarScene::getMyItemColor() const
 {

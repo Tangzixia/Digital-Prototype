@@ -25,61 +25,62 @@ DiagramItem::DiagramItem(QString iconName, QMenu *contextMenu, QGraphicsItem *pa
     myContextMenu = contextMenu;
     QPainterPath path;
 
+#if 0
     //这里元素的大小和在场景中是一样的，修改了都会变。
-//    switch (myDiagramType) {
+    switch (myDiagramType) {
         //暂不使用
-//        case Comp3:
-//            path.moveTo(200, 50);
-//            path.arcTo(150, 0, 50, 50, 0, 90);
-//            path.arcTo(50, 0, 50, 50, 90, 90);
-//            path.arcTo(50, 50, 50, 50, 180, 90);
-//            path.arcTo(150, 50, 50, 50, 270, 90);
-//            path.lineTo(200, 25);
-//            myPolygon = path.toFillPolygon();
+        case Comp3:
+            path.moveTo(200, 50);
+            path.arcTo(150, 0, 50, 50, 0, 90);
+            path.arcTo(50, 0, 50, 50, 90, 90);
+            path.arcTo(50, 50, 50, 50, 180, 90);
+            path.arcTo(150, 50, 50, 50, 270, 90);
+            path.lineTo(200, 25);
+            myPolygon = path.toFillPolygon();
         //统一形状
-//            myPolygon << QPointF(-50, -50) << QPointF(50, -50)
-//                      << QPointF(50, 50) << QPointF(-50, 50)
-//                      << QPointF(-50, -50);
-//            break;
-//        立着正方形
-//        case Comp2:
-//            myPolygon << QPointF(-50, 0) << QPointF(0, 50)
-//                      << QPointF(50, 0) << QPointF(0, -50)
-//                      << QPointF(-50, 0);
+            myPolygon << QPointF(-50, -50) << QPointF(50, -50)
+                      << QPointF(50, 50) << QPointF(-50, 50)
+                      << QPointF(-50, -50);
+            break;
+        // 立着正方形
+        case Comp2:
+            myPolygon << QPointF(-50, 0) << QPointF(0, 50)
+                      << QPointF(50, 0) << QPointF(0, -50)
+                      << QPointF(-50, 0);
 
         //统一形状
-//            myPolygon << QPointF(-50, -50) << QPointF(50, -50)
-//                      << QPointF(50, 50) << QPointF(-50, 50)
-//                      << QPointF(-50, -50);
-//            break;
+            myPolygon << QPointF(-50, -50) << QPointF(50, -50)
+                      << QPointF(50, 50) << QPointF(-50, 50)
+                      << QPointF(-50, -50);
+            break;
         //正方形
-//        case Comp1:
-//            path.moveTo(-50, -50);
-//            path.addText(QPointF(0,0),QFont("Helvetica", 20),QString("hhh"));
-//            path.moveTo(50, -50);
-//            path.lineTo(50, -50);
-//            path.lineTo(50, 50);
-//            path.lineTo(-50, 50);
-//            path.lineTo(-50, -50);
+        case Comp1:
+            path.moveTo(-50, -50);
+            path.addText(QPointF(0,0),QFont("Helvetica", 20),QString("hhh"));
+            path.moveTo(50, -50);
+            path.lineTo(50, -50);
+            path.lineTo(50, 50);
+            path.lineTo(-50, 50);
+            path.lineTo(-50, -50);
 
         //统一形状
-//            myPolygon << QPointF(-50, -50) << QPointF(50, -50)
-//                      << QPointF(50, 50) << QPointF(-50, 50)
-//                      << QPointF(-50, -50);
-//            myPolygon = path.toFillPolygon();
-//            break;
+            myPolygon << QPointF(-50, -50) << QPointF(50, -50)
+                      << QPointF(50, 50) << QPointF(-50, 50)
+                      << QPointF(-50, -50);
+            myPolygon = path.toFillPolygon();
+            break;
         //默认 菱形，IO
-//        default:
-//            myPolygon << QPointF(-60, -40) << QPointF(-35, 40)
-//                      << QPointF(60, 40) << QPointF(35, -40)
-//                      << QPointF(-60, -40);
+        default:
+            myPolygon << QPointF(-60, -40) << QPointF(-35, 40)
+                      << QPointF(60, 40) << QPointF(35, -40)
+                      << QPointF(-60, -40);
         //统一形状
-//            myPolygon << QPointF(-50, -50) << QPointF(50, -50)
-//                      << QPointF(50, 50) << QPointF(-50, 50)
-//                      << QPointF(-50, -50);
-//            break;
-//    }
-
+            myPolygon << QPointF(-50, -50) << QPointF(50, -50)
+                      << QPointF(50, 50) << QPointF(-50, 50)
+                      << QPointF(-50, -50);
+            break;
+    }
+#endif
     // 统一形状
     myPolygon << QPointF(-50, -50) << QPointF(50, -50)
           << QPointF(50, 50) << QPointF(-50, 50)
@@ -110,20 +111,22 @@ void DiagramItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWi
     QString s = QDir::currentPath()+"/images/"+iconName;
     painter->drawPixmap(-49,-49,98,98, QPixmap(s));
 
-//    qDebug() << "名字！！！" << s;
-//    myDiagramType = diagramType();
-//    switch (myDiagramType) {
-//        case Comp1: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/FDPC.png"));
-//            break;
-//        case Comp2: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/CFAR.png"));
-//            break;
-//        case Comp4: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/MTD.png"));
-//            break;
-//        case Comp3: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/input.png"));
-//            break;
-//        case Comp5: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/output.png"));
-//            break;
-//    }  
+#if 0
+    qDebug() << "名字！！！" << s;
+    myDiagramType = diagramType();
+    switch (myDiagramType) {
+        case Comp1: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/FDPC.png"));
+            break;
+        case Comp2: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/CFAR.png"));
+            break;
+        case Comp4: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/MTD.png"));
+            break;
+        case Comp3: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/input.png"));
+            break;
+        case Comp5: painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/output.png"));
+            break;
+    }
+#endif
 }
 
 
@@ -271,6 +274,9 @@ void DiagramItem::focusInEvent(QFocusEvent *)
     myContextMenu->setEnabled(true);
 }
 
+/**
+ * @brief 鼠标丢失焦点事件
+ */
 void DiagramItem::focusOutEvent(QFocusEvent *)
 {
     qDebug() << "item focus out";
@@ -278,3 +284,21 @@ void DiagramItem::focusOutEvent(QFocusEvent *)
     qDebug() << "isSelected设置为false";
     myContextMenu->setEnabled(false);
 }
+
+/**
+ * @brief 鼠标双击动作触发展示右边属性
+ * @param event
+ */
+void DiagramItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+    setFocus();
+    setSelected(true);
+    //确保左键点击.
+    if (event->button() == Qt::LeftButton)
+    {
+        emit showItemsProperties(this->itemSuuid);
+    }
+    event->accept();
+    QGraphicsPolygonItem::mousePressEvent(event);
+}
+

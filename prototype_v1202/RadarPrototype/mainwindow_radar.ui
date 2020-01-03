@@ -360,7 +360,7 @@ border:1px solid gray;
   </widget>
   <widget class="QDockWidget" name="dockWidget">
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
@@ -373,7 +373,7 @@ border:1px solid gray;
    </property>
    <property name="maximumSize">
     <size>
-     <width>200</width>
+     <width>400</width>
      <height>524287</height>
     </size>
    </property>

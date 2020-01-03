@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Plugins>
     <Information>
-        <ID>{89f7b049-72d2-432d-8f8a-bb26ce32d9d2}</ID>
-        <Name>TEST</Name>
+        <ID>{5036c6ec-2a5d-4846-aa39-44031622a815}</ID>
+        <Name>MAO</Name>
         <Path>E:/FirstSemesterofSeniorYear/LabJob/Project_Digital_Prototype/Code/20200103/build-prototype_v1202-Desktop_Qt_5_9_8_MinGW_32bit-Debug/algoXml</Path>
-        <Time>Fri Jan 3 22:15:46 2020 GMT</Time>
+        <Time>Fri Jan 3 22:13:38 2020 GMT</Time>
     </Information>
-    <Description></Description>
+    <Description>111111111111</Description>
     <Parameter/>
 </Plugins>

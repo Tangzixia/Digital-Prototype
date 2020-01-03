@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Plugins>
+    <Information>
+        <ID>{c05d4ce7-b86a-4acd-9732-49ed79aa0ef8}</ID>
+        <Name>OUTPUT</Name>
+        <Path>E:/FirstSemesterofSeniorYear/LabJob/Project_Digital_Prototype/Code/20200103/build-prototype_v1202-Desktop_Qt_5_9_8_MinGW_32bit-Debug/room/algoXml</Path>
+        <Time>Fri Jan 3 17:55:41 2020</Time>
+    </Information>
+    <Description>输出组件</Description>
+    <Parameter/>
+</Plugins>

@@ -51,6 +51,7 @@ public:
 //    void init1Comp(QString comPName, QMenu *itemMenu, DiagramItem::DiagramType diagramType);
     void init1Comp(QString comPName, QMenu *itemMenu, QString iconName);
     void loadCompByName(QString strText);
+    void toShowPropertiesDock(AlgorithmComp ac, bool isReadonly=true);
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -115,6 +116,9 @@ private slots:
 public slots:
      // 接收信息
      void receiveFromSend(QString message);
+
+     // 接收场景中的组件的id信息，传给mainwindow_radar展示属性
+     void receiveItemsid2showProperties(QString sid);
 
 private:
     QPushButton *openConsole;

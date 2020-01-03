@@ -90,7 +90,7 @@ int Utils::saveFile(QWidget *qw, QString dirp, QString filename, RadarScene *sce
             QTextStream out(&file);
             scene->getDoc()->save(out, 4); //EncodingFromDocument
             file.close();
-            qDebug() << "路径为："+directory;
+            qDebug() << "保存路径为："+directory;
             return 1;
         }
     }else{
@@ -147,7 +147,7 @@ QDir Utils::openDirOrCreate(QString dirPath)
 
 /**
 * @projectName   prototype_v0906
-* @brief         简介 读取算法组件的xml文件
+* @brief         简介 读取算法组件的xml文件到Algorithm
 * @author        Antrn
 * @date          2019-10-02
 */
@@ -218,14 +218,16 @@ AlgorithmComp Utils::readPluginXmlFile(QString fileName)
             m1 = m1.nextSibling();
         }
         ac.setParam(paramap);
-        QFileInfo fi = QFileInfo(fileName);
-        QString file_name = fi.fileName().split(".")[0];  //获取文件名
+
+//        QFileInfo fi = QFileInfo(fileName);
+//        QString file_name = fi.fileName().split(".")[0];  //获取文件名
 //        qDebug() << "短名字： " << file_name;
-        ac.setFileName(file_name);
+//        ac.setFileName(file_name);
+        ac.setFileName(ac.getInfo()["Name"]);
 //        qDebug() << ac.getInfo()["ID"];
         return ac;
     }else {
-        // TODO 文件名为空，啥也没选，提示
+        // 文件名为空，啥也没选，提示
         Utils::alert(QApplication::desktop()->screen()->rect(), "请选择文件!");
         return ac;
     }
@@ -358,7 +360,6 @@ bool Utils::deleteXmlFileByName(QString dname, QString id)
 {
     QDir dir(dname);
     QFileInfoList file_list = dir.entryInfoList(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
-    qDebug() << "id_split: " << id;
     for(int i = 0; i < file_list.size(); ++i){
         if(file_list.at(i).fileName().split(".")[0].endsWith(id)){
             QFile file(file_list.at(i).absoluteFilePath());
@@ -372,4 +373,35 @@ bool Utils::deleteXmlFileByName(QString dname, QString id)
         }
     }
     return false;
+}
+
+/**
+ * @brief 将名字写到图片上，并保存到文件夹中
+ * @param nm 图片上要写的名字
+ * @return 是否成功
+ */
+bool Utils::generateIcon(QString nm)
+{
+    QString p = QDir::currentPath()+"/images/base.png";
+    QImage image = QPixmap(p).toImage();
+    QPainter painter(&image); //为这个QImage构造一个QPainter
+    painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+    //设置画刷的组合模式CompositionMode_SourceOut这个模式为目标图像在上。
+    painter.setRenderHint(QPainter::TextAntialiasing);
+    //改变画笔和字体
+    QPen pen = painter.pen();
+    pen.setColor(Qt::red);
+    pen.setWidth(20);
+    QFont font = painter.font();
+    font.setBold(true);//加粗
+    font.setWeight(81);
+    font.setPixelSize(11);//改变字体大小
+    painter.setPen(pen);
+    painter.setFont(font);
+    painter.drawText(image.rect(),Qt::AlignCenter, nm);
+    //将nmame写在Image的中心
+    int n = 100;//这个为图片的压缩度。0/100
+    image.save(QDir::currentPath()+"/images/"+nm+".ico", "ico", n);
+    //将画好的图片保存起来。
+    return true;
 }
