@@ -125,7 +125,7 @@ void MainWindowNew::on_actio_leftDock_triggered()
         propertyContent(id);
     }
     else if(operateType==Menu_iteamOperation::edit){
-       //新建或者提升组件窗口（从left的item来，他在就在，他死就死）
+       // 新建或者提升组件窗口（从left的item来，他在就在，他死就死）
         qDebug()<<"edit来了";
         ui->listWidget_rader->itemOperateSlot(Menu_iteamOperation::edit,id);
     }else if(operateType==Menu_iteamOperation::rename){

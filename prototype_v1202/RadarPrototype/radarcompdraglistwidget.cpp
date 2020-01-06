@@ -74,6 +74,7 @@ void RadarCompDraglistWidget::createNewComp()
     ParamEditRadarDialog *dlg = new ParamEditRadarDialog(ac,this);
     // 先把要展示的消息传递给draglistWidget，再传给mainwindow_radar
     connect(dlg, &ParamEditRadarDialog::showMessage, this, &RadarCompDraglistWidget::sendMessage);
+    connect(dlg, &ParamEditRadarDialog::sendIconName, this, &RadarCompDraglistWidget::send_icon_name);
 
     if(dlg->exec() == QDialog::Accepted)
     {
@@ -122,12 +123,14 @@ void RadarCompDraglistWidget::onCurrentTextChanged(QListWidgetItem *item)
                 newm.insert("Time", dtime);
                 newm.insert("Name", lastName);
                 ac.setInfo(newm);
-                qDebug() << "该算法的信息: " << ac.getInfo().toStdMap();
+                // 5.9.8
+//                qDebug() << "该算法的信息: " << ac.getInfo().toStdMap();
                 Utils::writeAlgorithmComp2Xml(ac);
                 // 刷新列表
                 emit toRefreshCompList();
+                emit send_icon_name(lastName);
                 // 生成新名字的icon
-                Utils::generateIcon(lastName);
+//                Utils::generateIcon(lastName);
                 qDebug() << "重命名成功!";
             }else{
                 qDebug() << "重命名失败";
@@ -388,7 +391,7 @@ void RadarCompDraglistWidget::mousePressEvent(QMouseEvent *event)
                 }
             case 1:
                 // 导入文件
-                QString dirpath = QDir::currentPath()+"/algoXml/";
+                QString dirpath = QDir::currentPath();
                 Utils::openDirOrCreate(dirpath);
                 // 打开xml文件读取
                 const QString fileName = QFileDialog::getOpenFileName(this, tr("打开组件xml"), QString(dirpath), tr("xml files (*.xml)"));

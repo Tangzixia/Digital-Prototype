@@ -12,7 +12,10 @@ PPIWidget::PPIWidget(QWidget *parent) :
     ui->setupUi(this);
     setStyleSheet("background-color:black;");
 
-    qsrand(uint (time(nullptr)));
+    // 5.9.8
+    qsrand(uint (time_t(nullptr)));
+    // 5.9.8
+    // qsrand(uint (time(nullptr)));
     m_updateTimer = new QTimer(this);
     m_updateTimer->setInterval(16);
     connect(m_updateTimer, &QTimer::timeout, this, [this](){ update(); });

@@ -11,6 +11,7 @@
 class ECMItem : public QObject, public QGraphicsItem
 {
     Q_OBJECT
+    Q_INTERFACES(QGraphicsItem)
 public:
     ECMItem();
     ~ECMItem();

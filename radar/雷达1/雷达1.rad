@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<components height="5000" width="5000">
+    <Arrs>
+        <arrow id="{7532940b-eccd-44ea-9c34-1210af96aa4c}" end_item_id="{7863b357-6f4f-4db2-afde-89b3e2375fa9}" start_item_id="{1874c579-1925-4cbd-b195-2263472cd946}">
+            <color>#000000</color>
+        </arrow>
+        <arrow id="{69236500-f062-41f8-a6c6-34c8852c6bc5}" end_item_id="{bd073db9-180b-48a1-87e0-e2d1ea36320c}" start_item_id="{7863b357-6f4f-4db2-afde-89b3e2375fa9}">
+            <color>#000000</color>
+        </arrow>
+        <arrow id="{d5980f1a-c569-4405-b8a4-a74c1760c16d}" end_item_id="{ccf709fa-5892-469e-932e-3e42494b1464}" start_item_id="{bd073db9-180b-48a1-87e0-e2d1ea36320c}">
+            <color>#000000</color>
+        </arrow>
+        <arrow id="{9eed2c6a-0e55-4188-a577-5a47dabd0a71}" end_item_id="{13ff6da1-8f47-488b-b0f9-2d188a38955e}" start_item_id="{ccf709fa-5892-469e-932e-3e42494b1464}">
+            <color>#000000</color>
+        </arrow>
+    </Arrs>
+    <Items>
+        <INPUT pos_x="1800" pos_y="2421" id="{1874c579-1925-4cbd-b195-2263472cd946}">
+            <color>#ffffff</color>
+        </INPUT>
+        <FDPC pos_x="2101" pos_y="2433" id="{7863b357-6f4f-4db2-afde-89b3e2375fa9}">
+            <color>#ffffff</color>
+        </FDPC>
+        <MTD pos_x="2331" pos_y="2282" id="{bd073db9-180b-48a1-87e0-e2d1ea36320c}">
+            <color>#ffffff</color>
+        </MTD>
+        <CFAR pos_x="2358" pos_y="2669" id="{ccf709fa-5892-469e-932e-3e42494b1464}">
+            <color>#ffffff</color>
+        </CFAR>
+        <OUTPUT pos_x="2518" pos_y="2593" id="{13ff6da1-8f47-488b-b0f9-2d188a38955e}">
+            <color>#ffffff</color>
+        </OUTPUT>
+    </Items>
+</components>

@@ -276,19 +276,21 @@ void RadarScene::createFile2zoom(QString sid){
         // 复制一份bu是原来的那个
         QMap<QString, QString> newm;
         newm.insert("ID", sid);
-        newm.insert("Path", QDir::currentPath()+"/room/algoXml");
+        newm.insert("Path", QDir::currentPath()+"/radar/"+dynamic_cast<MainWindow_Radar*>(parent())->getEquip_id()+"/room/algoXml");
         QDateTime *dt = new QDateTime;
         QString dtime = dt->currentDateTime().toString();
         newm.insert("Time", dtime);
         newm.insert("Name", ap.getInfo().take("Name"));
         ap.setInfo(newm);
-        qDebug() << ap.getInfo().toStdMap();
+        // 5.9.8
+        // qDebug() << ap.getInfo().toStdMap();
         scene_comps.insert(sid, ap);
-        Utils::writeAlgorithmComp2Xml(ap, "/room");
+        Utils::writeAlgorithmComp2Xml(ap, "/radar/"+dynamic_cast<MainWindow_Radar*>(parent())->getEquip_id()+"/room");
         // 遍历Map打印一下
-        foreach(const QString ac, scene_comps.keys()){
-            qDebug() << "算法组件的id： " << ac << ", 组件信息: " << scene_comps.value(ac).getInfo().toStdMap();
-        }
+//        foreach(const QString ac, scene_comps.keys()){
+            // 5.9.8
+            // qDebug() << "算法组件的id： " << ac << ", 组件信息: " << scene_comps.value(ac).getInfo().toStdMap();
+//        }
     }
     else{
         qDebug() << "没有点击或者拖动";
@@ -311,7 +313,7 @@ void RadarScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     switch (myMode) {
         case InsertItem:{
 //            item = new DiagramItem(myItemType, myItemMenu);
-            item = new DiagramItem(myItemIconName, myItemMenu);
+            item = new DiagramItem(myItemIconName, myItemMenu, dynamic_cast<MainWindow_Radar*>(parent())->getEquip_id());
 //            item->(myItemColor);
             item->setBrush(myItemColor);
             QString sid = QUuid::createUuid().toString();
@@ -461,8 +463,9 @@ void RadarScene::dropEvent(QGraphicsSceneDragDropEvent *event)
     if (event->mimeData()->hasFormat(RadarCompDraglistWidget::puzzleMimeType())){
         event->acceptProposedAction();
 
+
 //        DiagramItem *item = new DiagramItem(myItemType, myItemMenu);
-        DiagramItem *item = new DiagramItem(myItemIconName, myItemMenu);
+        DiagramItem *item = new DiagramItem(myItemIconName, myItemMenu, dynamic_cast<MainWindow_Radar*>(parent())->getEquip_id());
         item->setBrush(myItemColor);
         QString sid = QUuid::createUuid().toString();
         qDebug() << "新生成的sid: " << sid;

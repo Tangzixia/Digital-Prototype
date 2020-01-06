@@ -26,7 +26,7 @@ public:
 //    DiagramType diagramType() const { return myDiagramType; }
 
 //    DiagramItem(DiagramType diagramType, QMenu *contextMenu, QGraphicsItem *parent = nullptr);
-    DiagramItem(QString iconName, QMenu *contextMenu, QGraphicsItem *parent = nullptr);
+    DiagramItem(QString iconName, QMenu *contextMenu, QString radar_id, QGraphicsItem *parent = nullptr);
     void removeArrow(Arrow *arrow);
     void removeArrows();
     QPolygonF polygon() const { return myPolygon; }
@@ -44,6 +44,10 @@ public:
 
     QString getIconName() const;
     void setIconName(const QString &value);
+
+    QString getRadar_id() const;
+
+    void setRadar_id(const QString &value);
 
 protected:
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
@@ -64,7 +68,8 @@ private:
     QMenu *myContextMenu;
     //存储箭头
     QList<Arrow *> arrows;
-
+    // 记住这个组件是属于哪个雷达的
+    QString radar_id;
 };
 
 #endif // DIAGRAMITEM_H

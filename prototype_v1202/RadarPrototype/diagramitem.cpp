@@ -8,6 +8,9 @@
 #include <QKeyEvent>
 #include <QDebug>
 #include <QGraphicsBlurEffect>
+#include <QFileInfo>
+#include <utils.h>
+
 /**
 * @projectName   prototype_v0719
 * @brief         这里就是悬浮框中雷达内部组件的图表类。
@@ -19,11 +22,18 @@
 //             QGraphicsItem *parent): QGraphicsPolygonItem(parent)
 //{
 //    myDiagramType = diagramType;
-DiagramItem::DiagramItem(QString iconName, QMenu *contextMenu, QGraphicsItem *parent)
-: QGraphicsPolygonItem(parent), iconName(iconName)
+DiagramItem::DiagramItem(QString iconName, QMenu *contextMenu, QString radarId, QGraphicsItem *parent)
+: QGraphicsPolygonItem(parent), iconName(iconName), radar_id(radarId)
 {
     myContextMenu = contextMenu;
     QPainterPath path;
+    QString s = QDir::currentPath()+"/radar/"+getRadar_id()+"/images/";
+    Utils::openDirOrCreate(s);
+    QFileInfo fi(s+iconName);
+    if(!fi.isFile()){
+        bool tof = QFile::copy(QDir::currentPath()+"/images/"+iconName+".ico", s+iconName+".ico");
+        qDebug() << "文件复制成功与否：" << tof;
+    }
 
 #if 0
     //这里元素的大小和在场景中是一样的，修改了都会变。
@@ -100,16 +110,27 @@ QRectF DiagramItem::boundingRect()
     return QRectF(-50-adjust,50-adjust,100+adjust,100+adjust);
 }
 
+/**
+ * @brief 刻画雷达组件的图像
+ * @param painter
+ */
 void DiagramItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
     painter->setRenderHint(QPainter::Antialiasing, true);
     painter->drawRect(-50,-50,100,100);
 
     // NOTE BUG 修改资源图片位置，为什么这里不能加后缀，试了两小时，又变成加不加后缀都可以了。。。。
-//    painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/"+iconName));
+    // painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/"+iconName));
 
-    QString s = QDir::currentPath()+"/images/"+iconName;
-    painter->drawPixmap(-49,-49,98,98, QPixmap(s));
+    QString s = QDir::currentPath()+"/radar/"+getRadar_id()+"/images/";
+//    Utils::openDirOrCreate(s);
+//    QFileInfo fi(s+iconName);
+//    if(!fi.isFile()){
+//        bool tof = QFile::copy(QDir::currentPath()+"/images/"+iconName, s+iconName);
+//        qDebug() << "文件复制成功与否：" << tof;
+//    }
+
+    painter->drawPixmap(-49,-49,98,98, QPixmap(s+iconName));
 
 #if 0
     qDebug() << "名字！！！" << s;
@@ -300,5 +321,15 @@ void DiagramItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     }
     event->accept();
     QGraphicsPolygonItem::mousePressEvent(event);
+}
+
+void DiagramItem::setRadar_id(const QString &value)
+{
+    radar_id = value;
+}
+
+QString DiagramItem::getRadar_id() const
+{
+    return radar_id;
 }
 

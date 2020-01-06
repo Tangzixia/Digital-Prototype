@@ -53,6 +53,13 @@ MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
     //兼容性？？
     setUnifiedTitleAndToolBarOnMac(true);
 
+    connect(this, &MainWindow_Radar::createProjectFiles, [=](){
+        bool tof = Utils::createProject(getEquip_id());
+        qDebug() << "工程文件是否创建成功：" << tof;
+    });
+
+    emit createProjectFiles();
+
     // 合并dock窗口
     otherDoc = new QDockWidget(this);
     otherDoc->setWindowTitle(tr("其他窗口"));
@@ -121,7 +128,7 @@ MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
     // 关联是否保存xml的按钮可用的信号和槽函数
     connect(scene, &RadarScene::isSave2False, this, &MainWindow_Radar::On_isSave2False);
 
-    //打开自动读取已有的xml文件
+    //打开自动读取已有的rad文件
     autoloadXmlById(getEquip_id());
     //    QGridLayout *layout = new QGridLayout;
 //    layout->addWidget(ui->dockCompList);
@@ -148,8 +155,7 @@ MainWindow_Radar::MainWindow_Radar(QString id, QWidget *parent) :
     // 打印信息
     connect(this, &MainWindow_Radar::send2AppOutput, this, &MainWindow_Radar::receiveFromSend);
     connect(ui->listWidget, &RadarCompDraglistWidget::sendMessage, this, &MainWindow_Radar::receiveFromSend);
-
-
+    connect(ui->listWidget, &RadarCompDraglistWidget::send_icon_name, this, &MainWindow_Radar::generateIcon);
 
 
     openConsole = new QPushButton;
@@ -503,7 +509,7 @@ void MainWindow_Radar::deleteItemArrowById(QString id)
                 emit send2AppOutput(QStringLiteral("找到图形项，已删除,id=")+id);
                 QString id_split = id.mid(1,id.length()-2);
                 qDebug() << "id_split: " << id_split;
-                Utils::deleteXmlFileByName(QDir::currentPath()+"/room/algoXml/", id_split);
+                Utils::deleteXmlFileByName(QDir::currentPath()+"/radar/"+getEquip_id()+"/room/algoXml/", id_split);
                 qDebug() << "删除之前的algorithm的MAP： " << scene->getScene_comps().keys();
                 scene->deleteScene_comps(id);
                 qDebug() << "删除之后的algorithm的MAP： " << scene->getScene_comps().keys();
@@ -610,7 +616,7 @@ void MainWindow_Radar::copyItem()
     scene->receiveAlgo4listWidget(acp);
 
     // 复制一份，不能使用原来的那个指针
-    DiagramItem *newItem = new DiagramItem(ditem->iconName, itemMenu);
+    DiagramItem *newItem = new DiagramItem(ditem->iconName, itemMenu, getEquip_id());
     newItem->setBrush(scene->getMyItemColor());
     QString sid = QUuid::createUuid().toString();
     qDebug() << "新生成的sid: " << sid;
@@ -669,8 +675,9 @@ void MainWindow_Radar::addItem2Lib()
     ac.setInfo(newm);
     ac.setFileName(text);
     // 生成新的Icon
-    Utils::generateIcon(text);
-    qDebug() << "打印一下要加入组件库的信息： " << ac.getInfo().toStdMap();
+    Utils::generateIcon(text, getEquip_id());
+    // 5.9.8
+//    qDebug() << "打印一下要加入组件库的信息： " << ac.getInfo().toStdMap();
     ui->listWidget->algorithms.insert(sid, ac);
 
     qDebug() << "algorithms： " << ui->listWidget->algorithms.keys() << "; 大小： " << ui->listWidget->algorithms.size();
@@ -1398,7 +1405,7 @@ void MainWindow_Radar::lineButtonTriggered()
 }
 
 /**
- * @brief 打开.rad雷达工程文件
+ * @brief 选择并打开.rad雷达工程文件
  */
 void MainWindow_Radar::on_actionOpenXml_triggered()
 {
@@ -1476,14 +1483,14 @@ void MainWindow_Radar::readXmlConf(QString xmlname)
                     save2XmlFile();
                     return;
                 }else{
-                    DiagramItem *item_ = new DiagramItem(compName, scene->getItemMenu());
+                    DiagramItem *item_ = new DiagramItem(compName, scene->getItemMenu(), this->getEquip_id());
                     QPointF pos(posx, poxy);
                     item_->setPos(pos);
                     item_->setBrush(colour);
                     item_->itemSuuid = id; //id不变
                     scene->idList.append(id);
                     // 读取xml文件的时候，也要恢复子空间的algorithm
-                    QString fullpath = QDir::currentPath()+"/room/algoXml/"+compName+id.mid(1,id.length()-2)+".xml";
+                    QString fullpath = QDir::currentPath()+"/radar/"+getEquip_id()+"/room/algoXml/"+compName+id.mid(1,id.length()-2)+".xml";
                     AlgorithmComp ac = Utils::readPluginXmlFile(fullpath);
                     // 加载场景中所有的算法组件
                     scene->add2Scene_comps(id, ac);
@@ -1645,8 +1652,8 @@ void MainWindow_Radar::save2XmlFile(){
     }
     //]更新color
 
-    // 保存雷达组件数据
-    QString dirp = QDir::currentPath() + "/radar/";
+    // 保存雷达组件数据，文件放到此雷达命名的文件夹中，要保证文件夹存在
+    QString dirp = QDir::currentPath() + "/radar/"+getEquip_id()+"/";
     QRect rect = QApplication::desktop()->screen()->rect();
     // 如果之前自己选择位置存错过
     if(isSelectPath){
@@ -1696,13 +1703,13 @@ void MainWindow_Radar::save2XmlFile(){
 }
 
 /**
- * @brief 打开自动读取已有的xml文件
- * @param id
+ * @brief 打开自动读取已有的xml文件,雷达rad文件
+ * @param id 雷达名字
  */
 void MainWindow_Radar::autoloadXmlById(QString id)
 {
     // 遍历文件夹
-    QFileInfoList list = getFileList(QDir::currentPath()+"/radar/");
+    QFileInfoList list = getFileList(QDir::currentPath()+"/radar/"+getEquip_id()+"/");
     for (int i = 0; i < list.size(); ++i) {
         QFileInfo fileInfo = list.at(i);
         QString fname = fileInfo.fileName();
@@ -1711,8 +1718,8 @@ void MainWindow_Radar::autoloadXmlById(QString id)
             QString filepath;
             filepath.append(fileInfo.path());
             filepath+="/"+fname;
-            qDebug() << "找到xml!" << filepath;
-            emit send2AppOutput(QStringLiteral("找到xml! ") + filepath);
+            qDebug() << "找到rad!" << filepath;
+            emit send2AppOutput(QStringLiteral("找到rad! ") + filepath);
             readXmlConf(filepath);
             isSave = true;
             toggleSaveXml(0);
@@ -1918,6 +1925,11 @@ void MainWindow_Radar::receiveItemsid2showProperties(QString sid)
 {
     AlgorithmComp ap = this->scene->getScene_comps().take(sid);
     this->toShowPropertiesDock(ap, false);
+}
+
+void MainWindow_Radar::generateIcon(QString icon_name)
+{
+    Utils::generateIcon(icon_name, getEquip_id());
 }
 
 void MainWindow_Radar::on_tabWidget_2_destroyed()

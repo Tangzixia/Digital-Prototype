@@ -37,6 +37,8 @@ private slots:
 
 signals:
     void showMessage(QString msg);
+    // 给Mainwindow_radar传递信号生成icon
+    void sendIconName(QString iconName);
 private:
     Ui::ParamEditRadarDialog *ui;
     // 当前参数有几行

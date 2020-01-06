@@ -45,7 +45,7 @@ void EchoesWave::realtimeDataSlot()
     qsrand(QTime::currentTime().msec() + QTime::currentTime().second() * 10000);
     //使用随机数产生两条曲线
     double value0 = qrand() % 100;
-    double value1 = qrand() % 80;
+//    double value1 = qrand() % 80;
     if (ui->checkBox_temp->isChecked())
         ui->customPlot->graph(0)->addData(key, value0);//添加数据1到曲线1
 

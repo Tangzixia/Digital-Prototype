@@ -31,7 +31,10 @@ Utils::Utils()
 void Utils::alert(QRect rect, QString content)
 {
     QLabel *label = new QLabel;
-    label->setWindowFlag(Qt::FramelessWindowHint);
+    // 5.6.1
+    label->setWindowFlags(Qt::FramelessWindowHint);
+    // 5.9.8
+    // label->setWindowFlag(Qt::FramelessWindowHint);
     label->setStyleSheet("background-color:rgb(212,237,218)");
     label->setMaximumWidth(200);
     label->setMaximumHeight(50);
@@ -159,13 +162,13 @@ AlgorithmComp Utils::readPluginXmlFile(QString fileName)
 //        qDebug() << fileName;
         QFile file(fileName);
         if(!file.open(QIODevice::ReadOnly)) {
-            qDebug() << "文件打开出错！";
+            qDebug() << "算法组件的xml文件打开出错！";
             file.close();
             return ac;
         }
         if(!doc.setContent(&file)){
             file.close();
-            qDebug() << "打开失败";
+            qDebug() << "算法组件的xml文件读取失败";
             return ac;
         }
         file.close();
@@ -300,7 +303,8 @@ void Utils::writeAlgorithmComp2Xml(AlgorithmComp ac, QString subPath)
         QDomAttr describe = doc.createAttribute("describe");
         QDomAttr value = doc.createAttribute("value");
         describe.setValue(j.value().value("describe"));
-        qDebug() << "参数Map：" << j.value().toStdMap();
+        // 5.9.8
+//        qDebug() << "参数Map：" << j.value().toStdMap();
         value.setValue(j.value().value("value"));
         para.setAttributeNode(describe);
         para.setAttributeNode(value);
@@ -380,7 +384,7 @@ bool Utils::deleteXmlFileByName(QString dname, QString id)
  * @param nm 图片上要写的名字
  * @return 是否成功
  */
-bool Utils::generateIcon(QString nm)
+bool Utils::generateIcon(QString nm, QString eQuip_id)
 {
     QString p = QDir::currentPath()+"/images/base.png";
     QImage image = QPixmap(p).toImage();
@@ -401,7 +405,34 @@ bool Utils::generateIcon(QString nm)
     painter.drawText(image.rect(),Qt::AlignCenter, nm);
     //将nmame写在Image的中心
     int n = 100;//这个为图片的压缩度。0/100
-    image.save(QDir::currentPath()+"/images/"+nm+".ico", "ico", n);
+    image.save(QDir::currentPath()+"/radar/"+eQuip_id+"/images/"+nm+".ico", "ico", n);
     //将画好的图片保存起来。
+    return true;
+}
+
+/**
+ * @brief 新建工程目录文件
+ * @param p_name 工程名
+ * @return 成功与否
+ */
+bool Utils::createProject(QString p_name)
+{
+    qDebug() << "雷达id：" << p_name;
+    QDir d(QDir::currentPath());
+    if(d.exists(QDir::currentPath()+"/radar/"+p_name)){
+        qDebug() << "目录已存在!";
+        return true;
+    }
+    qDebug() << "测试是否执行";
+    QString path1 = QDir::currentPath()+"/radar/"+p_name+"/images/";
+    QString path2 = QDir::currentPath()+"/radar/"+p_name+"/room/algoXml/";
+    QDir dir;
+    //创建多级目录，如果已存在则会返回去true
+    if(dir.mkpath(path1) && dir.mkpath(path2)){
+        return true;
+    }
+    else{
+        return false;
+    }
     return true;
 }

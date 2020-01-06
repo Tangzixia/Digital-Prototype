@@ -44,6 +44,8 @@ signals:
     void sendMessage(QString msg);
     // 将算法信息传递到场景中，复制一份
     void addAlgo2Scene(AlgorithmComp ap);
+    // 将icon传递到mainwindow_radar
+    void send_icon_name(QString name);
 
 protected:
     //开始拖拽

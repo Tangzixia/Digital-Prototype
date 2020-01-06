@@ -120,6 +120,9 @@ public slots:
      // 接收场景中的组件的id信息，传给mainwindow_radar展示属性
      void receiveItemsid2showProperties(QString sid);
 
+     // 为雷达组件生成icon图标
+     void generateIcon(QString icon_name);
+
 private:
     QPushButton *openConsole;
     // 名字
@@ -209,7 +212,7 @@ signals:
     void iClose(MainWindow_Radar*);
     // 接收要打印到程序输出的语句
     void send2AppOutput(QString message);
-
+    void createProjectFiles();
 };
 
 #endif // MAINWINDOW_RADAR_H

@@ -27,7 +27,10 @@ HelloDialog::HelloDialog(QWidget *parent) :
 
     ui->comboBox->setView(new QListView(this));
     //去掉页面边框和标题栏
-    this->setWindowFlag(Qt::FramelessWindowHint);
+    // 5.6.1
+    this->setWindowFlags(Qt::FramelessWindowHint);
+    // 5.9.8
+    // this->setWindowFlags(Qt::FramelessWindowHint);
     this->setWindowIcon(QIcon(":/img/HI.png"));
     //标题栏保留，去掉大小按钮
 //    this->setWindowFlag(Qt::WindowMinimizeButtonHint, false);

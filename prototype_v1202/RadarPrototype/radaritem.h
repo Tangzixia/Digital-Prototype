@@ -13,6 +13,7 @@
 class RadarItem : public QObject, public QGraphicsItem
 {
     Q_OBJECT
+    Q_INTERFACES(QGraphicsItem)
 public:
     RadarItem();
     RadarItem(QString);
