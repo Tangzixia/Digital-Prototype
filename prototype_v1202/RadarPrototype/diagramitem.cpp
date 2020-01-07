@@ -29,7 +29,7 @@ DiagramItem::DiagramItem(QString iconName, QMenu *contextMenu, QString radarId, 
     QPainterPath path;
     QString s = QDir::currentPath()+"/radar/"+getRadar_id()+"/images/";
     Utils::openDirOrCreate(s);
-    QFileInfo fi(s+iconName);
+    QFileInfo fi(s+iconName+".ico");
     if(!fi.isFile()){
         bool tof = QFile::copy(QDir::currentPath()+"/images/"+iconName+".ico", s+iconName+".ico");
         qDebug() << "文件复制成功与否：" << tof;
@@ -117,11 +117,18 @@ QRectF DiagramItem::boundingRect()
 void DiagramItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
     painter->setRenderHint(QPainter::Antialiasing, true);
+    painter->setBrush(QBrush(Qt::white));
+    painter->setPen(Qt::gray);
+    // 外边框
     painter->drawRect(-50,-50,100,100);
+
+    // 内矩形
+//    painter->fillRect(boundingRect(), Qt::green);
 
     // NOTE BUG 修改资源图片位置，为什么这里不能加后缀，试了两小时，又变成加不加后缀都可以了。。。。
     // painter->drawPixmap(-49,-49,98,98, QPixmap(":/img/"+iconName));
 
+    // icon路径
     QString s = QDir::currentPath()+"/radar/"+getRadar_id()+"/images/";
 //    Utils::openDirOrCreate(s);
 //    QFileInfo fi(s+iconName);
@@ -130,8 +137,20 @@ void DiagramItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWi
 //        qDebug() << "文件复制成功与否：" << tof;
 //    }
 
+    // 位图
     painter->drawPixmap(-49,-49,98,98, QPixmap(s+iconName));
 
+    // 文字
+//    painter->setPen(Qt::white);
+//    painter->drawText(boundingRect(), Qt::AlignCenter, iconName);
+
+    // 选中状态
+    if(isSelected()){
+        painter->setPen(Qt::black);
+        painter->setPen(QPen(Qt::DashLine));
+        painter->setBrush(Qt::NoBrush);
+        painter->drawRect(-50,-50,100,100);
+    }
 #if 0
     qDebug() << "名字！！！" << s;
     myDiagramType = diagramType();

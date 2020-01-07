@@ -21,6 +21,8 @@
 #include "clickablelabel.h"
 #include <QFormLayout>
 #include <QInputDialog>
+#include <QPlainTextEdit>
+#include <QSizePolicy>
 #include <simdatagenwidget.h>
 #include "leftnavi.h"
 //const int InsertTextButton = 10;
@@ -353,8 +355,8 @@ void MainWindow_Radar::loadCompByName(QString strText)
 
 /**
  * @brief 展示右边的属性Dock
- * @param ac
- * @param isReadonly
+ * @param ac 要解析展示的算法
+ * @param isReadonly 是不是可以编辑的
  */
 void MainWindow_Radar::toShowPropertiesDock(AlgorithmComp ac, bool isReadonly)
 {
@@ -369,11 +371,11 @@ void MainWindow_Radar::toShowPropertiesDock(AlgorithmComp ac, bool isReadonly)
     QMap<QString, QString>::Iterator it;
 
     // NOTE 注意这里不要在设计界面拖入一个ScrollArea，然后再和代码结合，我搞了一上午没解决，blgl
-    QScrollArea *scroll = new QScrollArea;
+    QScrollArea *scroll = new QScrollArea(ui->dockWidgetContents_2);
+
     QWidget *w = new QWidget;
-    QVBoxLayout *v = new QVBoxLayout;
-    v->setContentsMargins(1,1,1,1);
-    QWidget *sw = new QWidget;
+    w->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    scroll->setWidgetResizable(true);  // 自动调整大小
 
     // 表格布局
     QFormLayout *fl = new QFormLayout;
@@ -381,31 +383,115 @@ void MainWindow_Radar::toShowPropertiesDock(AlgorithmComp ac, bool isReadonly)
     fl->setSpacing(3);
     fl->setLabelAlignment(Qt::AlignLeft);//设置标签的对齐方式
     for ( it = info_map.begin(); it != info_map.end(); ++it ) {
-        QLineEdit *ql = new QLineEdit(it.value(), sw);
+        QPlainTextEdit *ql = new QPlainTextEdit(it.value(), w);
+        ql->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
         ql->setReadOnly(isReadonly);
         fl->addRow(it.key(), ql);
     }
 
-    QLineEdit *desc_ = new QLineEdit(ac.getDesc(), sw);
+    QPlainTextEdit *desc_ = new QPlainTextEdit(ac.getDesc(), w);
+    desc_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     desc_->setReadOnly(isReadonly);
     fl->addRow("Description", desc_);
 
     QMap<QString, QMap<QString, QString>> para_map = ac.getParam();
     for ( QMap<QString, QMap<QString, QString>>::iterator itt = para_map.begin(); itt != para_map.end(); ++itt ) {
-        QLineEdit *desc = new QLineEdit(itt.value().value("describe"), sw);
+        QPlainTextEdit *desc = new QPlainTextEdit(itt.value().value("describe"), w);
+        desc->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
         desc->setReadOnly(isReadonly);
-        QLineEdit *val = new QLineEdit(itt.value().value("value"), sw);
+        QPlainTextEdit *val = new QPlainTextEdit(itt.value().value("value"), w);
+        val->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
         val->setReadOnly(isReadonly);
         QLabel *l = new QLabel();
         fl->addRow(itt.key(), l);
         fl->addRow("describe", desc);
         fl->addRow("value", val);
     }
-    sw->setLayout(fl);
-    v->addWidget(sw);
-//     挤上去
-    v->addStretch();
-    w->setLayout(v);
+    // 当可编辑的时候
+    if(!isReadonly){
+        QPushButton *Ok = new QPushButton("确定");
+        QPushButton *Cancel = new QPushButton("取消"); // 点击取消好像没反应
+
+        fl->addRow(Ok, Cancel);
+        AlgorithmComp *acc = new AlgorithmComp;
+        // 按下ok的时候，将上述修改后的属性进行更新，更新算法Algorithm，加入到scene的map中，并新建和重写文件
+        connect(Ok, &QPushButton::clicked, [=](){
+            int info_num = info_map.size()*2, desc_num = 2, param_num = para_map.size()*6;
+            // 遍历表格布局，因为addRow的时候是一次加入两列，所以都是两倍数量
+            qDebug() << "属性总共数目：" << fl->layout()->count();
+            int para_index=0; // 这个用来判断参数是name还是后面的value和describe
+            QMap<QString, QString> mp; // 用来存放组件简介的map
+            QMap<QString, QMap<QString, QString> >pmap;  //存放一条参数的map
+            QMap<QString, QString> m; // 存放参数具体内容的map
+            QString name; // 参数名
+            // 遍历表格
+            for(int i = 0; i< fl->layout()->count()-2; i+=2){
+                // 第一部分，描述词
+                QLabel *l =qobject_cast<QLabel *>(fl->itemAt(i)->widget());
+                // 第二部分，Widget，也就是QPlainTextEdit
+                QPlainTextEdit *textEdit = qobject_cast<QPlainTextEdit *>(fl->itemAt(i+1)->widget());
+
+                // 第二部分为空的时候只有一种可能，就是参数的名字，后面的QLabel无法强制转换为QPlainTextEdit
+                if(textEdit!=nullptr){
+                    // 获取当前编辑框内容
+                    QString val_ = textEdit->document()->toPlainText();
+                    // 自己做一个判断
+                    if (!val_.isEmpty()){
+                        qDebug() << "参数属性：" << val_;
+                        // 如果是info
+                        if(i < info_num){
+                             mp.insert(l->text(), val_);
+                             if(l->text().compare("Name") == 0){
+                                 this->generateIcon(val_);
+                                 acc->setFileName(val_);
+                             }
+                        }else if(i < info_num+desc_num){
+                             // 如果是desc
+                             acc->setInfo(mp);
+                             acc->setDesc(val_);
+                        }else if(i< info_num+desc_num+param_num){
+                             // param
+                             // 初始时是0，2，4，因为这个版本属性只有describe和value两个属性
+                             if(para_index%6 == 0){
+                                 name = l->text();
+                             }else if(para_index%6 == 2){
+                                 m.clear();
+                                 m.insert(l->text(), val_);
+                             }else{
+                                 m.insert(l->text(), val_);
+                                 pmap.insert(name, m);
+                             }
+                             para_index+=2;
+                         }
+                     }else{
+                        // 只是提示一下
+                        qDebug() << "有选项为空!";
+                     }
+                }else{
+                    // qDebug() << "指针为空!";
+                    // param
+                    if(i< info_num+desc_num+param_num){
+                        // 这时候为参数的name
+                        if(para_index%6 == 0){
+                            name = l->text();
+                        }
+                        para_index+=2;
+                    }
+                }
+            }
+            acc->clearParam();
+            acc->setParam(pmap);
+            // 先把scene的map中原来的一项删除
+            scene->deleteScene_comps(acc->getInfo()["ID"]);
+            // 重新插入新的算法，id不变
+            scene->add2Scene_comps(acc->getInfo()["ID"], *acc);
+            // 重新写入文件
+            Utils::writeAlgorithmComp2Xml(*acc, "/radar/"+getEquip_id()+"/room");
+            // 刷新一下属性Dock，默认不能编辑
+            update_Comp_property(*acc);
+        });
+    }
+    w->setLayout(fl);
     scroll->setWidget(w);
     ui->dockWidget->setWidget(scroll);
 }

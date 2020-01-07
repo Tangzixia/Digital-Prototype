@@ -373,7 +373,7 @@ border:1px solid gray;
    </property>
    <property name="maximumSize">
     <size>
-     <width>400</width>
+     <width>524287</width>
      <height>524287</height>
     </size>
    </property>
@@ -390,7 +390,14 @@ border:1px solid gray;
    <attribute name="dockWidgetArea">
     <number>2</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents_2"/>
+   <widget class="QWidget" name="dockWidgetContents_2">
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+   </widget>
   </widget>
   <widget class="QDockWidget" name="dockWidget_3">
    <property name="minimumSize">

@@ -40,7 +40,7 @@ public:
     QString iconName; //组件小图标
     int init_pos_set=0;  // 是否初始化的标志
     QRectF boundingRect();
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) ;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr);
 
     QString getIconName() const;
     void setIconName(const QString &value);
