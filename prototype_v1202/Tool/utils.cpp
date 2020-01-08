@@ -52,12 +52,19 @@ void Utils::alert(QRect rect, QString content)
     });
 }
 
+
 /**
-* @projectName   prototype_v0906
-* @brief         简介: 保存文件到某个文件夹的文件中
-* @author        Antrn
-* @date          2019-09-27
-*/
+ * @brief Utils::saveFile 简介: 保存文件到某个文件夹的文件中
+ * @param qw 父类组件
+ * @param dirp 要打开的文件目录
+ * @param filename 文件名
+ * @param scene 场景对象
+ * @param isPrompt 是否弹窗询问
+ * @param spath
+ * @return 返回结果表明：
+ * @author Antrn
+ * @date 2019-09-27
+ */
 int Utils::saveFile(QWidget *qw, QString dirp, QString filename, RadarScene *scene, bool isPrompt, QString &spath)
 {
     QString directory = dirp;

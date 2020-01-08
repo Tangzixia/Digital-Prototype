@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 /**
 * @projectName   prototype_v0719
-* @brief         整个程序的主窗口：打开现有的工程时。
+* @brief         整个程序的主窗口：打开现有的dpsp工程时。
 * @author        Antrn
 * @date          2019-08-12
 */
@@ -20,7 +20,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(QString title, QString dpsp_path, QWidget *parent = nullptr);
     ~MainWindow();
     void init();
     void closeEvent(QCloseEvent *event);
@@ -40,6 +40,8 @@ private slots:
 private:
     Ui::MainWindow *ui;
     OpenGL *openGL;
+    QString w_title;
+    QString p_dpsp_path;
 
     void readSettings();
     void writeSettings();

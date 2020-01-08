@@ -2,6 +2,7 @@
 #include "ui_hellodialog.h"
 #include "mainwindownew.h"
 
+#include <QFileDialog>
 #include <QStyledItemDelegate>
 /**
 * @projectName   prototype_v0719
@@ -94,13 +95,23 @@ HelloDialog::~HelloDialog()
 }
 
 
+/**
+ * @brief 打开工程
+ */
 void HelloDialog::on_pushButton_open_clicked()
 {
-    this->main = new MainWindow();
-    this->main->show();
-    this->close();
+//    QProcess process;
+//    process.startDetached(QStringLiteral("explorer.exe /select,\"E:\\Desktop\\mao.txt\""));
+    QString pname = QFileDialog::getOpenFileName(nullptr, tr("打开工程.rad"), QDir::currentPath()+"/radar/", "Project Files(*.dpsp)");
+    qDebug() << "打开工程" << pname;
+//    this->main = new MainWindow();
+//    this->main->show();
+//    this->close();
 }
 
+/**
+ * 新建工程
+ */
 void HelloDialog::on_pushButton_new_clicked()
 {
     MainWindowNew* mainnew = new MainWindowNew;

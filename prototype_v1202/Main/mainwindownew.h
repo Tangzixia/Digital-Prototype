@@ -36,8 +36,6 @@ public slots:
     void itemOperateSlot(Menu_iteamOperation::OperateType, QString,QString newName="");
 protected:
     void closeEvent(QCloseEvent *event);
-    //设置监听窗口大小，使得视图和场景每次窗口缩放都左上角对应
-    void resizeEvent(QResizeEvent *event);
 
 private slots:
     void xy_show(double x,double y);

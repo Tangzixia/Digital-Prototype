@@ -74,18 +74,9 @@ void MainWindowNew::closeEvent(QCloseEvent *event)
     }
 }
 
-void MainWindowNew::resizeEvent(QResizeEvent *)
-{
-//    rect = ui->graphicsView->geometry();
-//    qDebug() << "视图的位置1：" << rect << endl;
-//    rect.moveLeft(9);
-//    graphicsScene->setSceneRect(rect);
-}
 //坐标跟踪
 void MainWindowNew::xy_show(double x,double y)
 {
-//    x-=9;
-//    y-=9;
     QString str=QString("x=%1,y=%2").arg(QString::number(x)).arg(QString::number(y));
     label_xy->setText(str);
 }
@@ -112,7 +103,7 @@ void MainWindowNew::on_actio_leftDock_triggered()
     }
 }
 //下发操作指令
- void MainWindowNew::itemOperateSlot(Menu_iteamOperation::OperateType operateType, QString id,QString newName){
+void MainWindowNew::itemOperateSlot(Menu_iteamOperation::OperateType operateType, QString id,QString newName){
     qDebug()<<"mainWindowsNew::"<<operateType<<","<<id<<"new name:"<<newName;
     if(operateType==Menu_iteamOperation::del){
         this->graphicsScene->itemOperateSlot(Menu_iteamOperation::del,id);

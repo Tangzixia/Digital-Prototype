@@ -1,4 +1,4 @@
-#include "mainwindownew.h"
+#include "mainwindow.h"
 #include "projectlist.h"
 #include "ui_projectlist.h"
 #include <QMenu>
@@ -6,7 +6,15 @@
 #include <QDebug>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QLabel>
 
+
+/**
+* @projectName   prototype_v1202
+* @brief         简介 欢迎页面的项目列表。打开的是总项目.dpsp
+* @author        Antrn
+* @date          2020-01-08
+*/
 ProjectList::ProjectList(QWidget *parent):
     QListWidget (parent),
     ui(new Ui::ProjectList)
@@ -24,74 +32,79 @@ ProjectList::ProjectList(QWidget *parent):
     this->setSpacing(5);
 }
 
+/**
+ * @brief ProjectList::initMenu 初始化项目列表
+ */
 void ProjectList::initMenu(){
-    blankMenu = new QMenu;
+//    blankMenu = new QMenu;
     // 点击空白处没反应，没添加任何action
-    projectMenu = new QMenu();
+    projectMenu = new QMenu;
     QAction *openAction = new QAction(tr("打开项目"), this);
     openAction->setIcon(QIcon()); // TODO 没填icon地址，应该和pro_head一样
     projectMenu->addAction(openAction);
-//    QListWidgetItem *recentPro = new QListWidgetItem;
-//    recentPro->setIcon(QIcon(":img/project.png"));
-//    recentPro->setText(tr("prototype_v0906"));
-//    recentPro->setToolTip(tr("build-prototype_v0906-Desktop_Qt_5_9_8_MinGW_32bit-Debug/debug"));
-//    QListWidgetItem *recentPro1 = new QListWidgetItem;
-//    recentPro1->setIcon(QIcon(":img/project.png"));
-//    recentPro1->setText(tr("QtDirectUI"));
-//    recentPro1->setToolTip(tr("E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QtFramelessWindow-master"));
-//    QListWidgetItem *recentPro2 = new QListWidgetItem;
-//    recentPro2->setIcon(QIcon(":img/project.png"));
-//    recentPro2->setText(tr("SARibbonBar"));
-//    recentPro2->setToolTip(tr("E:/MasterGraduateStudent/Laboratory/723/Qt_demos/SARibbon-master"));
-//    QListWidgetItem *recentPro3 = new QListWidgetItem;
-//    recentPro3->setIcon(QIcon(":img/project.png"));
-//    recentPro3->setText(tr("DesktopSnow"));
-//    recentPro3->setToolTip(tr("E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QT/DesktopSnow/DesktopSnow.pro"));
-//    QListWidgetItem *recentPro4 = new QListWidgetItem;
-//    recentPro4->setIcon(QIcon(":img/project.png"));
-//    recentPro4->setText(tr("dictionary-reborn-master"));
-//    recentPro4->setToolTip(tr("E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QT/dictionary-reborn-master/dictionary-reborn-master.pro"));
-//    QListWidgetItem *recentPro5 = new QListWidgetItem;
-//    recentPro5->setIcon(QIcon(":img/project.png"));
-//    recentPro5->setText(tr("RadarSearch"));
-//    recentPro5->setToolTip(tr("E:/MasterGraduateStudent/Laboratory/723/Project-10-23/RadarSearch/RadarSearch.pro"));
-//    QListWidgetItem *recentPro6 = new QListWidgetItem;
-//    recentPro6->setIcon(QIcon(":img/project.png"));
-//    recentPro6->setText(tr("DesktopSnow"));
-//    recentPro6->setToolTip(tr("E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QT/DesktopSnow/DesktopSnow.pro"));
-//    QListWidgetItem *recentPro7 = new QListWidgetItem;
-//    recentPro7->setIcon(QIcon(":img/project.png"));
-//    recentPro7->setText(tr("dictionary-reborn-master"));
-//    recentPro7->setToolTip(tr("E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QT/dictionary-reborn-master/dictionary-reborn-master.pro"));
-//    QListWidgetItem *recentPro8 = new QListWidgetItem;
-//    recentPro8->setIcon(QIcon(":img/project.png"));
-//    recentPro8->setText(tr("RadarSearch"));
-//    recentPro8->setToolTip(tr("E:/MasterGraduateStudent/Laboratory/723/Project-10-23/RadarSearch/RadarSearch.pro"));
-//    QListWidgetItem *recentPro9 = new QListWidgetItem;
-//    recentPro9->setIcon(QIcon(":img/project.png"));
-//    recentPro9->setText(tr("Opengltest"));
-//    recentPro9->setToolTip(tr("E:/MasterGraduateStudent/Laboratory/723/Project-10-23/Opengltest_QT5/Opengltest.pro"));
-//    this->addItem(recentPro);
-//    this->addItem(recentPro1);
-//    this->addItem(recentPro2);
-//    this->addItem(recentPro3);
-//    this->addItem(recentPro4);
-//    this->addItem(recentPro5);
-//    this->addItem(recentPro6);
-//    this->addItem(recentPro7);
-//    this->addItem(recentPro8);
-//    this->addItem(recentPro9);
+#if 0
+    QListWidgetItem *recentPro = new QListWidgetItem;
+    recentPro->setIcon(QIcon(":img/project.png"));
+    recentPro->setText(tr("prototype_v0906"));
+    recentPro->setToolTip(tr("build-prototype_v0906-Desktop_Qt_5_9_8_MinGW_32bit-Debug/debug"));
+    QListWidgetItem *recentPro1 = new QListWidgetItem;
+    recentPro1->setIcon(QIcon(":img/project.png"));
+    recentPro1->setText(tr("QtDirectUI"));
+    recentPro1->setToolTip(tr("E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QtFramelessWindow-master"));
+    QListWidgetItem *recentPro2 = new QListWidgetItem;
+    recentPro2->setIcon(QIcon(":img/project.png"));
+    recentPro2->setText(tr("SARibbonBar"));
+    recentPro2->setToolTip(tr("E:/MasterGraduateStudent/Laboratory/723/Qt_demos/SARibbon-master"));
+    QListWidgetItem *recentPro3 = new QListWidgetItem;
+    recentPro3->setIcon(QIcon(":img/project.png"));
+    recentPro3->setText(tr("DesktopSnow"));
+    recentPro3->setToolTip(tr("E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QT/DesktopSnow/DesktopSnow.pro"));
+    QListWidgetItem *recentPro4 = new QListWidgetItem;
+    recentPro4->setIcon(QIcon(":img/project.png"));
+    recentPro4->setText(tr("dictionary-reborn-master"));
+    recentPro4->setToolTip(tr("E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QT/dictionary-reborn-master/dictionary-reborn-master.pro"));
+    QListWidgetItem *recentPro5 = new QListWidgetItem;
+    recentPro5->setIcon(QIcon(":img/project.png"));
+    recentPro5->setText(tr("RadarSearch"));
+    recentPro5->setToolTip(tr("E:/MasterGraduateStudent/Laboratory/723/Project-10-23/RadarSearch/RadarSearch.pro"));
+    QListWidgetItem *recentPro6 = new QListWidgetItem;
+    recentPro6->setIcon(QIcon(":img/project.png"));
+    recentPro6->setText(tr("DesktopSnow"));
+    recentPro6->setToolTip(tr("E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QT/DesktopSnow/DesktopSnow.pro"));
+    QListWidgetItem *recentPro7 = new QListWidgetItem;
+    recentPro7->setIcon(QIcon(":img/project.png"));
+    recentPro7->setText(tr("dictionary-reborn-master"));
+    recentPro7->setToolTip(tr("E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QT/dictionary-reborn-master/dictionary-reborn-master.pro"));
+    QListWidgetItem *recentPro8 = new QListWidgetItem;
+    recentPro8->setIcon(QIcon(":img/project.png"));
+    recentPro8->setText(tr("RadarSearch"));
+    recentPro8->setToolTip(tr("E:/MasterGraduateStudent/Laboratory/723/Project-10-23/RadarSearch/RadarSearch.pro"));
+    QListWidgetItem *recentPro9 = new QListWidgetItem;
+    recentPro9->setIcon(QIcon(":img/project.png"));
+    recentPro9->setText(tr("Opengltest"));
+    recentPro9->setToolTip(tr("E:/MasterGraduateStudent/Laboratory/723/Project-10-23/Opengltest_QT5/Opengltest.pro"));
+    this->addItem(recentPro);
+    this->addItem(recentPro1);
+    this->addItem(recentPro2);
+    this->addItem(recentPro3);
+    this->addItem(recentPro4);
+    this->addItem(recentPro5);
+    this->addItem(recentPro6);
+    this->addItem(recentPro7);
+    this->addItem(recentPro8);
+    this->addItem(recentPro9);
+#endif
     // 换种方式，自定义list使用item和widget绑定
-    createListWidgetItem("Opengltest", "E:/MasterGraduateStudent/Laboratory/723/Project-10-23/Opengltest_QT5/Opengltest.pro");
-    createListWidgetItem("dictionary-reborn-master", "E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QT/dictionary-reborn-master/dictionary-reborn-master.pro");
-    createListWidgetItem("DesktopSnow", "E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QT/DesktopSnow/DesktopSnow.pro");
-    createListWidgetItem("QtDirectUI", "E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QtFramelessWindow-master");
-    createListWidgetItem("prototype_v0906", "build-prototype_v0906-Desktop_Qt_5_9_8_MinGW_32bit-Debug/debug");
-    createListWidgetItem("Opengltest", "E:/MasterGraduateStudent/Laboratory/723/Project-10-23/Opengltest_QT5/Opengltest.pro");
-    createListWidgetItem("dictionary-reborn-master", "E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QT/dictionary-reborn-master/dictionary-reborn-master.pro");
-    createListWidgetItem("DesktopSnow", "E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QT/DesktopSnow/DesktopSnow.pro");
-    createListWidgetItem("QtDirectUI", "E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QtFramelessWindow-master");
-    createListWidgetItem("prototype_v0906", "build-prototype_v0906-Desktop_Qt_5_9_8_MinGW_32bit-Debug/debug");
+    createListWidgetItem("Opengltest", "E:/MasterGraduateStudent/Laboratory/723/Project-10-23/Opengltest_QT5/Opengltest.dpsp");
+    createListWidgetItem("dictionary-reborn-master", "E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QT/dictionary-reborn-master/dictionary-reborn-master.dpsp");
+    createListWidgetItem("DesktopSnow", "E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QT/DesktopSnow/DesktopSnow.dpsp");
+    createListWidgetItem("QtDirectUI", "E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QtFramelessWindow-master/fk.dpsp");
+    createListWidgetItem("prototype_v0906", "build-prototype_v0906-Desktop_Qt_5_9_8_MinGW_32bit-Debug/debug/dsjid.dpsp");
+    createListWidgetItem("Opengltest", "E:/MasterGraduateStudent/Laboratory/723/Project-10-23/Opengltest_QT5/Opengltest.dpsp");
+    createListWidgetItem("dictionary-reborn-master", "E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QT/dictionary-reborn-master/dictionary-reborn-master.dpsp");
+    createListWidgetItem("DesktopSnow", "E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QT/DesktopSnow/DesktopSnow.dpsp");
+    createListWidgetItem("QtDirectUI", "E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QtFramelessWindow-master/QtFramelessWindow.dpsp");
+    createListWidgetItem("prototype_v0906", "build-prototype_v0906-Desktop_Qt_5_9_8_MinGW_32bit-Debug/debug/123.dpsp");
 }
 
 // This is an auto-generated comment.
@@ -133,8 +146,6 @@ void ProjectList::createListWidgetItem(QString name, QString desc)
     CloseButton->setStyleSheet("QPushButton{ margin-left:0px;margin-right:0px;border:none;color:white;background-image: url(:img/close.png);background-repeat:no-repeat;}"
                                "QPushButton:hover{color:#FFFFFF; background-image: url(:img/close-hover.png);background-repeat:no-repeat; }"
                                "QPushButton:pressed{ color:white; background-image: url(:img/close-press.png);background-repeat:no-repeat; }");
-    connect(CloseButton, SIGNAL(clicked()), this, SLOT(HideItem()));
-
     QVBoxLayout *verLayout = new QVBoxLayout;
     verLayout->setContentsMargins(0, 0, 0, 0);
     verLayout->setMargin(0);
@@ -161,36 +172,66 @@ void ProjectList::createListWidgetItem(QString name, QString desc)
     this->addItem(ITEM);
     widget->setSizeIncrement(size.width(), 40);
     this->setItemWidget(ITEM, widget);
+
+    // 点击的是哪个，传送到删除选项 FIXME 暂时无bug，但是打印信息不对，每次删除都重复调用hideItem()10次，
+    // 所有的item都是在函数中是local变量从堆中new出来的
+    connect(this, &ProjectList::thisItemCloseClicked, this, &ProjectList::HideItem);
+    // 关闭按钮
+    connect(CloseButton, &QPushButton::clicked, [=](){
+        // 先选中此选项，再手动删除
+        ITEM->setSelected(true);
+        emit thisItemCloseClicked(ITEM);
+    });
+
 }
 
-void ProjectList::HideItem()
+/**
+ * @brief ProjectList::HideItem 点击叉号关闭最近项目历史 一项
+ */
+void ProjectList::HideItem(QListWidgetItem *item)
 {
-    qDebug() << "关闭一条项目";
+
+    qDebug() << "关闭一条项目" << item;
     QList<QListWidgetItem*> list = this->selectedItems();
 
     if(list.size() == 0)
         return;
 
      QListWidgetItem* sel = list[0];
-    if (sel)
+    if (sel && sel == item)
     {
+        qDebug() << "删除item" << qobject_cast<QLabel *>(this->itemWidget(sel)->layout()->itemAt(1)->widget()->layout()->itemAt(0)->widget())->text();
         int r = this->row(sel);
-        this->takeItem(r);
+        delete this->takeItem(r);
+    }else{
+        qDebug() << "有问题";
     }
 }
 
-// 鼠标点击事件
+/**
+ * @brief ProjectList::mousePressEvent 打开某个历史记录工程
+ * @param event 鼠标点击list中的item的事件
+ */
 void ProjectList::mousePressEvent(QMouseEvent *event)
 {
-    QListWidget::mousePressEvent(event); // 如果不调用基类mousePressEvent，item被select会半天不响应,调用父类，让QSS起效，因为QSS基于父类QListWidget，子类就是子窗口，就是最上层窗口，是覆盖在父窗口上的，所以先于父窗口捕获消息
-    currentItem = this->itemAt(mapFromGlobal(QCursor::pos())); // 鼠标位置的Item，不管右键左键都获取
-    if(event->button()==Qt::LeftButton && currentItem!=nullptr) // 如果点击的左键
+    // 鼠标位置的Item，不管右键左键都获取
+    currentItem = this->itemAt(mapFromGlobal(QCursor::pos()));
+    currentItem->setSelected(true);
+    // 如果点击的左键
+    if(event->button()==Qt::LeftButton && currentItem!=nullptr)
     {
+        QWidget *w = this->itemWidget(currentItem);
         // 进入当前item对应的项目面板
-        qDebug() << "当前项目： " << currentItem->text();
-        MainWindowNew* mainnew = new MainWindowNew;
-        mainnew->show();
+        w->show();
+        QLabel *p_title = qobject_cast<QLabel*>(w->layout()->itemAt(1)->widget()->layout()->itemAt(0)->widget());
+        QLabel *p_path = qobject_cast<QLabel*>(w->layout()->itemAt(1)->widget()->layout()->itemAt(1)->widget());
+        qDebug() << "当前项目名字： " << p_title->text() << "当前项目路径：" << p_path->text();
+
+        // 打开窗口
+        MainWindow* main_w = new MainWindow(p_title->text(), p_path->text());
+        main_w->show();
     }
+    QListWidget::mousePressEvent(event); // 如果不调用基类mousePressEvent，item被select会半天不响应,调用父类，让QSS起效，因为QSS基于父类QListWidget，子类就是子窗口，就是最上层窗口，是覆盖在父窗口上的，所以先于父窗口捕获消息
 }
 
 //菜单事件，为了显示菜单，点击鼠标右键响应，鼠标点击事件mousePressEvent优先于contextMenuEvent

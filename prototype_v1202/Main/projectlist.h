@@ -21,9 +21,13 @@ public:
     QMenu *projectMenu;//点击人上的菜单
     QListWidgetItem *currentItem;//当前的项
     void createListWidgetItem(QString name, QString desc);
+
+signals:
+    void thisItemCloseClicked(QListWidgetItem *item);
+
 public slots:
     // 点击叉号的时候处理
-    void HideItem();
+    void HideItem(QListWidgetItem *item);
 private:
     Ui::ProjectList *ui;
 };

@@ -547,7 +547,7 @@ border:1px solid gray;
      <normaloff>:/img/openxml.png</normaloff>:/img/openxml.png</iconset>
    </property>
    <property name="text">
-    <string>打开xml</string>
+    <string>打开雷达编辑</string>
    </property>
   </action>
   <action name="actionsave">

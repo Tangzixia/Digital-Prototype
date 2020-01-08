@@ -10,9 +10,11 @@
 * @author        Antrn
 * @date          2019-08-21
 */
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(QString title, QString dpsp_path, QWidget *parent):
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    w_title(title),
+    p_dpsp_path(dpsp_path)
 {
     ui->setupUi(this);
     setWindowTitle("打开工程面板");
@@ -22,8 +24,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QAction *whatAction = QWhatsThis::createAction(this);
     ui->mainToolBar->addAction(whatAction);
 }
-
-
 
 MainWindow::~MainWindow()
 {
