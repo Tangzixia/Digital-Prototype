@@ -100,7 +100,7 @@ int Utils::saveFile(QWidget *qw, QString dirp, QString filename, RadarScene *sce
             QTextStream out(&file);
             scene->getDoc()->save(out, 4); //EncodingFromDocument
             file.close();
-            qDebug() << "保存路径为："+directory;
+            qDebug() << "雷达场景保存路径为："+directory;
             return 1;
         }
     }else{
@@ -146,6 +146,11 @@ int Utils::saveImage(int f, RadarScene *scene, QGraphicsView *view,  QString pat
     return 0;
 }
 
+/**
+ * @brief 没有就创建目录
+ * @param dirPath
+ * @return 成功与否
+ */
 QDir Utils::openDirOrCreate(QString dirPath)
 {
     QDir dir(dirPath);
@@ -441,5 +446,79 @@ bool Utils::createProject(QString p_name)
     else{
         return false;
     }
-    return true;
 }
+
+/**
+ * @brief 读取工程的.dpsp配置文件
+ * @param project_path 项目文件路径
+ * @param infomap 保存读取的工程信息
+ * @param compmap 工程中其他元素的信息
+ * @return 是否读取成功
+ */
+bool Utils::readProjectXml(QString project_path, QMap<QString, QString> &infomap, QMap<QString, QString> &compmap)
+{
+    QDomDocument doc;
+    if(!project_path.isEmpty()){
+        QFile file(project_path);
+        if(!file.open(QIODevice::ReadOnly)) {
+            qDebug() << "project的xml文件打开出错！";
+            file.close();
+            return false;
+        }
+        if(!doc.setContent(&file)){
+            file.close();
+            qDebug() << "project的xml文件读取失败";
+            return false;
+        }
+        file.close();
+        // project-root
+        QDomElement docElem = doc.documentElement();
+        // 第一个孩子是<information>
+//        QDomNode n = docElem.firstChild();
+        QDomNode itemNode = doc.elementsByTagName("information").at(0);
+        // 子孩子就是标签名为name、id
+        QDomNode m = itemNode.firstChild();
+        while(!m.isNull()){
+            std::string tagName = m.nodeName().toStdString();
+            if(m.isElement()){
+                // 每个元素item
+                QString content = m.toElement().text();
+                // 保存起来
+//                qDebug() << QString::fromStdString(tagName) << ": " << content;
+                infomap.insert(QString::fromStdString(tagName), content);
+            }
+            m = m.nextSibling();
+        }
+
+        // 大的标签是components的时候,小标签是radar,eccm,target
+        QDomNode m1 = doc.elementsByTagName("components").at(0).childNodes().at(0);
+        while(!m1.isNull()){
+            if(m1.isElement()){
+                QString text = m1.toElement().tagName();
+                QString id,name;
+                if(text.compare("radar")==0){
+                    id = m1.toElement().attribute("id");
+                    name = m1.toElement().attribute("name");
+                    qDebug() << "radar" << id << name;
+
+                }else if(text.compare("eccm")==0){
+                    qDebug() << "eccm";
+                }else if(text.compare("target")==0){
+                    qDebug() << "target";
+                }
+                // 测试时，当遍历到eccm和target时，id和name都为""
+                if(!id.isEmpty() && !name.isEmpty()){
+                    // 插入后会根据id的英文字母自动排序，所以存储的顺序不是插入顺序
+                    compmap.insert(id, name);
+                }
+            }
+            m1 = m1.nextSibling();
+        }
+        return true;
+    }else {
+        // 文件名为空，啥也没选，提示
+        Utils::alert(QApplication::desktop()->screen()->rect(), "请选择文件!");
+        return false;
+    }
+}
+

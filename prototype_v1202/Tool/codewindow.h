@@ -1,6 +1,7 @@
 #ifndef CODEWINDOW_H
 #define CODEWINDOW_H
 
+#include <QGraphicsItem>
 #include <QListWidgetItem>
 #include <QMainWindow>
 
@@ -13,7 +14,7 @@ class CodeWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit CodeWindow(QWidget *parent = nullptr, QListWidgetItem *item=nullptr);
+    explicit CodeWindow(QWidget *parent = nullptr, QListWidgetItem *item=nullptr, QGraphicsItem *gitem=nullptr);
     bool eventFilter(QObject *,QEvent *event)override;
     void newFile(const QString &fileName);
     bool loadFile(const QString &fileName);

@@ -54,7 +54,7 @@ bool AlgoCodeEdit::loadFile(const QString &fileName)
 {
     //新建QFile对象
     QFile file(fileName);
-    if(!file.open(QFile::ReadOnly | QFile::Text)){
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
         // 在主窗口中间显示
 //        int x =this->x() + (this->width() - aboutdialog.width()) / 2;
 //        int y =this->y() + (this->height() - aboutdialog.height()) / 2;
@@ -94,7 +94,7 @@ bool AlgoCodeEdit::saveAs()
 bool AlgoCodeEdit::saveFile(const QString &fileName)
 {
     QFile file(fileName);
-    if(!file.open(QFile::WriteOnly | QFile::Text)){
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Text)){
         QMessageBox::warning(this, tr("多文档编辑器"), tr("无法写入文件 %1:\n%2.").arg(fileName).arg(file.errorString()));
         return false;
     }

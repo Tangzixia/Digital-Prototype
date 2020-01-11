@@ -10,7 +10,6 @@
 #include <radarscene.h>
 
 
-
 // This is available in all editors.
 /**
 * @projectName   prototype_v0906
@@ -32,6 +31,7 @@ public:
     static bool deleteXmlFileByName(QString name, QString id);
     static bool generateIcon(QString name, QString eQuip_id);
     static bool createProject(QString p_name);
+    static bool readProjectXml(QString project_path, QMap<QString, QString> &infomap, QMap<QString, QString> &compmap);
 };
 
 #endif // UTILS_H

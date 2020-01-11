@@ -123,6 +123,9 @@ public slots:
      // 为雷达组件生成icon图标
      void generateIcon(QString icon_name);
 
+     // 编辑场景中的算法组件时候的槽函数
+     void codeEditSlot();
+
 private:
     QPushButton *openConsole;
     // 名字
@@ -189,6 +192,7 @@ private:
     QAction *addAction;
     QAction *deleteAction;
     QAction *propertyAction;
+    QAction *codeEditAction;
 
     QAction *toFrontAction;
     QAction *sendBackAction;

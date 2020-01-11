@@ -165,7 +165,6 @@ FORMS += \
     Tool/echoeswave.ui \
     Tool/codewindow.ui \
     Tool/simdatagenwidget.ui
-#    Tool/codewindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

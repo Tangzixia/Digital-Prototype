@@ -25,43 +25,58 @@ DragListWidget::DragListWidget(QWidget *parent ) : QListWidget(parent)
     //设置拖放模式为移动项目，否则为复制项目
     this->setDragDropMode(QAbstractItemView::InternalMove);
     this->setAttribute(Qt::WA_PendingMoveEvent);
+
+#if 0
     //旧代码
-{
-//    this->addItem(tr("新建雷达"));
-//    addRadarButton = this->item(0);
-//    addRadarButton->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-////    addRadarButton->setBackgroundColor(QColor(211,211,211));
-//    addRadarButton->setFlags(Qt::NoItemFlags);
-//    addRadarButton->setIcon(QIcon(":/img/newradar.png"));
+    this->addItem(tr("新建雷达"));
+    addRadarButton = this->item(0);
+    addRadarButton->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    addRadarButton->setBackgroundColor(QColor(211,211,211));
+    addRadarButton->setFlags(Qt::NoItemFlags);
+    addRadarButton->setIcon(QIcon(":/img/newradar.png"));
+#endif
+    // 加入新建雷达按钮项
+    listItem_add("雷达");
+    // 修改名称后失去焦点生效
+    connect(this, &DragListWidget::itemChanged,this,&DragListWidget::renameSlot);
 }
-    //    加入新建雷达按钮项
-    this->listItem_add("雷达");
-//    设置初始尺寸
-   // this->resize(250,200);
-    //修改名称后失去焦点生效
-     connect(this, &DragListWidget::itemChanged,this,&DragListWidget::renameSlot);
-}
-//添加拖拽项，使用此方法会动态resize整个widget
+
+
+/**
+ * @brief 添加一个item
+ * @param item
+ */
 void DragListWidget::addDragItem(QListWidgetItem*item){
-
-    int count = this->count();
-    int height = count*40;
-    int minHeight = 150;
-    int maxHeight = 400;
-    if(height < minHeight){
-        height = minHeight;
-    }
-    else if(height > maxHeight){
-        height = maxHeight;
-    }
-    this->resize(240,height);
+// 这些都没用
+//    int count = this->count();
+//    int height = count*40;
+//    int minHeight = 150;
+//    int maxHeight = 400;
+//    if(height < minHeight){
+//        height = minHeight;
+//    }
+//    else if(height > maxHeight){
+//        height = maxHeight;
+//    }
+//    this->resize(240,height);
+//    this->addItem(item);
+//    this->setVisible(false);
+//    this->setVisible(true);
     this->addItem(item);
-    this->setVisible(false);
-    this->setVisible(true);
-    emit repaintWidget();
-
 }
-//添加拖拽项，使用此方法会动态resize整个widget
+
+/**
+ * @brief 向类终对象插入键值对
+ * @return
+ */
+void DragListWidget::insert2id_item(QString id, QListWidgetItem *item)
+{
+    this->id_item.insert(id, item);
+}
+
+#if 0
+// 最古老的代码，用不到
+// 添加拖拽项，使用此方法会动态resize整个widget
 void DragListWidget::addDragItem(const QString &label){
     int count = this->count();
     int height = count*40;
@@ -78,9 +93,8 @@ void DragListWidget::addDragItem(const QString &label){
 //    我发现隐藏显示以后，尺寸会变成layout内的默认尺寸，相当于 resize无效，这个方法废了喝喝
     this->setVisible(false);
     this->setVisible(true);
-    emit repaintWidget();
-
 }
+#endif
 
 void DragListWidget::startDrag(Qt::DropActions /*supportedActions*/)
 {
@@ -129,23 +143,22 @@ void DragListWidget::mousePressEvent(QMouseEvent *event)
         //保留被拖拽的项.
         m_dragItem = item;
 
-//        老代码
-        {
-//        如果点击项是新建项则新建雷达
-
-//        if(m_dragItem == addRadarButton){
-//            int count = this->count();
-//            QString newname = "雷达"+QString::number(count);
-//            QListWidgetItem *item1 = new QListWidgetItem();
-//            item1->setIcon(QIcon(":/img/radar.png"));
-//            item1->setText(tr(newname.toUtf8().data()));
-//            //这里的用户角色存储用户数据
-//            item1->setData(Qt::UserRole, QPixmap(":/img/radar.png"));
-//            item1->setData(Qt::UserRole+1, newname);
-//            item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled);
-//            this->addDragItem(item1);
-//        }
+#if 0
+        // 老代码
+        // 如果点击项是新建项则新建雷达
+        if(m_dragItem == addRadarButton){
+            int count = this->count();
+            QString newname = "雷达"+QString::number(count);
+            QListWidgetItem *item1 = new QListWidgetItem();
+            item1->setIcon(QIcon(":/img/radar.png"));
+            item1->setText(tr(newname.toUtf8().data()));
+            //这里的用户角色存储用户数据
+            item1->setData(Qt::UserRole, QPixmap(":/img/radar.png"));
+            item1->setData(Qt::UserRole+1, newname);
+            item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled);
+            this->addDragItem(item1);
         }
+#endif
     }
 
     if (event->button() == Qt::RightButton&&item!=this->item(0)){
@@ -194,6 +207,10 @@ void DragListWidget:: mouseDoubleClickEvent(QMouseEvent *event){
     QListWidget::mouseDoubleClickEvent(event);
 }
 
+/**
+ * @brief 重命名的处理方法
+ * @param item
+ */
 void DragListWidget::renameSlot(QListWidgetItem* item)
 {
     //修改名称的过程会触发两次这个slot，所以第一次用来存初原来的名字，第二次用来改名字
@@ -222,6 +239,12 @@ void DragListWidget::renameSlot(QListWidgetItem* item)
     }else {forRename.ifEnableChange=true;}
 }
 
+/**
+ * @brief 各种对于列表的操作集合入此方法
+ * @param operateType
+ * @param id
+ * @param newName
+ */
 void DragListWidget::itemOperateSlot(Menu_iteamOperation::OperateType operateType, QString id,QString newName){
         QListWidgetItem *item= id_item.find(id).value();
         //触发就选中
@@ -309,14 +332,20 @@ void DragListWidget::itemOperateSlot(Menu_iteamOperation::OperateType operateTyp
      }
 }
 
+/**
+ * @brief 左边dock的list列表增加item
+ * @param name
+ */
 void DragListWidget::listItem_add(QString name){
+    // 添加最上方的添加按钮
     QListWidgetItem *listItem_top=new QListWidgetItem();
     listItem_top->setFlags(Qt::NoItemFlags);
     listItem_top->setWhatsThis("添加更多的"+name+"组件");
     listItem_top->setText("添加"+name);
     listItem_top->setIcon(QIcon(":/img/newradar.png"));
     this->addItem(listItem_top);
-    connect(this,&QListWidget::itemClicked,[=](QListWidgetItem* action_item){
+    // 定义信号和槽
+    connect(this, &QListWidget::itemClicked,[=](QListWidgetItem* action_item){
         if (action_item->text()=="添加"+name){
 //            qDebug()<<"触发新建item了。";
             QMessageBox msgBox;
@@ -343,6 +372,10 @@ void DragListWidget::listItem_add(QString name){
     });
 }
 
+/**
+ * @brief 朝左边list列表添加元素
+ * @param name
+ */
 void DragListWidget::add_listItem(QString name) {
     QString path=":/img/radar.png";
     // 有必要枚举   待修缮
@@ -351,6 +384,7 @@ void DragListWidget::add_listItem(QString name) {
     else if(name=="目标环境")path=":/img/object.png";
     //新建item，添加到左边的listwidget
     QString newName = name+QString::number(id_inde++);
+
     while(this->id_item.contains(newName)){
         //名称已经存在，换一个
         newName = name+QString::number(id_inde++);
@@ -369,6 +403,20 @@ void DragListWidget::add_listItem(QString name) {
     qDebug()<<"additem了,name:"<<newName;
 }
 
+QString DragListWidget::getItemType() const
+{
+    return itemType;
+}
+
+QMap<QString, QListWidgetItem *> DragListWidget::getId_item() const
+{
+    return id_item;
+}
+
+/**
+ * @brief 关闭主窗口时会检查一下现在这个
+ * @return
+ */
 bool DragListWidget::closeDragListWidget(){
      if(this->newEditWindowList.isEmpty())
         return true;
@@ -378,8 +426,8 @@ bool DragListWidget::closeDragListWidget(){
         while (i!=newEditWindowList.end()) {
            i.value()->showNormal();
            i.value()->raise();
-        i++;
-       }
+           i++;
+        }
        return false;
      }
 }

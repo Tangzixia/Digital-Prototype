@@ -22,17 +22,21 @@ class DragListWidget : public QListWidget
     Q_OBJECT
 public:
     explicit DragListWidget(QWidget *parent = nullptr);
+    // 没用
     void addDragItem(QListWidgetItem*item);
-    void addDragItem(const QString &label);
+    // 往id_item中插入
+    void insert2id_item(QString, QListWidgetItem*);
+
     bool closeDragListWidget();
     static QString puzzleMimeType() {
-     return QStringLiteral("image/x-module-piece");
-
+        return QStringLiteral("image/x-module-piece");
     }
-//没用到
+
+    QMap<QString, QListWidgetItem *> getId_item() const;
+
+    QString getItemType() const;
+
 signals:
-    //没用到
-    void repaintWidget();
     void itemOperate(Menu_iteamOperation::OperateType,QString,QString newName="");
 protected:
     //开始拖拽
@@ -63,15 +67,17 @@ private:
 
     //是否新建了edit窗口
    QMap<QString,MainWindow_Radar*> newEditWindowList;
-  //保存前一个被操作的item信息（名字 index）
+   //保存前一个被操作的item信息（名字 index）
    struct forRename
            {
                 QString preName;
                 int preIndex=-1;
                 bool ifEnableChange=true;
            }forRename;
+
     //今后传值方便
     QString itemType="雷达";
+
 public slots:
 //操作item
     void itemOperateSlot(Menu_iteamOperation::OperateType, QString ,QString newName="");

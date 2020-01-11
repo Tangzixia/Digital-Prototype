@@ -154,7 +154,7 @@
          </rect>
         </property>
         <attribute name="icon">
-         <iconset resource="../Res/res.qrc">
+         <iconset>
           <normaloff>:/img/radar.png</normaloff>:/img/radar.png</iconset>
         </attribute>
         <attribute name="label">
@@ -198,7 +198,7 @@
          </rect>
         </property>
         <attribute name="icon">
-         <iconset resource="../Res/res.qrc">
+         <iconset>
           <normaloff>:/img/ecmdemo.jpg</normaloff>:/img/ecmdemo.jpg</iconset>
         </attribute>
         <attribute name="label">
@@ -235,7 +235,7 @@
          </rect>
         </property>
         <attribute name="icon">
-         <iconset resource="../Res/res.qrc">
+         <iconset>
           <normaloff>:/img/input.png</normaloff>:/img/input.png</iconset>
         </attribute>
         <attribute name="label">
@@ -309,25 +309,31 @@
   </widget>
   <action name="actionnewFile">
    <property name="icon">
-    <iconset resource="../Res/res.qrc">
+    <iconset>
      <normaloff>:/img/new.png</normaloff>:/img/new.png</iconset>
    </property>
    <property name="text">
-    <string>新建文件</string>
+    <string>新建工程</string>
+   </property>
+   <property name="toolTip">
+    <string>新建工程</string>
    </property>
   </action>
   <action name="actionsaveFile">
    <property name="icon">
-    <iconset resource="../Res/res.qrc">
+    <iconset>
      <normaloff>:/img/save.png</normaloff>:/img/save.png</iconset>
    </property>
    <property name="text">
-    <string>保存文件</string>
+    <string>保存工程</string>
+   </property>
+   <property name="toolTip">
+    <string>保存工程</string>
    </property>
   </action>
   <action name="actionabout_DPSP">
    <property name="icon">
-    <iconset resource="../Res/res.qrc">
+    <iconset>
      <normaloff>:/img/about.png</normaloff>:/img/about.png</iconset>
    </property>
    <property name="text">
@@ -336,7 +342,7 @@
   </action>
   <action name="actionabout_us">
    <property name="icon">
-    <iconset resource="../Res/res.qrc">
+    <iconset>
      <normaloff>:/img/aboutUs.png</normaloff>:/img/aboutUs.png</iconset>
    </property>
    <property name="text">
@@ -345,7 +351,7 @@
   </action>
   <action name="actionexit">
    <property name="icon">
-    <iconset resource="../Res/res.qrc">
+    <iconset>
      <normaloff>:/img/exit.png</normaloff>:/img/exit.png</iconset>
    </property>
    <property name="text">
@@ -360,7 +366,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../Res/res.qrc">
+    <iconset>
      <normaloff>:/img/compXmlDock.png</normaloff>:/img/compXmlDock.png</iconset>
    </property>
    <property name="text">
@@ -375,7 +381,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="../Res/res.qrc">
+    <iconset>
      <normaloff>:/img/property.png</normaloff>:/img/property.png</iconset>
    </property>
    <property name="text">
@@ -395,8 +401,6 @@
    <header location="global">ecmdraglistwidget.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../Res/res.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

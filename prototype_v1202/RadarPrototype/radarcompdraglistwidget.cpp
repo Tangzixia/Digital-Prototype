@@ -348,6 +348,7 @@ void RadarCompDraglistWidget::mousePressEvent(QMouseEvent *event)
             msgBox.addButton(tr("导入"), QMessageBox::ActionRole);
             msgBox.addButton(tr("取消"), QMessageBox::RejectRole);
             msgBox.setDefaultButton(newButton);
+            // 消除Application output中的geometry提示
             msgBox.move ((QApplication::desktop()->width() - msgBox.width())/2,(QApplication::desktop()->height() - msgBox.height())/2);
             int button_index=msgBox.exec();
             switch (button_index) {

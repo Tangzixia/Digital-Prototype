@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-root>
+	<information>
+		<name>pro1</name>
+		<id>{51b34762-3f1f-d4b2-adfe-82b7e254f3a9}</id>
+	</information>
+	<components>
+		<radar id="radarsjdajsdjsbdjs" name="雷达1"></radar>
+		<radar id="radardksnfdjsfbjdq" name="雷达2"></radar>
+		<radar id="radarorikjgmrkvfdd" name="雷达3"></radar>
+	    <eccm></eccm>
+		<target></target>
+	</components>>
+</project-root>

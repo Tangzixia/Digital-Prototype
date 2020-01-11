@@ -21,7 +21,6 @@ MainWindowNew::MainWindowNew(QWidget *parent) :
     ui->setupUi(this);
     // 设置对话框icon
     this->setWindowIcon(QIcon(":/img/fangzhen.png"));
-//    this->setStyleSheet("padding:0;margin:0");
     this->setAttribute(Qt::WA_DeleteOnClose);
     graphicsScene=new MainWindowNewScene();
     // xy坐标标签
@@ -36,7 +35,7 @@ MainWindowNew::MainWindowNew(QWidget *parent) :
     ui->graphicsView->setAcceptDrops(true);
 //    默认 定位到雷达
     ui->toolBox_left->setCurrentIndex(0);
-//不设置大小会出现拖动释放后位置跳变
+    //不设置大小会出现拖动释放后位置跳变
     graphicsScene->setSceneRect(QRectF(0, 0, 5000, 5000));
 
     connect(graphicsScene,SIGNAL(signal_xy(double,double)),this,SLOT(xy_show(double,double)));
@@ -44,9 +43,11 @@ MainWindowNew::MainWindowNew(QWidget *parent) :
     this->setWindowTitle(tr("新建工程"));
     //可以设置在视图上使用鼠标拖出橡皮筋框选择图形项
     this->ui->graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
+
 //  接收来之左边item的信号
     connect(this->ui->listWidget_rader,&DragListWidget::itemOperate,this,&MainWindowNew::itemOperateSlot);
-//  接收来之scene的item的信号
+
+    // 接收来之scene的item的信号
     connect (graphicsScene,&MainWindowNewScene::itemOperate,[=](Menu_iteamOperation::OperateType operate,QString id){
         this->itemOperateSlot(operate,id);
     });
@@ -59,6 +60,10 @@ MainWindowNew::~MainWindowNew()
     delete ui;
 }
 
+/**
+ * @brief 窗口关闭事件
+ * @param event
+ */
 void MainWindowNew::closeEvent(QCloseEvent *event)
 {
 //    for(MainWindow_Radar *m : main_radar_list){
@@ -102,8 +107,9 @@ void MainWindowNew::on_actio_leftDock_triggered()
         ui->dockWidget_left->hide();
     }
 }
+
 //下发操作指令
-void MainWindowNew::itemOperateSlot(Menu_iteamOperation::OperateType operateType, QString id,QString newName){
+void MainWindowNew::itemOperateSlot(Menu_iteamOperation::OperateType operateType, QString id, QString newName){
     qDebug()<<"mainWindowsNew::"<<operateType<<","<<id<<"new name:"<<newName;
     if(operateType==Menu_iteamOperation::del){
         this->graphicsScene->itemOperateSlot(Menu_iteamOperation::del,id);
@@ -130,6 +136,7 @@ void MainWindowNew::itemOperateSlot(Menu_iteamOperation::OperateType operateType
             ui->listWidget_rader->itemOperateSlot(Menu_iteamOperation::ashow,id,newName);
         }
  }
+
   //属性窗口内容显示
  void MainWindowNew::propertyContent(QString id){
      //读取XMl写入窗口
@@ -137,6 +144,10 @@ void MainWindowNew::itemOperateSlot(Menu_iteamOperation::OperateType operateType
      //
  }
 
+ /**
+  * @brief MainWindowNew::on_actionProperty_triggered 显示属性dock面板
+  * @param checked
+  */
  void MainWindowNew::on_actionProperty_triggered(bool checked)
 {
     if(checked){
@@ -144,4 +155,20 @@ void MainWindowNew::itemOperateSlot(Menu_iteamOperation::OperateType operateType
     }else{
         ui->dockWidget_property->hide();
     }
+}
+
+ /**
+  * @brief 保存工程.dpsp
+  */
+void MainWindowNew::on_actionsaveFile_triggered()
+{
+    // TODO 保存工程包含几个radar，几个eccm，几个target，各自的属性以及位置等信息到.dpsp文件中
+}
+
+/**
+ * @brief 用户想要在此窗口中另外新建一个工程
+ */
+void MainWindowNew::on_actionnewFile_triggered()
+{
+    // TODO 新建.dpsp工程文件，弹出另外一个窗口
 }

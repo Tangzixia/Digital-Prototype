@@ -191,7 +191,7 @@
         <enum>QFrame::Plain</enum>
        </property>
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <property name="tabSpacing">
         <number>6</number>
@@ -229,7 +229,14 @@
           <number>0</number>
          </property>
          <item row="0" column="0">
-          <widget class="QListWidget" name="listWidget_rader"/>
+          <widget class="DragListWidget" name="listWidget_rader">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -542,6 +549,13 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>DragListWidget</class>
+   <extends>QListWidget</extends>
+   <header location="global">draglistwidget.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>graphicsView</tabstop>
  </tabstops>

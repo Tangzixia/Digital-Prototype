@@ -23,6 +23,7 @@
 #include <QInputDialog>
 #include <QPlainTextEdit>
 #include <QSizePolicy>
+#include <codewindow.h>
 #include <simdatagenwidget.h>
 #include "leftnavi.h"
 //const int InsertTextButton = 10;
@@ -410,9 +411,10 @@ void MainWindow_Radar::toShowPropertiesDock(AlgorithmComp ac, bool isReadonly)
     // 当可编辑的时候
     if(!isReadonly){
         QPushButton *Ok = new QPushButton("确定");
-        QPushButton *Cancel = new QPushButton("取消"); // 点击取消好像没反应
+        //QPushButton *Cancel = new QPushButton(""); // 点击取消不用有反应
+        QLabel *cancel = new QLabel;
 
-        fl->addRow(Ok, Cancel);
+        fl->addRow(Ok, cancel);
         AlgorithmComp *acc = new AlgorithmComp;
         // 按下ok的时候，将上述修改后的属性进行更新，更新算法Algorithm，加入到scene的map中，并新建和重写文件
         connect(Ok, &QPushButton::clicked, [=](){
@@ -424,7 +426,7 @@ void MainWindow_Radar::toShowPropertiesDock(AlgorithmComp ac, bool isReadonly)
             QMap<QString, QMap<QString, QString> >pmap;  //存放一条参数的map
             QMap<QString, QString> m; // 存放参数具体内容的map
             QString name; // 参数名
-            // 遍历表格
+            // 遍历表格,-2是因为最后两个widget是QPushButton和QLabel
             for(int i = 0; i< fl->layout()->count()-2; i+=2){
                 // 第一部分，描述词
                 QLabel *l =qobject_cast<QLabel *>(fl->itemAt(i)->widget());
@@ -568,6 +570,9 @@ void MainWindow_Radar::itemInserted(DiagramItem *)
 }
 
 
+/**
+ * @brief MainWindow_Radar::textInserted 插入文字处理函数
+ */
 void MainWindow_Radar::textInserted(QGraphicsTextItem *)
 {
     isSave = false;
@@ -579,7 +584,10 @@ void MainWindow_Radar::textInserted(QGraphicsTextItem *)
     scene->setMode(RadarScene::Mode(pointerTypeGroup->checkedId()));
 }
 
-// 删除doc中的箭头和图形项
+/**
+ * @brief MainWindow_Radar::deleteItemArrowById 删除doc中的箭头和图形项
+ * @param id item组件的id
+ */
 void MainWindow_Radar::deleteItemArrowById(QString id)
 {
     QDomNode itemNode = scene->getDoc()->elementsByTagName("Items").at(0);
@@ -628,6 +636,10 @@ void MainWindow_Radar::deleteItemArrowById(QString id)
     }
 }
 
+/**
+ * @brief MainWindow_Radar::deleteArrowById 通过id删除箭头
+ * @param id 箭头的id
+ */
 void MainWindow_Radar::deleteArrowById(QString id)
 {
     QDomNode arrowNode = scene->getDoc()->elementsByTagName("Arrs").at(0);
@@ -697,6 +709,7 @@ void MainWindow_Radar::copyItem()
 {
     QGraphicsItem *item_ =  scene->selectedItems().first();
     DiagramItem *ditem =  qgraphicsitem_cast<DiagramItem *>(item_);
+
     // 从当前组件复制
     AlgorithmComp acp =  scene->getScene_comps().take(ditem->itemSuuid);
     scene->receiveAlgo4listWidget(acp);
@@ -903,6 +916,9 @@ void MainWindow_Radar::bringToFront()
     qDebug() << "xml由于组件上移一层而改变";
 }
 
+/**
+ * @brief MainWindow_Radar::sendToBack 放置到面板后面
+ */
 void MainWindow_Radar::sendToBack()
 {
     if (scene->selectedItems().isEmpty())
@@ -934,48 +950,50 @@ void MainWindow_Radar::sendToBack()
 */
 void MainWindow_Radar::createCompBox()
 {
-//    init5Comp();
     loadAllComps();
 
+#if 0
+    init5Comp();
     //-----------旧版使用buttonGroup-----------------------
-//    buttonGroup = new QButtonGroup(ui->dockWidgetContents);
-//    buttonGroup->setExclusive(true);
+    buttonGroup = new QButtonGroup(ui->dockWidgetContents);
+    buttonGroup->setExclusive(true);
     //自定义的slot函数：与graphics交互的关键
-//    connect(buttonGroup, SIGNAL(buttonClicked(int)),
-//            this, SLOT(buttonGroupClicked(int)));
-//    QGridLayout *layout = new QGridLayout;
+    connect(buttonGroup, SIGNAL(buttonClicked(int)),
+            this, SLOT(buttonGroupClicked(int)));
+    QGridLayout *layout = new QGridLayout;
     // TODO 支持点击修改组件名
-//    layout->addWidget(createCellWidget(tr("脉冲压缩"), DiagramItem::Comp1), 0, 0); // Component_1 0,0
-//    layout->addWidget(createCellWidget(tr("恒虚警率"), DiagramItem::Comp2), 0, 1); // Component_2 0,1
-//    layout->addWidget(createCellWidget(tr("输入"), DiagramItem::Comp3), 1, 1); // Component_3 1,1
-//    layout->addWidget(createCellWidget(tr("动目标检测"), DiagramItem::Comp4), 1, 0); // Component_4 1,0
-//    layout->addWidget(createCellWidget(tr("输出"), DiagramItem::Comp5), 2, 0); // Component_5 2,0
+    layout->addWidget(createCellWidget(tr("脉冲压缩"), DiagramItem::Comp1), 0, 0); // Component_1 0,0
+    layout->addWidget(createCellWidget(tr("恒虚警率"), DiagramItem::Comp2), 0, 1); // Component_2 0,1
+    layout->addWidget(createCellWidget(tr("输入"), DiagramItem::Comp3), 1, 1); // Component_3 1,1
+    layout->addWidget(createCellWidget(tr("动目标检测"), DiagramItem::Comp4), 1, 0); // Component_4 1,0
+    layout->addWidget(createCellWidget(tr("输出"), DiagramItem::Comp5), 2, 0); // Component_5 2,0
     // 文字按钮，在场景添加文字，暂时保留
-//    QToolButton *textButton = new QToolButton;
-//    textButton->setCheckable(true);
-//    buttonGroup->addButton(textButton, InsertTextButton);
-//    textButton->setIcon(QIcon(QPixmap(":/img/textpointer.png")));
-//    textButton->setIconSize(QSize(50, 50));
-//    QGridLayout *textLayout = new QGridLayout;
-//    textLayout->addWidget(textButton, 0, 0, Qt::AlignHCenter);
+    QToolButton *textButton = new QToolButton;
+    textButton->setCheckable(true);
+    buttonGroup->addButton(textButton, InsertTextButton);
+    textButton->setIcon(QIcon(QPixmap(":/img/textpointer.png")));
+    textButton->setIconSize(QSize(50, 50));
+    QGridLayout *textLayout = new QGridLayout;
+    textLayout->addWidget(textButton, 0, 0, Qt::AlignHCenter);
     //1,0表示1行0列 TODO 文字
-//    ClickableLabel *text = new ClickableLabel(tr("Text"));
+    ClickableLabel *text = new ClickableLabel(tr("Text"));
     // 能被选中
-//    connect(text, &ClickableLabel::lostFocus, text, &ClickableLabel::labelLostFocus);
-//    text->setTextInteractionFlags(Qt::TextSelectableByMouse);
-//    textLayout->addWidget(text, 1, 0, Qt::AlignCenter);
+    connect(text, &ClickableLabel::lostFocus, text, &ClickableLabel::labelLostFocus);
+    text->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    textLayout->addWidget(text, 1, 0, Qt::AlignCenter);
 
-//    QWidget *textWidget = new QWidget;
-//    textWidget->setLayout(textLayout);
-//    layout->addWidget(textWidget, 2, 1); // 2,1
+    QWidget *textWidget = new QWidget;
+    textWidget->setLayout(textLayout);
+    layout->addWidget(textWidget, 2, 1); // 2,1
 
     //设置行和列的比例
-//    layout->setRowStretch(3, 10);
-//    layout->setColumnStretch(2, 10);
+    layout->setRowStretch(3, 10);
+    layout->setColumnStretch(2, 10);
 
-//    QWidget *itemWidget = new QWidget;
-//    itemWidget->setLayout(layout);
+    QWidget *itemWidget = new QWidget;
+    itemWidget->setLayout(layout);
 
+#endif
     //______________________背景颜色---------------------------
 
     backgroundButtonGroup = new QButtonGroup(ui->dockWidgetContents);
@@ -1061,6 +1079,9 @@ void MainWindow_Radar::createCompBox()
     ui->dockCompList->setWidget(toolBox);
 }
 
+/**
+ * @brief MainWindow_Radar::createActions 新建动作对象
+ */
 void MainWindow_Radar::createActions()
 {
     toFrontAction = new QAction(QIcon(":/img/bringtofront.png"), tr("前移一层"), this);
@@ -1089,6 +1110,10 @@ void MainWindow_Radar::createActions()
     add2CompLibraryAction->setStatusTip(tr("将此组件添加到组件库"));
     connect(add2CompLibraryAction, SIGNAL(triggered()), this, SLOT(addItem2Lib()));
 
+    codeEditAction = new QAction(QIcon(":/img/code.png"), tr("编辑算法代码"), this);
+//    codeEditAction->setShortcut(tr("Ctrl+E"));
+    codeEditAction->setStatusTip(tr("编辑此组件的代码"));
+    connect(codeEditAction, SIGNAL(triggered()), this, SLOT(codeEditSlot()));
 
     // 查看属性动作
     propertyAction = new QAction(QIcon(":/img/property.png"), tr("输入输出"), this);
@@ -1146,6 +1171,8 @@ void MainWindow_Radar::createMenus()
     itemMenu->addSeparator();
     itemMenu->addAction(copyAction);
     itemMenu->addAction(add2CompLibraryAction);
+    itemMenu->addAction(codeEditAction);
+
 
     // 比例条
     progressBar=new QProgressBar(this);
@@ -2016,6 +2043,15 @@ void MainWindow_Radar::receiveItemsid2showProperties(QString sid)
 void MainWindow_Radar::generateIcon(QString icon_name)
 {
     Utils::generateIcon(icon_name, getEquip_id());
+}
+
+/**
+ * @brief MainWindow_Radar::codeEditSlot 编辑场景中组件代码
+ */
+void MainWindow_Radar::codeEditSlot()
+{
+    CodeWindow *cw = new CodeWindow(this, nullptr, scene->selectedItems().first());
+    cw->show();
 }
 
 void MainWindow_Radar::on_tabWidget_2_destroyed()

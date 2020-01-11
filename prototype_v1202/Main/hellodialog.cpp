@@ -17,7 +17,7 @@ HelloDialog::HelloDialog(QWidget *parent) :
     ui->setupUi(this);
     //应用样式 apply the qss style
     QFile file(":/qss/qss_hellodialog.qss");
-    file.open(QFile::ReadOnly);
+    file.open(QIODevice::ReadOnly);
     QTextStream filetext(&file);
     QString stylesheet = filetext.readAll();
 //    qDebug() << stylesheet;
@@ -102,11 +102,14 @@ void HelloDialog::on_pushButton_open_clicked()
 {
 //    QProcess process;
 //    process.startDetached(QStringLiteral("explorer.exe /select,\"E:\\Desktop\\mao.txt\""));
-    QString pname = QFileDialog::getOpenFileName(nullptr, tr("打开工程.rad"), QDir::currentPath()+"/radar/", "Project Files(*.dpsp)");
-    qDebug() << "打开工程" << pname;
-//    this->main = new MainWindow();
-//    this->main->show();
-//    this->close();
+    QString ppath = QFileDialog::getOpenFileName(nullptr, tr("打开工程.dpsp"), QDir::currentPath()+"/project/", "Project Files(*.dpsp)");
+    if(!ppath.isEmpty()){
+        QString title = ppath.split("/").takeAt(ppath.split("/").length()-2);
+        qDebug() << "打开工程" << ppath.split("/").last();
+        this->main = new MainWindow(title, ppath);
+        this->main->show();
+        this->close();
+    }
 }
 
 /**

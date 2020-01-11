@@ -79,7 +79,7 @@ void SimDataGenWidget::on_pushButton_load_clicked()
     QString path = "./echo/res"+QTime::currentTime().toString()+".txt";
     path= ui->lineEdit_path->text();
     QFile file(path);
-    if(!file.open(QFile::ReadOnly)){
+    if(!file.open(QIODevice::ReadOnly)){
         QMessageBox::warning(this, "文件名设置出错！", "请检查文件名的格式是否正确！");
         return;
     }

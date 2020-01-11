@@ -1,11 +1,13 @@
 #include "codewindow.h"
 #include "ui_codewindow.h"
+#include "utils.h"
 #include <QDebug>
 #include <QDir>
 #include <QFileDialog>
 #include <QPushButton>
 #include <QListWidgetItem>
 #include <QMessageBox>
+#include <diagramitem.h>
 
 
 // This is an auto-generated comment.
@@ -21,7 +23,7 @@
  * @param parent 父类
  * @param item 传入的左边的算法组件列表的对象
  */
-CodeWindow::CodeWindow(QWidget *parent, QListWidgetItem *item) :
+CodeWindow::CodeWindow(QWidget *parent, QListWidgetItem *litem, QGraphicsItem *gitem) :
     QMainWindow(parent),
     ui(new Ui::CodeWindow)
 {
@@ -32,22 +34,33 @@ CodeWindow::CodeWindow(QWidget *parent, QListWidgetItem *item) :
     ui->plainTextEdit->setMinimumSize(800,600);
     //初始isUntitled为true，未被重命名
     isUntitled = true;
-    if( item == nullptr ){
-        qDebug() << "你不应该看见这几个字，表示item为null";
+    if( litem == nullptr && gitem == nullptr){
+        qDebug() << "你不应该看见这几个字，表示item都为null";
         return;
     }
-    else{
-        QString na = item->text();
-        QString id = item->data(Qt::UserRole+2).toString();
-        qDebug() << "编辑组件代码: " << na;
+    else if(litem!=nullptr){
+        QString na = litem->text();
+//        QString id = litem->data(Qt::UserRole+2).toString();
+        qDebug() << "编辑组件库组件的代码: " << na;
         QString code_path_name = QDir::currentPath()+"/codes/"+ na +".cpp";
-        bool tof = loadFile(code_path_name);
-        if(!tof){
+        if(!loadFile(code_path_name)){
             // 表示读取代码文件失败，需要新建文件
             newFile(code_path_name);
         }
         ui->plainTextEdit->showNormal();
 //        child->move((QApplication::desktop()->width() - child->width())/2,(QApplication::desktop()->height() - child->height())/2);
+    }else{
+        DiagramItem *ditem =  qgraphicsitem_cast<DiagramItem *>(gitem);
+        QString d_name = ditem->getIconName();
+        qDebug() << "编辑场景中组件的代码: " << d_name;
+        QString code_dir_name = QDir::currentPath()+"/radar/"+ditem->getRadar_id()+"/room/codes/";
+        Utils::openDirOrCreate(code_dir_name);
+        QString code_fname = code_dir_name + d_name +".cpp";
+        if(!loadFile(code_fname)){
+            // 表示读取代码文件失败，需要新建文件
+            newFile(code_fname);
+        }
+        ui->plainTextEdit->showNormal();
     }
 }
 
@@ -83,7 +96,7 @@ bool CodeWindow::eventFilter(QObject *widget, QEvent *event)
  */
 void CodeWindow::newFile(const QString &fileName)
 {
-    qDebug() << "新建代码文件" << fileName;
+    qDebug() << "新建组件代码文件" << fileName;
     QFile file(fileName);
     file.open(QIODevice::WriteOnly);
     file.close();
@@ -108,10 +121,11 @@ bool CodeWindow::loadFile(const QString &fileName)
 {
     //新建QFile对象
     QFile file(fileName);
-    if(!file.open(QFile::ReadOnly | QFile::Text)){
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
         // 在主窗口中间显示
 //        int x =this->x() + (this->width() - aboutdialog.width()) / 2;
 //        int y =this->y() + (this->height() - aboutdialog.height()) / 2;
+        // 没有必要显示提示，多此一举
 //        QMessageBox::warning(this, tr("代码编辑器"),tr("无法读取文件%1:\n%2.").arg(fileName).arg(file.errorString()));
         return false;
     }
@@ -189,7 +203,7 @@ bool CodeWindow::saveFile(const QString &fileName)
 {
     // 新建文件对象
     QFile file(fileName);
-    if(!file.open(QFile::WriteOnly | QFile::Text)){
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Text)){
         QMessageBox::warning(this, tr("多代码编辑器"), tr("无法写入文件 %1:\n%2.").arg(fileName).arg(file.errorString()));
         return false;
     }

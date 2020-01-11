@@ -32,8 +32,8 @@ signals:
 //接收子类itemoperate
     void itemOperate(Menu_iteamOperation::OperateType, QString );
 public slots:
-//向子类发送itemoperate
-    void itemOperateSlot(Menu_iteamOperation::OperateType, QString,QString newName="");
+    //向子类发送itemoperate
+    void itemOperateSlot(Menu_iteamOperation::OperateType operateType, QString,QString newName="");
 protected:
     void closeEvent(QCloseEvent *event);
 
@@ -48,12 +48,16 @@ private slots:
 
     void on_actionProperty_triggered(bool checked);
 
+    void on_actionsaveFile_triggered();
+
+    void on_actionnewFile_triggered();
+
 private:
     Ui::MainWindowNew *ui;
     QRect rect;
     //为了在itemOperateSlot中可以向graphicsScene中的控件传递信息
     MainWindowNewScene *graphicsScene;
-      //属性窗口内容显示
+    //属性窗口内容显示
     void propertyContent(QString);
 };
 
