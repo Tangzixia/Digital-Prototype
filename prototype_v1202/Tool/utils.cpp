@@ -10,6 +10,9 @@
 #include <radarscene.h>
 #include <QApplication>
 #include <QDatetime>
+#include <mainwindow_radar.h>
+#include <radarcompdraglistwidget.h>
+#include <QFileDialog>
 
 /**
 * @projectName   prototype_v0906
@@ -172,7 +175,8 @@ AlgorithmComp Utils::readPluginXmlFile(QString fileName)
     QDomDocument doc;
     if(!fileName.isEmpty()){
 //        qDebug() << fileName;
-        QFile file(fileName);
+        // 中文时会读取失败，所以转化为utf-8
+        QFile file(fileName.toUtf8());
         if(!file.open(QIODevice::ReadOnly)) {
             qDebug() << "算法组件的xml文件打开出错！";
             file.close();
@@ -180,7 +184,7 @@ AlgorithmComp Utils::readPluginXmlFile(QString fileName)
         }
         if(!doc.setContent(&file)){
             file.close();
-            qDebug() << "算法组件的xml文件读取失败";
+            qDebug() << "算法组件的xml文件读取失败, 请查看是否是中文命名";
             return ac;
         }
         file.close();
@@ -461,20 +465,21 @@ bool Utils::readProjectXml(QString project_path, QMap<QString, QString> &infomap
     if(!project_path.isEmpty()){
         QFile file(project_path);
         if(!file.open(QIODevice::ReadOnly)) {
-            qDebug() << "project的xml文件打开出错！";
+            qDebug() << "project的dpsp文件打开出错,请查看是否存在！";
             file.close();
             return false;
         }
         if(!doc.setContent(&file)){
             file.close();
-            qDebug() << "project的xml文件读取失败";
+            qDebug() << "project的dpsp文件读取失败!";
             return false;
         }
         file.close();
+
         // project-root
         QDomElement docElem = doc.documentElement();
         // 第一个孩子是<information>
-//        QDomNode n = docElem.firstChild();
+        // QDomNode n = docElem.firstChild();
         QDomNode itemNode = doc.elementsByTagName("information").at(0);
         // 子孩子就是标签名为name、id
         QDomNode m = itemNode.firstChild();
@@ -484,7 +489,7 @@ bool Utils::readProjectXml(QString project_path, QMap<QString, QString> &infomap
                 // 每个元素item
                 QString content = m.toElement().text();
                 // 保存起来
-//                qDebug() << QString::fromStdString(tagName) << ": " << content;
+                // qDebug() << QString::fromStdString(tagName) << ": " << content;
                 infomap.insert(QString::fromStdString(tagName), content);
             }
             m = m.nextSibling();
@@ -499,12 +504,12 @@ bool Utils::readProjectXml(QString project_path, QMap<QString, QString> &infomap
                 if(text.compare("radar")==0){
                     id = m1.toElement().attribute("id");
                     name = m1.toElement().attribute("name");
-                    qDebug() << "radar" << id << name;
+                    qDebug() << "读取到radar： id：" << id << "name:" << name;
 
                 }else if(text.compare("eccm")==0){
-                    qDebug() << "eccm";
+                    qDebug() << "读取到eccm:[待完善]";
                 }else if(text.compare("target")==0){
-                    qDebug() << "target";
+                    qDebug() << "读取到target:[待完善]";
                 }
                 // 测试时，当遍历到eccm和target时，id和name都为""
                 if(!id.isEmpty() && !name.isEmpty()){
@@ -522,3 +527,316 @@ bool Utils::readProjectXml(QString project_path, QMap<QString, QString> &infomap
     }
 }
 
+/**
+ * @brief Utils::importXml 导入rad/ecm/targ工程的配置并调用读取
+ * @param listWidget
+ * @param id_inde
+ * @param nameSet
+ * @param id_item
+ * @param flag 1新建 2导入
+ * @param name 新建，不同的draglist调用的时候的表明是雷达还是电子对抗还是目标，为了公用性
+ */
+void Utils::importXml(QListWidget *listWidget, int *id_inde, QSet<QString> *nameSet, QMap<QString, QListWidgetItem*> *id_item, int flag, QString name)
+{
+    // 导入
+    if(flag == 2){
+        QFileInfo fileinfo;
+        QString fileName = QFileDialog::getOpenFileName(nullptr, "打开rad/ecm/targ工程", QString(QDir::currentPath()), "files (*.rad *.ecm *.targ)");
+        qDebug() << "长路径名字：" << fileName;
+
+        if(fileName.compare("") && !fileName.isEmpty()){
+            // 先判断导入的是哪种对象
+            fileinfo = QFileInfo(fileName);
+            // 文件后缀
+            // qDebug() << fileinfo.suffix();
+            // 文件名
+            QString n = fileinfo.baseName();
+            if(fileinfo.suffix().compare("rad")==0){
+                add_listItem(listWidget, QString("雷达"),id_inde, nameSet, id_item, flag, n);
+            }
+            else if(fileinfo.suffix().compare("ecm")==0){
+                add_listItem(listWidget, QString("电子对抗"),id_inde, nameSet, id_item, flag, n);
+            }else{
+                add_listItem(listWidget, QString("目标环境"),id_inde, nameSet, id_item, flag, n);
+            }
+        }
+    }
+    // 新建
+    if(flag == 1){
+        add_listItem(listWidget, name, id_inde, nameSet, id_item, flag, "");
+    }
+}
+
+
+/**
+ * @brief Utils::add_listItem 分导入和新建两种，新建则需要计数文件夹数量，向后递增新建item；导入则是保留原有的item名字
+ * @param listWidget 组件对象指针
+ * @param name 区分是雷达/电子对抗/目标
+ * @param id_inde 列表中的id数量
+ * @param nameSet 名字集合
+ * @param id_item map，名字到list item指针的映射
+ * @param flag 旗帜，1新建，2导入
+ * @param n 导入之后的名字
+ */
+void Utils::add_listItem(QListWidget *listWidget, QString name, int *id_inde, QSet<QString> *nameSet, QMap<QString, QListWidgetItem*> *id_item, int flag, QString n) {
+    QString path=":/img/radar.png";
+    // FIXME 有必要枚举 待修缮
+    qDebug() << "id_inde: " << *id_inde;
+
+    // 不同目标的文件夹
+    QString path_;
+    if(name.compare("雷达")==0){
+        path=":/img/radar.png";
+        path_=QDir::currentPath()+"/radar";
+    }
+    else if(!name.compare("电子对抗机")) {
+        path=":/img/ECM.png";
+        path_=QDir::currentPath()+"/ecm";
+    }
+    else if(!name.compare("目标环境")){
+        path=":/img/object.png";
+        path_=QDir::currentPath()+"/object";
+    }
+
+
+    // 新建
+    if(flag == 1){
+        int fileCount=*id_inde;
+        // 先检查每种对象分别有几个已存在
+        QDir dir(path_);
+        qDebug() << "path_ " << path_;
+        QFileInfoList fileInfoList = dir.entryInfoList();
+        foreach ( QFileInfo fileInfo, fileInfoList )
+        {
+            if ( fileInfo.fileName() == "." || fileInfo.fileName() == ".." )
+                continue;
+            else if ( fileInfo.isDir() )
+            {
+                nameSet->insert(fileInfo.fileName());
+//                qDebug() << fileInfo.fileName();
+                fileCount++;
+//                qDebug() << fileCount;
+            }else{
+                continue;
+            }
+        }
+        if(fileCount!=0){
+            *id_inde = fileCount;
+        }
+        addItem2List(path, name, id_inde, nameSet, id_item, listWidget, n);
+    }else{
+        // 导入
+        addItem2List(path, name, id_inde, nameSet, id_item, listWidget, n);
+    }
+}
+
+
+
+/**
+ * @brief Utils::addItem2List 将item新建并加入到listwidget中
+ * @param path icon的路径
+ * @param name 雷达/电子对抗/目标其中之一
+ * @param id_inde listwidget中的id计数器，传入指针！不然会崩溃
+ * @param nameSet 名字集合，不能重复，程序中保证不能重复
+ * @param id_item 存放名字和item的map映射，也要指针
+ * @param listWidget 传过来界面上的listwidget的指针
+ * @param n 名字，如果是导入的话，需要解析导入文件的名字，也就是导入之后列表项的名字
+ */
+void Utils::addItem2List(QString path, QString name, int *id_inde, QSet<QString> *nameSet, QMap<QString, QListWidgetItem*> *id_item, QListWidget *listWidget, QString n)
+{
+    QString newName;
+    // 导入
+    if(!n.isEmpty() && n.compare("")){
+        newName = n;
+    }else{
+        //新建item，添加到左边的listwidget
+        newName = name+QString::number(*id_inde++);
+
+    //    while(this->id_item.contains(newName))
+        while(nameSet->contains(newName)){
+            // 名称已经存在，换一个
+            newName = name+QString::number(*id_inde++);
+        }
+    }
+    if(nameSet->contains(newName)){
+        qDebug() << "名字已存在, 导入失败, 说明已经导入相同名字的组件。";
+        return;
+    }else{
+        nameSet->insert(newName);
+        QListWidgetItem *item = new QListWidgetItem();
+        id_item->insert(newName,item);
+        item->setIcon(QIcon(path));
+        item->setText(newName);
+
+        //这里的用户角色存储用户数据（和拖入场景有关）
+        item->setData(Qt::UserRole, QPixmap(path));
+        item->setData(Qt::UserRole+1, newName);
+        item->setData(Qt::UserRole+2, name);
+        item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled);
+        listWidget->addItem(item);
+        qDebug()<<"additem了, name:"<<newName;
+    }
+}
+
+#if 0
+// This is an auto-generated comment.
+/**
+ * @brief Utils::readXmlConf
+ * @param xmlname
+ * @return bool
+ */
+bool Utils::readXmlConf(QString xmlname, RadarScene *scene, MainWindow_Radar *this_, RadarCompDraglistWidget *listWidget)
+{
+    QDomDocument doc;
+    if(!xmlname.isEmpty()){
+        QFile file(xmlname);
+        if(!file.open(QIODevice::ReadOnly)) return false;
+        if(!doc.setContent(&file)){
+            file.close();
+            qDebug() << "打开失败";
+            return false;
+        }
+        file.close();
+        //根元素component
+        QDomElement docElem = doc.documentElement();
+        int wid,hei;
+        wid = docElem.attribute("width").toInt();
+        hei = docElem.attribute("height").toInt();
+        scene->setSceneRect(QRectF(0, 0, wid, hei));
+        // 第一个孩子是Arrs或者Items
+//        QDomNode n = docElem.firstChild();
+        QDomNode itemNode = doc.elementsByTagName("Items").at(0);
+        QString id;
+        // 子孩子就是标签名为comp_1...
+        QDomNode m = itemNode.firstChild();
+        while(!m.isNull()){
+            std::string tagName = m.nodeName().toStdString();
+            if(m.isElement()){
+                // 每个元素item
+                QDomElement e = m.toElement();
+                id = e.attribute("id");
+                qreal posx = e.attribute("pos_x").toInt();
+                qreal poxy = e.attribute("pos_y").toInt();
+                QString s = e.elementsByTagName("color").at(0).toElement().text();
+                QColor colour(s);
+
+                // 只能先用if/else了，switch也不能用
+//                DiagramItem::DiagramType type;
+                QString compName = QString::fromStdString(tagName);
+                qDebug() << "组件名: " << compName;
+                emit this_->send2AppOutput(QStringLiteral("组件名： ") + compName);
+                if(!listWidget->nameList.contains(compName)){
+                    qDebug() << "读取出错，缺少组件，组件" << compName << "已被删除";
+                    Utils::alert(QApplication::desktop()->screen()->rect(),"读取出错，缺少组件，组件"+compName+"已被删除");
+                    for(QGraphicsItem *item: scene->items()){
+                        scene->removeItem(item);
+                        delete item;
+                    }
+                    for(int i=0;i<scene->getArrs()->childNodes().size();i++){
+                        scene->getArrs()->childNodes().item(i).clear();
+                    }
+                    for(int j=0;j<scene->getItems()->childNodes().size();j++){
+                        scene->getItems()->childNodes().item(j).clear();
+                    }
+                    doc.clear();
+                    scene->idList.clear();
+                    qDebug() << "idList" << scene->idList;
+                    this_->ui->actionsave->setEnabled(false);
+                    emit this_->save2false();
+                    this_->save2XmlFile();
+                    return false;
+                }else{
+                    DiagramItem *item_ = new DiagramItem(compName, scene->getItemMenu(), this_->getEquip_id());
+                    QPointF pos(posx, poxy);
+                    item_->setPos(pos);
+                    item_->setBrush(colour);
+                    item_->itemSuuid = id; //id不变
+                    scene->idList.append(id);
+                    // 读取xml文件的时候，也要恢复子空间的algorithm
+                    QString fullpath = QDir::currentPath()+"/radar/"+this_->getEquip_id()+"/room/algoXml/"+compName+id.mid(1,id.length()-2)+".xml";
+                    AlgorithmComp ac = Utils::readPluginXmlFile(fullpath);
+                    // 加载场景中所有的算法组件
+                    scene->add2Scene_comps(id, ac);
+
+                    qDebug() << "scene的id列表" << scene->idList;
+                    emit this_->send2AppOutput(QStringLiteral("组件名： ") + compName);
+                    scene->addItem(item_);
+                    emit this_->itemInserted(item_);
+                    //更新xml
+                    scene->modifyXmlItems(pos, item_);
+                    connect(item_, &DiagramItem::showItemsProperties, this_, &MainWindow_Radar::receiveItemsid2showProperties);
+                }
+#if 0
+                // FIXME 这部分出大问题，不可能每次都枚举吧
+                if(tagName == "comp_1"){
+                    type = DiagramItem::DiagramType::Comp1;
+                }else if(tagName == "comp_2"){
+                    type = DiagramItem::DiagramType::Comp2;
+                }else if(tagName == "comp_3"){
+                    type = DiagramItem::DiagramType::Comp3;
+                }else if(tagName == "comp_4"){
+                    type = DiagramItem::DiagramType::Comp4;
+                }else {
+                    type = DiagramItem::DiagramType::Comp5;
+                }
+
+//                 成功啦
+                QMetaObject mo = DiagramItem::staticMetaObject;
+                int index = mo.indexOfEnumerator("DiagramType");
+                QMetaEnum metaEnum = mo.enumerator(index);
+                 QMetaEnum metaEnum = QMetaEnum::fromType<DiagramItem::DiagramType>();
+                for (int i=0; i<metaEnum.keyCount(); ++i)
+                {
+                    qDebug() << metaEnum.key(i);
+                    qDebug()<<  metaEnum.valueToKey(2);              //  enum转string
+                    qDebug()<<  metaEnum.keysToValue("Comp4");       //  string转enum
+                }
+
+                type = DiagramItem::DiagramType(metaEnum.keysToValue(tagName.c_str()));
+#endif
+            }
+            m = m.nextSibling();
+        }
+        // 大的标签是Arrs的时候
+        QDomNode arrowNode = doc.elementsByTagName("Arrs").at(0);
+        // 就是arrow了，因为箭头就一种
+        QDomNode m1 = arrowNode.firstChild();
+        QString start_item_id, end_item_id, arrow_id;
+
+        // 遍历所有的箭头
+        while(!m1.isNull()){
+            if(m1.isElement()){
+                // 每个元素item
+                QDomElement e = m1.toElement();
+                arrow_id = e.attribute("id");
+                start_item_id = e.attribute("start_item_id");
+                end_item_id = e.attribute("end_item_id");
+                QString cs = e.elementsByTagName("color").at(0).toElement().text();
+                //qDebug() << "箭头颜色： " << cs;
+                QColor line_colour(cs);
+
+                DiagramItem *startItem = getDiagramItemById(start_item_id);
+                DiagramItem *endItem = getDiagramItemById(end_item_id);
+                Arrow *arrow = new Arrow(startItem, endItem);
+                arrow->setColor(line_colour);
+                arrow->itemId = arrow_id; // id不变
+                scene->idList.append(arrow_id);
+//                qDebug() << "scene的id列表" << scene->idList;
+
+                startItem->addArrow(arrow);
+                endItem->addArrow(arrow);
+                arrow->setZValue(-1000.0);
+                scene->addItem(arrow);
+                arrow->updatePosition();
+
+                scene->modifyXmlArrows(arrow, startItem, endItem);
+
+            }
+            m1 = m1.nextSibling();
+        }
+    }else {
+        // 文件名为空，啥也没选，提示
+        Utils::alert(QApplication::desktop()->screen()->rect(), "文件名为空！请重新选择！");
+    }
+}
+#endif

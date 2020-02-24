@@ -52,6 +52,7 @@ public:
     void init1Comp(QString comPName, QMenu *itemMenu, QString iconName);
     void loadCompByName(QString strText);
     void toShowPropertiesDock(AlgorithmComp ac, bool isReadonly=true);
+    Ui::MainWindow_Radar *ui;
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -73,7 +74,6 @@ private slots:
      void bringToFront();
      void sendToBack();
      void showItemProperties();
-     void itemInserted(DiagramItem *item);
      void textInserted(QGraphicsTextItem *item);
      void currentFontChanged(const QFont &font);
      void fontSizeChanged(const QString &size);
@@ -114,6 +114,7 @@ private slots:
      void on_actiongene_triggered();
 
 public slots:
+     void itemInserted(DiagramItem *item);
      // 接收信息
      void receiveFromSend(QString message);
 
@@ -130,7 +131,7 @@ private:
     QPushButton *openConsole;
     // 名字
     QString equip_id;
-    Ui::MainWindow_Radar *ui;
+
     QLabel *label_xy;
     QLineEdit *m_pSearchLineEdit;
     // 工具类

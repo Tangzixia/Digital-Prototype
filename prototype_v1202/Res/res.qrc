@@ -96,5 +96,8 @@
         <file>img/generateCode.png</file>
         <file>img/copy.png</file>
         <file>img/add2Lib.png</file>
+        <file>img/ECM.png</file>
+        <file>img/fullscreen.png</file>
+        <file>img/object.png</file>
     </qresource>
 </RCC>

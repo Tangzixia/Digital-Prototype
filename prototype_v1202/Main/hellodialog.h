@@ -28,6 +28,8 @@ private slots:
 
     void on_pushButton_new_clicked();
 
+    void on_pushButton_clicked();
+
 private:
     Ui::HelloDialog *ui;
     MainWindow *main;

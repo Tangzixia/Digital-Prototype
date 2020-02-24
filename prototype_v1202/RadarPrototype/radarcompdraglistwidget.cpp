@@ -160,7 +160,7 @@ void RadarCompDraglistWidget::onCurrentDoubleClicked(QListWidgetItem *item)
  */
 void RadarCompDraglistWidget::deleteItemSlot()
 {
-    int ch = QMessageBox::warning(nullptr, "提醒",
+    int ch = QMessageBox::warning(this, "提醒",
                                       "您确定要删除此组件吗?\n若已有场景中使用了此组件，您的删除会造成致命错误。",
                                       QMessageBox::Yes | QMessageBox::No,
                                       QMessageBox::No);
@@ -348,11 +348,12 @@ void RadarCompDraglistWidget::mousePressEvent(QMouseEvent *event)
             msgBox.addButton(tr("导入"), QMessageBox::ActionRole);
             msgBox.addButton(tr("取消"), QMessageBox::RejectRole);
             msgBox.setDefaultButton(newButton);
-            // 消除Application output中的geometry提示
             msgBox.move ((QApplication::desktop()->width() - msgBox.width())/2,(QApplication::desktop()->height() - msgBox.height())/2);
             int button_index=msgBox.exec();
             switch (button_index) {
-                case 2: qDebug() <<"不添加也不导入，关闭"; break;
+                case 2:
+                    qDebug() <<"不添加也不导入，关闭";
+                    break;
                 // 创建
                 case 0:{
                     createNewComp();

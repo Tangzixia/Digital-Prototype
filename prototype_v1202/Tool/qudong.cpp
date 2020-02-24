@@ -5,6 +5,7 @@
 #include <QString>
 #include <QStringList>
 #include <QApplication>
+#include <QDir>
 QuDong::QuDong()
 {
 
@@ -12,22 +13,22 @@ QuDong::QuDong()
 
 void QuDong::startRun(QString fileName, QString outName)
 {
-
 //    QProcess *p1 = new QProcess;//./home/a913/Qt_project/20190910/prototype_v0906/Projects/test/code/radar_test.out
 //    p1->start("g++", QStringList() << "/home/a913/Qt_project/20190910/prototype_v0906/Projects/test/code/radar_test.cpp"<< "-fopenmp"<< "-lfftw3"<< "-lm"<< "-o" <<"/home/a913/Qt_project/20190910/prototype_v0906/Projects/test/code/radar_test.out");
 //    p1->waitForStarted();
 //    p1->close();
 //    p1->waitForFinished();
     QStringList args;
-        args.append(fileName);
-        args.append("-o");
-        args.append(outName);
-        args.append("-lvsip");
-        args.append("-lm");
-        args.append("-lpthread");
+    args.append(fileName);
+    args.append("-o");
+    args.append(outName);
+    args.append("-lvsip");
+    args.append("-lfftw3");
+    args.append("-lm");
+//    args.append("-lpthread");
 
-        QString command = args.join(" ");
-        qDebug() << "command: " << command;
+//    QString command = args.join(" ");
+//    qDebug() << "command: " << command;
 
     QProcess *p1 = new QProcess;
     p1->start("gcc", args);
@@ -37,10 +38,11 @@ void QuDong::startRun(QString fileName, QString outName)
     p1->kill();
 
     QProcess *p = new QProcess;
-    QString workpath = "/home/a913/Qt_project/20191130/prototype_v0906/Projects/test/code/";
+    // 修改此处的参数
+    QString workpath = "/home/a913/Qt_project/20191130/prototype_v1202/Projects/test/code/";
     p->setWorkingDirectory(workpath);
     qDebug() << p->environment();
-    p->start("./radar.out");
+    p->start("./radar.o");
     p->waitForStarted();
     p->waitForFinished();
 

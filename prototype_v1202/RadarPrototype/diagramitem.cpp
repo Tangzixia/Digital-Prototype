@@ -34,7 +34,7 @@ DiagramItem::DiagramItem(QString iconName, QMenu *contextMenu, QString radarId, 
         bool tof = QFile::copy(QDir::currentPath()+"/images/"+iconName+".ico", s+iconName+".ico");
         qDebug() << "文件复制成功与否：" << tof;
     }
-
+    this->setToolTip("在该情况下推荐使用RPC分布式计算");
 #if 0
     //这里元素的大小和在场景中是一样的，修改了都会变。
     switch (myDiagramType) {

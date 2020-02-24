@@ -1,6 +1,5 @@
 #include "mtd.c"
-void movingTargetDetection(vsip_cmview_f *mtd, vsip_cmview_f *pc, vsip_cmview_f *buff,
-                           vsip_cmview_f *buff_fft, vsip_fftm_f *buffPlan);
-void submtd(void *param);
-void movingTargetDetection1(vsip_cmview_f *mtd, vsip_cmview_f *pc, vsip_cmview_f *buff,
-                           vsip_cmview_f *buff_fft, vsip_fftm_f *buffPlan,threadpool thpool);                        
+void movingTargetDetection(vsip_mview_f *mtd, vsip_cmview_f *pc,
+                           vsip_cmview_f *buff, vsip_cmview_f *buff_fft,
+                           vsip_mview_f *win, vsip_fftm_f *buffPlan,
+                           vsip_scalar_f max, vsip_scalar_f temp);

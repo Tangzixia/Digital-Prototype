@@ -4,6 +4,9 @@
 #include <QAbstractButton>
 #include <ashowdialog.h>
 #include "ppidialog.h"
+#include <QApplication>
+#include <QDesktopWidget>
+#include <QFileDialog>
 
 /**
 * @projectName   prototype_v0719
@@ -47,21 +50,6 @@ DragListWidget::DragListWidget(QWidget *parent ) : QListWidget(parent)
  * @param item
  */
 void DragListWidget::addDragItem(QListWidgetItem*item){
-// 这些都没用
-//    int count = this->count();
-//    int height = count*40;
-//    int minHeight = 150;
-//    int maxHeight = 400;
-//    if(height < minHeight){
-//        height = minHeight;
-//    }
-//    else if(height > maxHeight){
-//        height = maxHeight;
-//    }
-//    this->resize(240,height);
-//    this->addItem(item);
-//    this->setVisible(false);
-//    this->setVisible(true);
     this->addItem(item);
 }
 
@@ -349,46 +337,84 @@ void DragListWidget::listItem_add(QString name){
         if (action_item->text()=="添加"+name){
 //            qDebug()<<"触发新建item了。";
             QMessageBox msgBox;
+            // 加上这一行之后不提示setGeometry: Unable to set geometry 640x480+821+463...警告，但是会偏离中心，靠左上角
+//            msgBox.setGeometry((QApplication::desktop()->width() - msgBox.width())/2,(QApplication::desktop()->height() - msgBox.height())/2, msgBox.width(), msgBox.width());
             msgBox.setWindowTitle("添加"+name);
             msgBox.setText("添加"+name);
             msgBox.setInformativeText("您想要创建一个新的"+name+"组件，还是导入一个已经有的"+name+"组件？");
             QPushButton*newButton = msgBox.addButton(tr("新建"), QMessageBox::ActionRole);
             msgBox.addButton(tr("导入"), QMessageBox::ActionRole);
-            msgBox.addButton(tr("取消"), QMessageBox::ActionRole);
+            msgBox.addButton(tr("取消"), QMessageBox::RejectRole);
             msgBox.setDefaultButton(newButton);
             int button_index=msgBox.exec();
+
             switch (button_index) {
-                case 0:
-                 this->add_listItem(name);
+                case 0: {
+                    // 新建文件, 打开文件读取
+                    Utils::importXml(this, &id_inde, &nameSet, &id_item, 1, "雷达");
                     break;
-            case 1:
-//                   导入文件
+                }
+                case 1:
+                    // 导入文件, 打开文件读取
+                    Utils::importXml(this, &id_inde, &nameSet, &id_item, 2, "");
                     break;
                 case 2:
-//                    不操作
                     break;
             }
         }
     });
 }
 
+#if 0
 /**
  * @brief 朝左边list列表添加元素
  * @param name
  */
 void DragListWidget::add_listItem(QString name) {
     QString path=":/img/radar.png";
-    // 有必要枚举   待修缮
-    if(name=="雷达"){path=":/img/radar.png";}
-    else if(name=="电子对抗机") path=":/img/ECM.png";
-    else if(name=="目标环境")path=":/img/object.png";
+    // FIXME 有必要枚举 待修缮
+    int fileCount=id_inde;
+    // 不同目标的文件夹
+    QString path_;
+    if(name=="雷达"){
+        path=":/img/radar.png";
+        path_=QDir::currentPath()+"/radar";
+    }
+    else if(name=="电子对抗机") {
+        path=":/img/ECM.png";
+        path_=QDir::currentPath()+"/ecm";
+    }
+    else if(name=="目标环境"){
+        path=":/img/object.png";
+        path_=QDir::currentPath()+"/object";
+    }
+    // 先检查每种对象分别有几个已存在
+    QDir dir(path_);
+    QFileInfoList fileInfoList = dir.entryInfoList();
+    foreach ( QFileInfo fileInfo, fileInfoList )
+    {
+        if ( fileInfo.fileName() == "." || fileInfo.fileName() == ".." )
+            continue;
+        else if ( fileInfo.isDir() )
+        {
+            nameSet.insert(fileInfo.fileName());
+            fileCount++;
+        }else{
+            continue;
+        }
+    }
+    if(fileCount!=0){
+        id_inde = fileCount;
+    }
     //新建item，添加到左边的listwidget
     QString newName = name+QString::number(id_inde++);
 
-    while(this->id_item.contains(newName)){
+//    while(this->id_item.contains(newName))
+    while(nameSet.contains(newName)){
         //名称已经存在，换一个
         newName = name+QString::number(id_inde++);
     }
+    nameSet.insert(newName);
     QListWidgetItem *item = new QListWidgetItem();
     id_item.insert(newName,item);
     item->setIcon(QIcon(path));
@@ -400,9 +426,9 @@ void DragListWidget::add_listItem(QString name) {
     item->setData(Qt::UserRole+2, itemType);
     item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled);
     this->addDragItem(item);
-    qDebug()<<"additem了,name:"<<newName;
+    qDebug()<<"additem了, name:"<<newName;
 }
-
+#endif
 QString DragListWidget::getItemType() const
 {
     return itemType;
@@ -418,16 +444,17 @@ QMap<QString, QListWidgetItem *> DragListWidget::getId_item() const
  * @return
  */
 bool DragListWidget::closeDragListWidget(){
-     if(this->newEditWindowList.isEmpty())
+    // 如果列表中的编辑窗口都已经销毁了，就返回true
+    if(this->newEditWindowList.isEmpty())
         return true;
-     else {
-        QMessageBox::warning(this,"警告","有子窗口未关闭！！请先关闭子窗口。");
+    else {
+        QMessageBox::warning(this,"警告","有子窗口未关闭！请先关闭子窗口。");
         QMap<QString,MainWindow_Radar*>::iterator i=this->newEditWindowList.begin();
         while (i!=newEditWindowList.end()) {
-           i.value()->showNormal();
-           i.value()->raise();
-           i++;
+            i.value()->showNormal();
+            i.value()->raise();
+            i++;
         }
-       return false;
-     }
+        return false;
+    }
 }

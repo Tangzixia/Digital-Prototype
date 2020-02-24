@@ -7,8 +7,10 @@
 #include <QRect>
 #include <QString>
 #include <QWidget>
+#include <mainwindow_radar.h>
+#include <radarcompdraglistwidget.h>
 #include <radarscene.h>
-
+#include <QSet>
 
 // This is available in all editors.
 /**
@@ -32,6 +34,9 @@ public:
     static bool generateIcon(QString name, QString eQuip_id);
     static bool createProject(QString p_name);
     static bool readProjectXml(QString project_path, QMap<QString, QString> &infomap, QMap<QString, QString> &compmap);
+//    static bool readXmlConf(QString xmlname, RadarScene *scene, MainWindow_Radar *this_, RadarCompDraglistWidget *listWidget);
+    static void importXml(QListWidget *listWidget, int *id_inde, QSet<QString> *nameSet, QMap<QString, QListWidgetItem *> *id_item, int flag, QString name);
+    static void add_listItem(QListWidget *listWidget, QString name, int *id_inde, QSet<QString> *nameSet, QMap<QString, QListWidgetItem *> *id_item, int flag, QString n);
+    static void addItem2List(QString path, QString name, int *id_inde, QSet<QString> *nameSet, QMap<QString, QListWidgetItem*> *id_item, QListWidget *listWidget, QString n);
 };
-
 #endif // UTILS_H

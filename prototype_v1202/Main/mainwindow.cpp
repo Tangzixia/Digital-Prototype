@@ -22,6 +22,9 @@ MainWindow::MainWindow(QString title, QString dpsp_path, QWidget *parent):
     ui->setupUi(this);
     setWindowTitle(w_title);
     initOpenGL();
+    // 关闭时自动释放窗口对象
+    setAttribute( Qt::WA_DeleteOnClose, true );
+
     // 第一次尝试 what's this?
     QAction *whatAction = QWhatsThis::createAction(this);
     ui->mainToolBar->addAction(whatAction);
@@ -62,7 +65,7 @@ MainWindow::MainWindow(QString title, QString dpsp_path, QWidget *parent):
         showMaximized();
     }else{
         qDebug() << "加载失败！";
-        qApp->closeAllWindows();
+        this->close();
     }
     graphicsScene = new MainWindowNewScene;
     // 将窗口中的场景设置为自定义的场景

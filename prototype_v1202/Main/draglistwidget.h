@@ -61,7 +61,8 @@ private:
     //0:name 1:itemImgPath
     void listItem_add(QString);
     void add_listItem(QString);
-    QMap<QString,QListWidgetItem*> id_item;
+    QMap<QString, QListWidgetItem*> id_item;
+    QSet<QString> nameSet;
     //listWidgetItem计数
     int id_inde=1;
 

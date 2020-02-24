@@ -1,88 +1,66 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
-#include <sys/types.h>
-#include <pthread.h>
-#include <assert.h>
-#include <sys/time.h>
-#include "thpool.c"
 #include "vsip.h"
 #include "constant.h"
-struct cfarparam
-{
-    int row;
-    vsip_cmview_f *cfar_result; //结果
-    vsip_cmview_f *noise_gate;  //噪音门限
-    vsip_cmview_f *mtd;         //输入
-    int protect_number;         //保护门限值
-    int reference_number;       //读取的长度
-    int alpha;                  //权值
-    vsip_cscalar_f left;        //中间变量
-    vsip_cscalar_f right;       //中间变量
-    vsip_cscalar_f temp;        //中间变量
-};
-void subcfar(void *param)
-{
-    //子任务
 
-    struct cfarparam *parameter = (struct cfarparam *)param;
-    int j = 0;
-    for (j = 100; j < SampleNumber - 100; j++)
+/**
+ * 采用的是一维cfar，输入是经过mtd之后得到一维向量，针对每个值左右都进行求和，比较取大，再和当前位置进行
+ * 比较大小，大取0，小取1
+ * */
+void constantFalseAlarmRate(vsip_mview_f *cfar_result, vsip_mview_f *mtd,
+                            int protect_number, int reference_number,
+                            int alpha, vsip_mview_f *mean_matrix, vsip_scalar_f temp)
+{
+    temp = vsip_mmeanval_f(vsip_msubview_f(mtd, 0, 0, 1, reference_number));
+    vsip_mput_f(mean_matrix, 0, 0, temp);
+    int i = 0;
+    for (i = protect_number + reference_number; i < SampleNumber; i++)
     {
-        parameter->left = vsip_cmmeanval_f(vsip_cmsubview_f(parameter->mtd, parameter->row,
-                                                            j - parameter->protect_number - parameter->reference_number, 1, parameter->reference_number));
-        parameter->right = vsip_cmmeanval_f(vsip_cmsubview_f(parameter->mtd, parameter->row,
-                                                             j + parameter->protect_number, 1, parameter->reference_number));
-        parameter->temp = vsip_cadd_f(parameter->left, parameter->right);
-        parameter->temp = vsip_rcmul_f(parameter->alpha, parameter->temp);
-        vsip_cmput_f(parameter->noise_gate, parameter->row, j, parameter->temp);
-        if (vsip_cmget_f(parameter->mtd, parameter->row, j).r > vsip_cmget_f(parameter->noise_gate, parameter->row, j).r)
+        temp += (vsip_mget_f(mtd, 0, i - protect_number) - vsip_mget_f(mtd, 0, i - protect_number - reference_number));
+        vsip_mput_f(mean_matrix, 0, i - protect_number - reference_number, temp);
+    }
+    for (i = 0; i < SampleNumber; i++)
+    {
+        if (i < protect_number + reference_number) //如果i < p + r,直接取右边的值
         {
-            vsip_cmput_f(parameter->cfar_result, parameter->row, j, parameter->temp);
+            temp = vsip_mget_f(mean_matrix, 0, i + protect_number);
+        }
+        else if (i > SampleNumber - protect_number - reference_number)
+        //如果i > SampleNumber - p - r,直接取左边的值
+        {
+            temp = vsip_mget_f(mean_matrix, 0, i - protect_number - reference_number);
+        }
+        else //在中间的值取左右两边值中的较大值
+        {
+            temp = vsip_max_f(
+                vsip_mget_f(mean_matrix, 0, i + protect_number),
+                vsip_mget_f(mean_matrix, 0, i - protect_number - reference_number));
+        }
+        temp *= alpha; //乘以α系数
+        //比较temp和在矩阵中对应位置的值，如果temp大的话，结果矩阵相应位置为1，反之为0
+        if (temp > vsip_mget_f(mtd, 0, i))
+        {
+            vsip_mput_f(cfar_result, 0, i, 0.);
+        }
+        else
+        {
+            vsip_mput_f(cfar_result, 0, i, 1.);
         }
     }
 }
-void constantFalseAlarmRate(vsip_cmview_f *cfar_result, vsip_cmview_f *noise_gate, vsip_cmview_f *mtd,
-                            int protect_number, int reference_number, int alpha, vsip_cscalar_f left,
-                            vsip_cscalar_f right, vsip_cscalar_f temp)
-{
-    int i, j;
-    
-    for (i = 0; i < PulseNumber; i++)
-    {
-        // #pragma omp parallel for
-        for (j = 100; j < SampleNumber - 100; j++)
-        {
-            left = vsip_cmmeanval_f(vsip_cmsubview_f(mtd, i, j - protect_number - reference_number, 1, reference_number));
-            right = vsip_cmmeanval_f(vsip_cmsubview_f(mtd, i, j + protect_number, 1, reference_number));
-            temp = vsip_cadd_f(left, right);
-            temp = vsip_rcmul_f(alpha, temp);
-            vsip_cmput_f(noise_gate, i, j, temp);
-            if (vsip_cmget_f(mtd, i, j).r > vsip_cmget_f(noise_gate, i, j).r)
-            {
-                vsip_cmput_f(cfar_result, i, j, temp);
-            }
-        }
-    }
-}
-void constantFalseAlarmRate1(vsip_cmview_f *cfar_result, vsip_cmview_f *noise_gate, vsip_cmview_f *mtd,
-                             int protect_number, int reference_number, int alpha, vsip_cscalar_f left,
-                             vsip_cscalar_f right, vsip_cscalar_f temp, threadpool thpool)
-{
-    //线程池版本的恒虚警率
-    struct cfarparam param[PulseNumber];
-    int i;
-    for (i = 0; i < PulseNumber; i++)
-    { //添加子任务
-        param[i].cfar_result = cfar_result;
-        param[i].noise_gate = noise_gate;
-        param[i].mtd = mtd;
-        param[i].protect_number = protect_number;
-        param[i].reference_number = reference_number;
-        param[i].alpha = alpha;
-        param[i].left = param[i].right = param[i].temp = vsip_cmplx_f(0., 0.);
-        param[i].row = i;
-        thpool_add_work(thpool, subcfar, (void *)&param[i]);
-    }
-    thpool_wait(thpool); //等待任务队列中的子任务结束
-}
+
+// int main()
+// {
+//     vsip_mview_f *cfar_result = vsip_mcreate_f(1, SampleNumber, VSIP_ROW, VSIP_MEM_CONST);
+//     vsip_mview_f *mtd = vsip_mcreate_f(1, SampleNumber, VSIP_ROW, VSIP_MEM_CONST);
+//     vsip_mview_f *mean_matrix = vsip_mcreate_f(1, SampleNumber, VSIP_ROW, VSIP_MEM_CONST);
+//     vsip_scalar_f temp;
+//     int protect_number = 2;
+//     int reference_number = 16;
+//     int alpha = 2.4;
+//     vsip_mfill_f((vsip_scalar_f)(1.0), mtd);
+//     constantFalseAlarmRate(cfar_result,mtd,protect_number,reference_number,alpha,mean_matrix,temp);
+//     int i = 0;
+//     for (i = 0;i < vsip_mgetrowlength_f(cfar_result);i++){
+//         printf("%f\t",vsip_mget_f(cfar_result,0,i));
+//     }
+// }

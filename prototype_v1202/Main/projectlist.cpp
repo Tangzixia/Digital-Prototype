@@ -190,8 +190,7 @@ void ProjectList::createListWidgetItem(QString name, QString desc)
  */
 void ProjectList::HideItem(QListWidgetItem *item)
 {
-
-    qDebug() << "关闭一条项目" << item;
+//    qDebug() << "关闭一条项目" << item;
     QList<QListWidgetItem*> list = this->selectedItems();
 
     if(list.size() == 0)

@@ -1,6 +1,6 @@
 #include <vsip.h>
 #include "constant.h"
-#include "thpool.h"
+#include "ham.c"
 /**
  * 动目标检测,区分不同速度的目标，有测速作用
  * mtd:输出
@@ -9,61 +9,28 @@
  * buff_fft:buff傅里叶变换结果
  * buffPlan:buff傅里叶变换
  * */
-void movingTargetDetection(vsip_cmview_f *mtd, vsip_cmview_f *pc, vsip_cmview_f *buff,
-                           vsip_cmview_f *buff_fft, vsip_fftm_f *buffPlan)
+void movingTargetDetection(vsip_mview_f *mtd, vsip_cmview_f *pc,
+                           vsip_cmview_f *buff, vsip_cmview_f *buff_fft,
+                           vsip_mview_f *win, vsip_fftm_f *buffPlan,
+                           vsip_scalar_f max, vsip_scalar_f temp)
 {
     int i, j;
     for (i = 0; i < SampleNumber; i++)
     {
-        buff = vsip_cmsubview_f(pc, 0, i, PulseNumber, 1);
-        vsip_ccfftmop_f(buffPlan, buff, buff_fft);
+        max = VSIP_MIN_SCALAR_F;
+        buff = vsip_cmsubview_f(pc, 0, i, PulseNumber, 1);//取列操作
+        vsip_rcmmul_f(win, buff, buff);//和窗口函数点乘 汉明窗
+        vsip_ccfftmop_f(buffPlan, buff, buff_fft);// fft运算
         for (j = 0; j < PulseNumber; j++)
-        {
-            vsip_cmput_f(mtd, j, i, vsip_cmget_f(buff_fft, j, 0));
+        {//取最大值，max 初始为VSIP_MIN_SCALAR_F
+            temp = vsip_sqrt_f(
+                vsip_pow_f(vsip_cmget_f(buff_fft, j, 0).r, 2) +
+                vsip_pow_f(vsip_cmget_f(buff_fft, j, 0).i, 2));
+            if (max < temp)
+            {
+                max = temp;
+            }
         }
+        vsip_mput_f(mtd,0,i,max);//将最大值放入结果的相应位置上面
     }
-}
-struct mtdParam
-{
-    int col;
-    vsip_cmview_f *mtd;      //输出
-    vsip_cmview_f *pc;       //输入
-    vsip_cmview_f *buff;     //中间变量，用来存储pc中每一列的数据
-    vsip_cmview_f *buff_fft; //buff经过fft之后的数据
-    vsip_fftm_f *buffPlan;   //buff fft运算中的参数
-};
-void submtd(void *param)
-{
-    //子任务
-    struct mtdParam *p = (struct mtdParam *)param;
-    p->buff = vsip_cmsubview_f(p->pc, 0, p->col, PulseNumber, 1);
-    vsip_ccfftmop_f(p->buffPlan, p->buff, p->buff_fft);
-    printf("%d\n",p->col);
-    int j = 0;
-    for (j = 0; j < PulseNumber; j++)
-    {
-        vsip_cmput_f(p->mtd, j, p->col, vsip_cmget_f(p->buff_fft, j, 0));
-    }
-    // printf("%d\n",col);
-}
-void movingTargetDetection1(vsip_cmview_f *mtd, vsip_cmview_f *pc, vsip_cmview_f *buff,
-                            vsip_cmview_f *buff_fft, vsip_fftm_f *buffPlan, threadpool thpool)
-{
-    //线程池版本动目标检测
-    struct mtdParam p[SampleNumber];
-
-    int i = 0;
-    for (i = 0; i < SampleNumber; i++)
-    {
-        p[i].mtd = vsip_cmcloneview_f(mtd);
-        p[i].pc = vsip_cmcloneview_f(pc);
-        p[i].buff = vsip_cmcloneview_f(buff);
-        p[i].buff_fft = vsip_cmcloneview_f(buff_fft);
-        p[i].buffPlan = buffPlan;
-        p[i].col = i;
-        //添加子任务
-        thpool_add_work(thpool, submtd, (void *)&p[i]);
-        //等待子任务结束
-    }
-    thpool_wait(thpool);
 }

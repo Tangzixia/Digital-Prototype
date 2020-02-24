@@ -7,12 +7,13 @@
 * @date          2019-08-12
 */
 #include "mainwindownewscene.h"
-
 #include <QMainWindow>
 #include <QLabel>
 #include <mainwindow_radar.h>
-//仅仅为了引入枚举值OperateType
+// 仅仅为了引入枚举值OperateType
 #include "menu_iteamoperation.h"
+
+
 namespace Ui {
 class MainWindowNew;
 }
