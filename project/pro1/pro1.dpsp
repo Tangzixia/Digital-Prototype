@@ -8,7 +8,7 @@
 		<radar id="radarsjdajsdjsbdjs" name="雷达1"></radar>
 		<radar id="radardksnfdjsfbjdq" name="雷达2"></radar>
 		<radar id="radarorikjgmrkvfdd" name="雷达3"></radar>
-	    <eccm></eccm>
+	    	<eccm></eccm>
 		<target></target>
 	</components>>
 </project-root>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Plugins>
+    <Information>
+        <ID>{0216a869-adea-466d-b629-37c4244c7325}</ID>
+        <Name>测试组件</Name>
+        <Path>点击选择路径名称</Path>
+        <Time>Thu Feb 20 22:06:12 2020 GMT</Time>
+    </Information>
+    <Description>123</Description>
+    <Parameter>
+        <123 describe="参数描述" value="参数值"/>
+    </Parameter>
+</Plugins>
