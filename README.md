@@ -7,6 +7,9 @@ In order to facilitate our development.
 
 #### 未来希望能设计成：
 ```
+.algoXml/
+	MTD.xml
+	...
 .codes/
 	FDPC.xml
 	CFAR.xml
@@ -17,13 +20,29 @@ In order to facilitate our development.
 	res.txt
 .images/
 	xxx.ico
+	...
 .radar/
 	雷达1/
 		雷达1.rad
-		room/algoXml/MTDc60666dd-3064-47ff-a3d6-67e5398dfc3d.xml
+		room/
+			algoXml/
+				MTDc60666dd-3064-47ff-a3d6-67e5398dfc3d.xml
+		images/
+			CFAR.ico
 	雷达2/
 		雷达2.rad
-		room/algoXml/FDPCa27b06a8-5104-4481-8b35-1cdb397ad79a.xml
+		room/
+			algoXml/
+				FDPCa27b06a8-5104-4481-8b35-1cdb397ad79a.xml
+		images/
+			FDPC.ico
+.project/
+	pro1/
+		pro1.dpsp
+	pro2/
+		pro2.dpsp
+	projectlist.pl
+	
 ```
 
 # 仿真系统运行流程 
