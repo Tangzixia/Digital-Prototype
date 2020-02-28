@@ -2,10 +2,11 @@
 In order to facilitate our development. 
 
 ### 工程目录变化:
-增加`/room/algoXml/`
+1、增加`/room/algoXml/` 20200103
 用于存放当前雷达工程空间（场景）的算法组件。
+2、增加 
 
-#### 未来希望能设计成：
+#### 当前目录:
 ```
 .algoXml/
 	MTD.xml
