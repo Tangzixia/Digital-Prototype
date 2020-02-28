@@ -9,6 +9,7 @@
 #include "diagramitem.h"
 #include "mainwindow_radar.h"
 #include "radarcompdraglistwidget.h"
+#include "utils.h"
 /**
 * @projectName   prototype_v0719
 * @brief         编辑雷达页面的自定义场景类，上面绘制设计雷达的组件链接。
@@ -141,7 +142,6 @@ void RadarScene::modifyXmlItems(QPointF pos, DiagramItem *item)
     color.appendChild(c);
     comp.appendChild(color);
     Items.appendChild(comp);
-
 }
 /**
  * @brief 更新元素位置信息

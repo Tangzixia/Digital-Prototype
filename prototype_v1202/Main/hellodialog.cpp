@@ -4,6 +4,7 @@
 
 #include <QFileDialog>
 #include <QStyledItemDelegate>
+#include <utils.h>
 /**
 * @projectName   prototype_v0719
 * @brief         开始欢迎页面，也即是进入主程序之前的拦截界面。可以选择打开或者新建工程。
@@ -15,6 +16,8 @@ HelloDialog::HelloDialog(QWidget *parent) :
     ui(new Ui::HelloDialog)
 {
     ui->setupUi(this);
+    // 写下一行这个在projectlist发出信号关闭的时候会出现错误
+//    this->setAttribute(Qt::WA_DeleteOnClose);
     //应用样式 apply the qss style
     QFile file(":/qss/qss_hellodialog.qss");
     file.open(QIODevice::ReadOnly);
@@ -66,6 +69,9 @@ HelloDialog::HelloDialog(QWidget *parent) :
     ui->pushButton_new->setStyleSheet(styleSheet);
     // 关闭按钮
     ui->pushButton->setStyleSheet(styleSheet);
+    connect(ui->projectList, &ProjectList::closeHelloDialog, this, [=](){
+        this->close();
+    });
 }
 
 HelloDialog::~HelloDialog()
@@ -89,6 +95,7 @@ void HelloDialog::on_pushButton_open_clicked()
         QString title = ppath.split("/").takeAt(ppath.split("/").length()-2);
 //        qDebug() << "打开工程" << ppath.split("/").last();
         this->main = new MainWindow(title, ppath);
+        Utils::addProject2Pl(title, ppath);
         this->main->show();
         this->close();
     }else{

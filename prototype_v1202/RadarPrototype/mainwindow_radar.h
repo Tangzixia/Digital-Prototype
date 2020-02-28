@@ -8,7 +8,6 @@
 #include <QProgressBar>
 #include <QToolBox>
 #include <QToolButton>
-#include <utils.h>
 #include <QListWidget>
 #include <QPushButton>
 #include "diagramitem.h"
@@ -52,7 +51,6 @@ public:
     void init1Comp(QString comPName, QMenu *itemMenu, QString iconName);
     void loadCompByName(QString strText);
     void toShowPropertiesDock(AlgorithmComp ac, bool isReadonly=true);
-    Ui::MainWindow_Radar *ui;
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -131,7 +129,7 @@ private:
     QPushButton *openConsole;
     // 名字
     QString equip_id;
-
+    Ui::MainWindow_Radar *ui;
     QLabel *label_xy;
     QLineEdit *m_pSearchLineEdit;
     // 工具类
@@ -219,5 +217,4 @@ signals:
     void send2AppOutput(QString message);
     void createProjectFiles();
 };
-
 #endif // MAINWINDOW_RADAR_H

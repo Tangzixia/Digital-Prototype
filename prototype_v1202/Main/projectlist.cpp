@@ -7,8 +7,8 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QLabel>
-
-
+#include <utils.h>
+#include <QDesktopWidget>
 /**
 * @projectName   prototype_v1202
 * @brief         简介 欢迎页面的项目列表。打开的是总项目.dpsp
@@ -94,17 +94,26 @@ void ProjectList::initMenu(){
     this->addItem(recentPro8);
     this->addItem(recentPro9);
 #endif
+#if 0
     // 换种方式，自定义list使用item和widget绑定
-    createListWidgetItem("Opengltest", "E:/MasterGraduateStudent/Laboratory/723/Project-10-23/Opengltest_QT5/Opengltest.dpsp");
-    createListWidgetItem("dictionary-reborn-master", "E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QT/dictionary-reborn-master/dictionary-reborn-master.dpsp");
-    createListWidgetItem("DesktopSnow", "E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QT/DesktopSnow/DesktopSnow.dpsp");
-    createListWidgetItem("QtDirectUI", "E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QtFramelessWindow-master/fk.dpsp");
-    createListWidgetItem("prototype_v0906", "build-prototype_v0906-Desktop_Qt_5_9_8_MinGW_32bit-Debug/debug/dsjid.dpsp");
-    createListWidgetItem("Opengltest", "E:/MasterGraduateStudent/Laboratory/723/Project-10-23/Opengltest_QT5/Opengltest.dpsp");
-    createListWidgetItem("dictionary-reborn-master", "E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QT/dictionary-reborn-master/dictionary-reborn-master.dpsp");
-    createListWidgetItem("DesktopSnow", "E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QT/DesktopSnow/DesktopSnow.dpsp");
-    createListWidgetItem("QtDirectUI", "E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QtFramelessWindow-master/QtFramelessWindow.dpsp");
-    createListWidgetItem("prototype_v0906", "build-prototype_v0906-Desktop_Qt_5_9_8_MinGW_32bit-Debug/debug/123.dpsp");
+//    createListWidgetItem("Opengltest", "E:/MasterGraduateStudent/Laboratory/723/Project-10-23/Opengltest_QT5/Opengltest.dpsp");
+//    createListWidgetItem("dictionary-reborn-master", "E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QT/dictionary-reborn-master/dictionary-reborn-master.dpsp");
+//    createListWidgetItem("DesktopSnow", "E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QT/DesktopSnow/DesktopSnow.dpsp");
+//    createListWidgetItem("QtDirectUI", "E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QtFramelessWindow-master/fk.dpsp");
+//    createListWidgetItem("prototype_v0906", "build-prototype_v0906-Desktop_Qt_5_9_8_MinGW_32bit-Debug/debug/dsjid.dpsp");
+//    createListWidgetItem("Opengltest", "E:/MasterGraduateStudent/Laboratory/723/Project-10-23/Opengltest_QT5/Opengltest.dpsp");
+//    createListWidgetItem("dictionary-reborn-master", "E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QT/dictionary-reborn-master/dictionary-reborn-master.dpsp");
+//    createListWidgetItem("DesktopSnow", "E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QT/DesktopSnow/DesktopSnow.dpsp");
+//    createListWidgetItem("QtDirectUI", "E:/MasterGraduateStudent/Laboratory/723/Qt_demos/QtFramelessWindow-master/QtFramelessWindow.dpsp");
+//    createListWidgetItem("prototype_v0906", "build-prototype_v0906-Desktop_Qt_5_9_8_MinGW_32bit-Debug/debug/123.dpsp");
+#endif
+    // 使用自动读取配置文件的方式，读取projectlist.pl文件，把名字和路径添加进列表中
+    // 打开某个项目的时候，需要先判断路径是否存在，如果不存在则删除掉列表中的一条，并提示返回此页面
+    QMap<QString, QString> plist = Utils::readProjectList();
+    for(auto item : plist){
+       qDebug() << item << plist.key(item);
+       createListWidgetItem(plist.key(item), item);
+    }
 }
 
 // This is an auto-generated comment.
@@ -196,14 +205,19 @@ void ProjectList::HideItem(QListWidgetItem *item)
     if(list.size() == 0)
         return;
 
-     QListWidgetItem* sel = list[0];
+    // 一般只会有一个
+    QListWidgetItem* sel = list[0];
     if (sel && sel == item)
     {
-        qDebug() << "删除item" << qobject_cast<QLabel *>(this->itemWidget(sel)->layout()->itemAt(1)->widget()->layout()->itemAt(0)->widget())->text();
+        QString projectName = qobject_cast<QLabel *>(this->itemWidget(sel)->layout()->itemAt(1)->widget()->layout()->itemAt(0)->widget())->text();
+        qDebug() << "删除item" << projectName;
         int r = this->row(sel);
+        // 删除
         delete this->takeItem(r);
+        // 在文件里面也要删除！
+        qDebug() << Utils::delete1Project(projectName);
     }else{
-        qDebug() << "有问题";
+        qDebug() << "删除出现问题！";
     }
 }
 
@@ -225,12 +239,22 @@ void ProjectList::mousePressEvent(QMouseEvent *event)
         QLabel *p_title = qobject_cast<QLabel*>(w->layout()->itemAt(1)->widget()->layout()->itemAt(0)->widget());
         QLabel *p_path = qobject_cast<QLabel*>(w->layout()->itemAt(1)->widget()->layout()->itemAt(1)->widget());
         qDebug() << "当前项目名字： " << p_title->text() << "当前项目路径：" << p_path->text();
-
-        // 打开窗口
-        MainWindow* main_w = new MainWindow(p_title->text(), p_path->text());
-        main_w->show();
+        // 在这里判断文件是否存在，再决定是否打开窗口
+        QFile pfile(p_path->text());
+        if(pfile.exists())
+        {
+            // 打开窗口
+            MainWindow* main_w = new MainWindow(p_title->text(), p_path->text());
+            main_w->show();
+            emit closeHelloDialog();
+        }else{
+            Utils::alert(QApplication::desktop()->screen()->rect(), "路径不存在, 请重新选择！");
+            // 自动从列表删除
+            HideItem(currentItem);
+        }
     }
-    QListWidget::mousePressEvent(event); // 如果不调用基类mousePressEvent，item被select会半天不响应,调用父类，让QSS起效，因为QSS基于父类QListWidget，子类就是子窗口，就是最上层窗口，是覆盖在父窗口上的，所以先于父窗口捕获消息
+    // 如果不调用基类mousePressEvent，item被select会半天不响应,调用父类，让QSS起效，因为QSS基于父类QListWidget，子类就是子窗口，就是最上层窗口，是覆盖在父窗口上的，所以先于父窗口捕获消息
+    QListWidget::mousePressEvent(event);
 }
 
 //菜单事件，为了显示菜单，点击鼠标右键响应，鼠标点击事件mousePressEvent优先于contextMenuEvent

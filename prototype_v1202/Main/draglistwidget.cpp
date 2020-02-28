@@ -7,7 +7,7 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QFileDialog>
-
+#include "utils.h"
 /**
 * @projectName   prototype_v0719
 * @brief         整体工程项目左边的拖拽列表：雷达/电子对抗设备，是以list的形式表现的。

@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <components width="5000" height="5000">
     <Arrs>
-        <arrow id="{7532940b-eccd-44ea-9c34-1210af96aa4c}" start_item_id="{1874c579-1925-4cbd-b195-2263472cd946}" end_item_id="{7863b357-6f4f-4db2-afde-89b3e2375fa9}">
+        <arrow start_item_id="{1874c579-1925-4cbd-b195-2263472cd946}" id="{7532940b-eccd-44ea-9c34-1210af96aa4c}" end_item_id="{7863b357-6f4f-4db2-afde-89b3e2375fa9}">
             <color>#000000</color>
         </arrow>
-        <arrow id="{69236500-f062-41f8-a6c6-34c8852c6bc5}" start_item_id="{7863b357-6f4f-4db2-afde-89b3e2375fa9}" end_item_id="{bd073db9-180b-48a1-87e0-e2d1ea36320c}">
+        <arrow start_item_id="{7863b357-6f4f-4db2-afde-89b3e2375fa9}" id="{69236500-f062-41f8-a6c6-34c8852c6bc5}" end_item_id="{bd073db9-180b-48a1-87e0-e2d1ea36320c}">
             <color>#000000</color>
         </arrow>
-        <arrow id="{d5980f1a-c569-4405-b8a4-a74c1760c16d}" start_item_id="{bd073db9-180b-48a1-87e0-e2d1ea36320c}" end_item_id="{ccf709fa-5892-469e-932e-3e42494b1464}">
+        <arrow start_item_id="{bd073db9-180b-48a1-87e0-e2d1ea36320c}" id="{d5980f1a-c569-4405-b8a4-a74c1760c16d}" end_item_id="{ccf709fa-5892-469e-932e-3e42494b1464}">
             <color>#000000</color>
         </arrow>
-        <arrow id="{9eed2c6a-0e55-4188-a577-5a47dabd0a71}" start_item_id="{ccf709fa-5892-469e-932e-3e42494b1464}" end_item_id="{13ff6da1-8f47-488b-b0f9-2d188a38955e}">
+        <arrow start_item_id="{ccf709fa-5892-469e-932e-3e42494b1464}" id="{9eed2c6a-0e55-4188-a577-5a47dabd0a71}" end_item_id="{13ff6da1-8f47-488b-b0f9-2d188a38955e}">
             <color>#000000</color>
         </arrow>
     </Arrs>
     <Items>
-        <INPUT pos_y="2383" id="{1874c579-1925-4cbd-b195-2263472cd946}" pos_x="1697">
+        <INPUT pos_y="2315" id="{1874c579-1925-4cbd-b195-2263472cd946}" pos_x="1868">
             <color>#ffffff</color>
         </INPUT>
         <FDPC pos_y="2514" id="{7863b357-6f4f-4db2-afde-89b3e2375fa9}" pos_x="2016">

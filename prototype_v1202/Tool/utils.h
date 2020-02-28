@@ -1,8 +1,6 @@
 #ifndef UTILS_H
 #define UTILS_H
-
 #include "algorithmcomp.h"
-
 #include <QGraphicsView>
 #include <QRect>
 #include <QString>
@@ -34,9 +32,12 @@ public:
     static bool generateIcon(QString name, QString eQuip_id);
     static bool createProject(QString p_name);
     static bool readProjectXml(QString project_path, QMap<QString, QString> &infomap, QMap<QString, QString> &compmap);
-//    static bool readXmlConf(QString xmlname, RadarScene *scene, MainWindow_Radar *this_, RadarCompDraglistWidget *listWidget);
+    static bool writeProjectXml(QString pat, QString name); // FIXME 暂时这样写，后续完善
     static void importXml(QListWidget *listWidget, int *id_inde, QSet<QString> *nameSet, QMap<QString, QListWidgetItem *> *id_item, int flag, QString name);
     static void add_listItem(QListWidget *listWidget, QString name, int *id_inde, QSet<QString> *nameSet, QMap<QString, QListWidgetItem *> *id_item, int flag, QString n);
     static void addItem2List(QString path, QString name, int *id_inde, QSet<QString> *nameSet, QMap<QString, QListWidgetItem*> *id_item, QListWidget *listWidget, QString n);
+    static QMap<QString, QString> readProjectList();
+    static bool delete1Project(QString pname);
+    static bool addProject2Pl(QString name, QString ppath);
 };
 #endif // UTILS_H

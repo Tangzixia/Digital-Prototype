@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<components height="5000" width="5000">
+    <Arrs>
+        <arrow id="{532ee5eb-9415-4c1a-a31e-faef5d4c369e}" start_item_id="{8f503f6a-68a0-41e8-9f6a-69313e7c5762}" end_item_id="{58f7c721-6ab7-4ccb-98f8-e3926869fcb4}">
+            <color>#000000</color>
+        </arrow>
+        <arrow id="{77f0abe1-fa86-46a0-ac96-e90df207080d}" start_item_id="{58f7c721-6ab7-4ccb-98f8-e3926869fcb4}" end_item_id="{1a099de2-3820-42af-bb6a-02de2d1e538d}">
+            <color>#000000</color>
+        </arrow>
+        <arrow id="{bfa3aa6e-d473-43a6-97ac-1d189eeab226}" start_item_id="{1a099de2-3820-42af-bb6a-02de2d1e538d}" end_item_id="{7da09e00-ba18-4f29-bd09-6cb15333acb3}">
+            <color>#000000</color>
+        </arrow>
+    </Arrs>
+    <Items>
+        <CFAR pos_y="2713" id="{1a099de2-3820-42af-bb6a-02de2d1e538d}" pos_x="2284">
+            <color>#ffffff</color>
+        </CFAR>
+        <INPUT pos_y="2408" id="{8f503f6a-68a0-41e8-9f6a-69313e7c5762}" pos_x="1845">
+            <color>#ffffff</color>
+        </INPUT>
+        <MTD pos_y="2588" id="{58f7c721-6ab7-4ccb-98f8-e3926869fcb4}" pos_x="2102">
+            <color>#ffffff</color>
+        </MTD>
+        <OUTPUT pos_y="2513" id="{7da09e00-ba18-4f29-bd09-6cb15333acb3}" pos_x="2447">
+            <color>#ffffff</color>
+        </OUTPUT>
+    </Items>
+</components>

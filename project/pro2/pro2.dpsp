@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-root>
+    <information>
+        <name>pro2</name>
+        <id>{267589af-292e-4205-91c4-8778029eb2a1}</id>
+    </information>
+    <components>
+        <eccm/>
+        <target/>
+        <radar name="雷达100" id="radarfnskdjfnsdkjf"/>
+    </components>
+</project-root>

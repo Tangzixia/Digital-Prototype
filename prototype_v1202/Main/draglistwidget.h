@@ -1,6 +1,5 @@
 #ifndef DRAGLISTWIDGET_H
 #define DRAGLISTWIDGET_H
-
 #include <QWidget>
 #include <QtGui>
 #include <QListWidget>

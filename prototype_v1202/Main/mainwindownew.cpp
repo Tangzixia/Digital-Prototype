@@ -1,10 +1,13 @@
 #include "mainwindownew.h"
 #include "ui_mainwindownew.h"
 #include "draglistwidget.h"
-
+#include <QDesktopWidget>
 #include <QtDebug>
 #include <QListWidgetItem>
 #include <QMessageBox>
+#include <utils.h>
+#include <QFileDialog>
+#include <QInputDialog>
 
 //QList<MainWindow_Radar *> MainWindowNew::main_radar_list;
 /**
@@ -91,10 +94,57 @@ void MainWindowNew::on_actionabout_DPSP_triggered()
                              tr("[EXAMPLE:]> The <b>DPSP(Digital-Prototype-Simulation-Platform)</b>"
                                 " is an engineering level simulation tool for radar and electronic countermeasures equipment.."));
 }
-//退出
+
+/**
+ * @brief MainWindowNew::on_actionexit_triggered 退出的时候提示是否保存工程文件
+ * 并将其写入到projectlist.pl文件中
+ */
 void MainWindowNew::on_actionexit_triggered()
 {
-    qApp->closeAllWindows();
+    int ret1 = QMessageBox::question(this, tr("确认"), tr("确定退出前保存文件?"), QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel);
+    if(ret1 == QMessageBox::Yes){
+        bool ok;
+        QString pro_name = QInputDialog::getText(this, tr("保存工程"),tr("请输入保存的工程名"), QLineEdit::Normal, nullptr, &ok);
+        if (ok && !pro_name.isEmpty())
+        {
+            QString path = QDir::currentPath()+"/project";
+            if (!path.isEmpty())
+            {
+                // 上一级文件夹
+                QString patt = path+"/"+pro_name;
+                // 根据用户的输入决定保存的工程的文件名
+                QString pat = patt+"/"+pro_name+".dpsp";
+                // 没有的话，先创建
+                Utils::openDirOrCreate(patt);
+                // 打开文件，没有的话会自己创建
+                QFile file(pat);
+                if(!file.open(QIODevice::WriteOnly | QIODevice::Truncate)){
+                    qDebug() << "打开文件出现错误";
+                    file.close();
+                }else{
+                    qDebug() << "工程文件"+pro_name+".dpsp保存" << ((Utils::writeProjectXml(pat, pro_name)==true)?"成功":"失败") << "路径为："+pat;
+                    qApp->closeAllWindows();
+                }
+            }
+        }else{
+            qDebug() << "输入为空！";
+            Utils::alert(QApplication::desktop()->screen()->rect(), "输入为空！");
+            return;
+        }
+
+//        QString spath = QFileDialog::getExistingDirectory(
+//                this,
+//                "选择文件夹",
+//                path,
+//                QFileDialog::ShowDirsOnly);
+
+    }else if(ret1 == QMessageBox::No){
+        qDebug() << "不保存";
+        qApp->closeAllWindows();
+    }else {
+        qDebug() << "拒绝关闭!!!";
+        return;
+    }
 }
 
 //左边窗口显示

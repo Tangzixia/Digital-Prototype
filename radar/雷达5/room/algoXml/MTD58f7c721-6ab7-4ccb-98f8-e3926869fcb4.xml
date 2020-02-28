@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Plugins>
+    <Information>
+        <ID>{58f7c721-6ab7-4ccb-98f8-e3926869fcb4}</ID>
+        <Name>MTD</Name>
+        <Path>E:/FirstSemesterofSeniorYear/LabJob/Project_Digital_Prototype/Code/20200220/build-prototype_v1202-Desktop_Qt_5_9_8_MinGW_32bit-Debug/radar/雷达5/room/algoXml</Path>
+        <Time>Mon Feb 24 21:32:38 2020</Time>
+    </Information>
+    <Description>动目标检测：通过计算一维频谱的输出与噪声电平的比较识别动目标</Description>
+    <Parameter>
+        <qqq describe="we" value="0"/>
+    </Parameter>
+</Plugins>

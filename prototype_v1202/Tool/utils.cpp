@@ -1,4 +1,3 @@
-#include "algorithmcomp.h"
 #include "utils.h"
 #include <QDesktopWidget>
 #include <QFileDialog>
@@ -9,9 +8,7 @@
 #include <QTimer>
 #include <radarscene.h>
 #include <QApplication>
-#include <QDatetime>
-#include <mainwindow_radar.h>
-#include <radarcompdraglistwidget.h>
+#include <QDateTime>
 #include <QFileDialog>
 
 /**
@@ -22,7 +19,7 @@
 */
 Utils::Utils()
 {
-
+    //构造函数
 }
 
 /**
@@ -112,15 +109,22 @@ int Utils::saveFile(QWidget *qw, QString dirp, QString filename, RadarScene *sce
     }
 }
 
+
 /**
-* @projectName   prototype_v0906
-* @brief         简介 保存快照截图
-* @author        Antrn
-* @date          2019-09-27
-*/
+ * @brief Utils::saveImage 保存快照截图
+ * @param f flag：场景还是视图
+ * @param scene 场景指针
+ * @param view 视图指针
+ * @param path 保存路径
+ * @param name 文件名字
+ * @return 整型flag
+ * @author Antrn
+ * @date 2019-09-27
+ */
 int Utils::saveImage(int f, RadarScene *scene, QGraphicsView *view,  QString path, QString name)
 {
     int width = 0, height = 0;
+    // 场景
     if(f == 1){
         width = static_cast<int>(scene->width());
         height = static_cast<int>(scene->height());
@@ -528,6 +532,61 @@ bool Utils::readProjectXml(QString project_path, QMap<QString, QString> &infomap
 }
 
 /**
+ * @brief Utils::writeProjectXml 保存工程文件到dpsp
+ * @return
+ */
+bool Utils::writeProjectXml(QString pat, QString name)
+{
+    QDomDocument doc;
+    QDomProcessingInstruction instruction = doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
+    doc.appendChild(instruction);
+    QDomElement root = doc.createElement("project-root");
+    doc.appendChild(root);
+
+    QDomElement Info = doc.createElement("information");
+
+    QDomElement xname = doc.createElement("name");
+    QDomText domname = doc.createTextNode(name);
+    xname.appendChild(domname);
+    Info.appendChild(xname);
+    QDomElement xid = doc.createElement("id");
+    // 随机生成uuid
+    QDomText domid = doc.createTextNode(QUuid::createUuid().toString());
+    xid.appendChild(domid);
+    Info.appendChild(xid);
+
+    QDomElement Comps = doc.createElement("components");
+    QDomElement xradar = doc.createElement("radar");
+    QDomAttr xrid = doc.createAttribute("id");
+    xrid.setValue("sfsjkdfnskdjfnsdkjf");
+    QDomAttr xrname = doc.createAttribute("name");
+    xrname.setValue("雷达4");
+    xradar.setAttributeNode(xrid);
+    xradar.setAttributeNode(xrname);
+    QDomElement xeccm = doc.createElement("eccm");
+    QDomElement xtarget = doc.createElement("target");
+    Comps.appendChild(xeccm);
+    Comps.appendChild(xtarget);
+    Comps.appendChild(xradar);
+    root.appendChild(Info);
+    root.appendChild(Comps);
+
+    // 【千万要注意】，改动doc之后要手动保存，我在这上面绊了一脚
+    QFile file(pat);
+    // 每次打开文件都会先删除后重写
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Truncate)){
+        file.close();
+        qDebug() << "打开文件失败";
+        return false;
+    }else{
+        QTextStream out(&file);
+        doc.save(out, 4); //EncodingFromDocument
+        file.close();
+        return true;
+    }
+}
+
+/**
  * @brief Utils::importXml 导入rad/ecm/targ工程的配置并调用读取
  * @param listWidget
  * @param id_inde
@@ -678,165 +737,159 @@ void Utils::addItem2List(QString path, QString name, int *id_inde, QSet<QString>
     }
 }
 
-#if 0
-// This is an auto-generated comment.
 /**
- * @brief Utils::readXmlConf
- * @param xmlname
- * @return bool
+ * @brief Utils::readProjectList 开始页面读取项目列表
+ * @return 结果map集合
  */
-bool Utils::readXmlConf(QString xmlname, RadarScene *scene, MainWindow_Radar *this_, RadarCompDraglistWidget *listWidget)
+QMap<QString, QString> Utils::readProjectList()
 {
+    QString project_path = QDir::currentPath()+"/project/projectlist.pl";
     QDomDocument doc;
-    if(!xmlname.isEmpty()){
-        QFile file(xmlname);
-        if(!file.open(QIODevice::ReadOnly)) return false;
+    if(!project_path.isEmpty()){
+        QFile file(project_path);
+        if(!file.open(QIODevice::ReadOnly)) {
+            qDebug() << "project的pl文件打开出错,请查看是否存在！";
+            file.close();
+            return QMap<QString,QString>();
+        }
         if(!doc.setContent(&file)){
             file.close();
-            qDebug() << "打开失败";
-            return false;
+            qDebug() << "project的pl文件读取失败!";
+            return QMap<QString,QString>();
         }
         file.close();
-        //根元素component
+
+        // projects
         QDomElement docElem = doc.documentElement();
-        int wid,hei;
-        wid = docElem.attribute("width").toInt();
-        hei = docElem.attribute("height").toInt();
-        scene->setSceneRect(QRectF(0, 0, wid, hei));
-        // 第一个孩子是Arrs或者Items
-//        QDomNode n = docElem.firstChild();
-        QDomNode itemNode = doc.elementsByTagName("Items").at(0);
-        QString id;
-        // 子孩子就是标签名为comp_1...
-        QDomNode m = itemNode.firstChild();
-        while(!m.isNull()){
-            std::string tagName = m.nodeName().toStdString();
-            if(m.isElement()){
+        // 第一个孩子是<project>
+        QDomNode p = docElem.firstChild();
+        QString name, path, dtime;
+        QMap<QString,QString> resMap;
+        while(!p.isNull()){
+            if(p.isElement()){
                 // 每个元素item
-                QDomElement e = m.toElement();
-                id = e.attribute("id");
-                qreal posx = e.attribute("pos_x").toInt();
-                qreal poxy = e.attribute("pos_y").toInt();
-                QString s = e.elementsByTagName("color").at(0).toElement().text();
-                QColor colour(s);
-
-                // 只能先用if/else了，switch也不能用
-//                DiagramItem::DiagramType type;
-                QString compName = QString::fromStdString(tagName);
-                qDebug() << "组件名: " << compName;
-                emit this_->send2AppOutput(QStringLiteral("组件名： ") + compName);
-                if(!listWidget->nameList.contains(compName)){
-                    qDebug() << "读取出错，缺少组件，组件" << compName << "已被删除";
-                    Utils::alert(QApplication::desktop()->screen()->rect(),"读取出错，缺少组件，组件"+compName+"已被删除");
-                    for(QGraphicsItem *item: scene->items()){
-                        scene->removeItem(item);
-                        delete item;
-                    }
-                    for(int i=0;i<scene->getArrs()->childNodes().size();i++){
-                        scene->getArrs()->childNodes().item(i).clear();
-                    }
-                    for(int j=0;j<scene->getItems()->childNodes().size();j++){
-                        scene->getItems()->childNodes().item(j).clear();
-                    }
-                    doc.clear();
-                    scene->idList.clear();
-                    qDebug() << "idList" << scene->idList;
-                    this_->ui->actionsave->setEnabled(false);
-                    emit this_->save2false();
-                    this_->save2XmlFile();
-                    return false;
-                }else{
-                    DiagramItem *item_ = new DiagramItem(compName, scene->getItemMenu(), this_->getEquip_id());
-                    QPointF pos(posx, poxy);
-                    item_->setPos(pos);
-                    item_->setBrush(colour);
-                    item_->itemSuuid = id; //id不变
-                    scene->idList.append(id);
-                    // 读取xml文件的时候，也要恢复子空间的algorithm
-                    QString fullpath = QDir::currentPath()+"/radar/"+this_->getEquip_id()+"/room/algoXml/"+compName+id.mid(1,id.length()-2)+".xml";
-                    AlgorithmComp ac = Utils::readPluginXmlFile(fullpath);
-                    // 加载场景中所有的算法组件
-                    scene->add2Scene_comps(id, ac);
-
-                    qDebug() << "scene的id列表" << scene->idList;
-                    emit this_->send2AppOutput(QStringLiteral("组件名： ") + compName);
-                    scene->addItem(item_);
-                    emit this_->itemInserted(item_);
-                    //更新xml
-                    scene->modifyXmlItems(pos, item_);
-                    connect(item_, &DiagramItem::showItemsProperties, this_, &MainWindow_Radar::receiveItemsid2showProperties);
-                }
-#if 0
-                // FIXME 这部分出大问题，不可能每次都枚举吧
-                if(tagName == "comp_1"){
-                    type = DiagramItem::DiagramType::Comp1;
-                }else if(tagName == "comp_2"){
-                    type = DiagramItem::DiagramType::Comp2;
-                }else if(tagName == "comp_3"){
-                    type = DiagramItem::DiagramType::Comp3;
-                }else if(tagName == "comp_4"){
-                    type = DiagramItem::DiagramType::Comp4;
-                }else {
-                    type = DiagramItem::DiagramType::Comp5;
-                }
-
-//                 成功啦
-                QMetaObject mo = DiagramItem::staticMetaObject;
-                int index = mo.indexOfEnumerator("DiagramType");
-                QMetaEnum metaEnum = mo.enumerator(index);
-                 QMetaEnum metaEnum = QMetaEnum::fromType<DiagramItem::DiagramType>();
-                for (int i=0; i<metaEnum.keyCount(); ++i)
-                {
-                    qDebug() << metaEnum.key(i);
-                    qDebug()<<  metaEnum.valueToKey(2);              //  enum转string
-                    qDebug()<<  metaEnum.keysToValue("Comp4");       //  string转enum
-                }
-
-                type = DiagramItem::DiagramType(metaEnum.keysToValue(tagName.c_str()));
-#endif
+                QDomElement e = p.toElement();
+                name = e.attribute("name");
+                path = e.attribute("path");
+                resMap.insert(name, path);
             }
-            m = m.nextSibling();
+            p = p.nextSibling();
         }
-        // 大的标签是Arrs的时候
-        QDomNode arrowNode = doc.elementsByTagName("Arrs").at(0);
-        // 就是arrow了，因为箭头就一种
-        QDomNode m1 = arrowNode.firstChild();
-        QString start_item_id, end_item_id, arrow_id;
-
-        // 遍历所有的箭头
-        while(!m1.isNull()){
-            if(m1.isElement()){
-                // 每个元素item
-                QDomElement e = m1.toElement();
-                arrow_id = e.attribute("id");
-                start_item_id = e.attribute("start_item_id");
-                end_item_id = e.attribute("end_item_id");
-                QString cs = e.elementsByTagName("color").at(0).toElement().text();
-                //qDebug() << "箭头颜色： " << cs;
-                QColor line_colour(cs);
-
-                DiagramItem *startItem = getDiagramItemById(start_item_id);
-                DiagramItem *endItem = getDiagramItemById(end_item_id);
-                Arrow *arrow = new Arrow(startItem, endItem);
-                arrow->setColor(line_colour);
-                arrow->itemId = arrow_id; // id不变
-                scene->idList.append(arrow_id);
-//                qDebug() << "scene的id列表" << scene->idList;
-
-                startItem->addArrow(arrow);
-                endItem->addArrow(arrow);
-                arrow->setZValue(-1000.0);
-                scene->addItem(arrow);
-                arrow->updatePosition();
-
-                scene->modifyXmlArrows(arrow, startItem, endItem);
-
-            }
-            m1 = m1.nextSibling();
-        }
+        return resMap;
     }else {
         // 文件名为空，啥也没选，提示
-        Utils::alert(QApplication::desktop()->screen()->rect(), "文件名为空！请重新选择！");
+        Utils::alert(QApplication::desktop()->screen()->rect(), "请选择文件!");
+        return QMap<QString,QString>();
     }
 }
-#endif
+
+/**
+ * @brief Utils::delete1Project
+ * @param pname 项目名字，根据他对文件中的项目进行删除
+ * @return 是否成功
+ */
+bool Utils::delete1Project(QString pname)
+{
+    QString ppath = QDir::currentPath()+"/project/projectlist.pl";
+    QFile file(ppath); //相对路径、绝对路径、资源路径都可以
+    if(!file.open(QFile::ReadOnly))
+        return false;
+    QDomDocument doc;
+    if(!doc.setContent(&file)){
+        file.close();
+        qDebug() << "project的pl文件读取失败!";
+        return false;
+    }
+    file.close();
+    // projects
+    QDomElement docElem = doc.documentElement();
+    // 第一个孩子是<project>
+    // 这种方法可以，下面的也可以
+//    QDomNode p = docElem.childNodes().at(0);
+//    while(!p.isNull()){
+//        if(p.isElement()){
+//            // 每个元素item
+//            if(!p.toElement().attribute("name").compare(pname)){
+//                qDebug()<< "找到对应项目名称：" <<p.toElement().attribute("name");
+//                docElem.removeChild(p);
+//                return true;
+//            }
+//        }
+//        p = p.nextSibling();
+//    }
+
+    QDomNodeList list = doc.elementsByTagName("project"); //由标签名定位
+    for(int i=0;i<list.count();i++)
+    {
+        QDomElement e=list.at(i).toElement();
+        //以属性名定位，类似于hash的方式，warning：这里仅仅删除一个节点，其实可以加个break
+        if(e.attribute("name")==pname || !e.attribute("name").compare(pname)){
+            qDebug()<< "找到对应项目名称：" <<e.attribute("name");
+            docElem.removeChild(list.at(i));
+            // 【千万要注意】，改动doc之后要手动保存，我在这上面绊了一脚
+            QFile file(ppath);
+            // 每次打开文件都会先删除后重写
+            if(!file.open(QIODevice::WriteOnly | QIODevice::Truncate)){
+                file.close();
+                qDebug() << "打开文件失败";
+            }else{
+                QTextStream out(&file);
+                doc.save(out, 4); //EncodingFromDocument
+                file.close();
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * @brief Utils::addProject2Pl 向projectlist.pl中添加一条project
+ * @param name 项目名字
+ * @param ppath 项目路径
+ * @return 是否成功
+ */
+bool Utils::addProject2Pl(QString name, QString ppath)
+{
+    QString fpath = QDir::currentPath()+"/project/projectlist.pl";
+    QFile file(fpath); //相对路径、绝对路径、资源路径都可以
+    if(!file.open(QFile::ReadOnly))
+        return false;
+    QDomDocument doc;
+    if(!doc.setContent(&file)){
+        file.close();
+        qDebug() << "project的pl文件读取失败!";
+        return false;
+    }
+    file.close();
+    // projects
+    QDomElement docElem = doc.documentElement();
+    QDomElement project = doc.createElement("project");
+    QDomAttr pl_name = doc.createAttribute("name");
+    QDomAttr pl_path = doc.createAttribute("path");
+    QDomAttr pl_dtime = doc.createAttribute("dtime");
+
+    pl_name.setValue(name);
+    pl_path.setValue(ppath);
+
+    project.setAttributeNode(pl_name);
+    project.setAttributeNode(pl_path);
+    project.setAttributeNode(pl_dtime);
+
+    docElem.appendChild(project);
+
+    // 【千万要注意】，改动doc之后要手动保存，我在这上面绊了一脚
+    QFile file2(fpath);
+    // 每次打开文件都会先删除后重写
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Truncate)){
+        file.close();
+        qDebug() << "打开文件失败";
+        return false;
+    }else{
+        QTextStream out(&file);
+        doc.save(out, 4); //EncodingFromDocument
+        file.close();
+        return true;
+    }
+}
+

@@ -1,9 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<components width="5000" height="5000">
-    <Arrs/>
+<components height="5000" width="5000">
+    <Arrs>
+        <arrow id="{420f115c-e705-4f38-a002-a6cec9ebd6fa}" end_item_id="{89938f4a-9b95-4dca-84e4-45748e020138}" start_item_id="{e5e747ee-566f-4b9a-af4c-32c806f3cfdd}">
+            <color>#000000</color>
+        </arrow>
+        <arrow id="{69f90d2f-51dd-4567-94c3-4da976979f8e}" end_item_id="{231526e2-b63d-4dd2-9184-25bd2993caa1}" start_item_id="{89938f4a-9b95-4dca-84e4-45748e020138}">
+            <color>#000000</color>
+        </arrow>
+        <arrow id="{3ddad48b-e72e-47e6-b17b-c1fa95a44a57}" end_item_id="{58d3f2d4-0a65-43c5-b8e4-5adb60af50c3}" start_item_id="{231526e2-b63d-4dd2-9184-25bd2993caa1}">
+            <color>#000000</color>
+        </arrow>
+    </Arrs>
     <Items>
-        <CFAR pos_x="1863" id="{89938f4a-9b95-4dca-84e4-45748e020138}" pos_y="2348">
+        <CFAR id="{89938f4a-9b95-4dca-84e4-45748e020138}" pos_y="2379" pos_x="2220">
             <color>#ffffff</color>
         </CFAR>
+        <INPUT id="{e5e747ee-566f-4b9a-af4c-32c806f3cfdd}" pos_y="2399" pos_x="2616">
+            <color>#ffffff</color>
+        </INPUT>
+        <MAO id="{231526e2-b63d-4dd2-9184-25bd2993caa1}" pos_y="2569" pos_x="1926">
+            <color>#ffffff</color>
+        </MAO>
+        <OUTPUT id="{58d3f2d4-0a65-43c5-b8e4-5adb60af50c3}" pos_y="2605" pos_x="2285">
+            <color>#ffffff</color>
+        </OUTPUT>
+        <测试 id="{9c823258-71e5-4880-97fd-da3fac8db13a}" pos_y="2696" pos_x="1732">
+            <color>#ffffff</color>
+        </测试>
     </Items>
 </components>

@@ -24,6 +24,7 @@ public:
 
 signals:
     void thisItemCloseClicked(QListWidgetItem *item);
+    void closeHelloDialog();
 
 public slots:
     // 点击叉号的时候处理

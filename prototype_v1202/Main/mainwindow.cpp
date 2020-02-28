@@ -7,6 +7,7 @@
 #include <QSettings>
 #include <QWhatsThis>
 #include <QDebug>
+#include "utils.h"
 /**
 * @projectName   prototype_v0719
 * @brief         整个程序的主窗口： 打开现有的工程时。
