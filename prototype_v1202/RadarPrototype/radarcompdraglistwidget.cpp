@@ -18,6 +18,7 @@
 #include <QDesktopWidget>
 #include <algocodeedit.h>
 #include <codewindow.h>
+#include <QDebug>
 // This is available in all editors.
 /**
 * @projectName   prototype_v0906
@@ -85,6 +86,8 @@ void RadarCompDraglistWidget::createNewComp()
         Utils::writeAlgorithmComp2Xml(dlg->ac);
         emit add_one_Comp(dlg->ac);
         emit toRefreshCompList(); //刷新列表
+        qDebug() << "-------[重要draglist]---------" << dlg->ac.getInfo()["Name"];
+        Utils::generateIcon(dlg->ac.getInfo()["Name"],"");
         Utils::alert(QApplication::desktop()->screen()->rect(), "添加组件成功!");
     }else{
         // reject
@@ -128,9 +131,9 @@ void RadarCompDraglistWidget::onCurrentTextChanged(QListWidgetItem *item)
                 Utils::writeAlgorithmComp2Xml(ac);
                 // 刷新列表
                 emit toRefreshCompList();
-                emit send_icon_name(lastName);
                 // 生成新名字的icon
-//                Utils::generateIcon(lastName);
+                emit send_icon_name(lastName);
+
                 qDebug() << "重命名成功!";
             }else{
                 qDebug() << "重命名失败";
@@ -352,7 +355,7 @@ void RadarCompDraglistWidget::mousePressEvent(QMouseEvent *event)
             int button_index=msgBox.exec();
             switch (button_index) {
                 case 2:
-                    qDebug() <<"不添加也不导入，关闭";
+                    qDebug() <<"不新建组件也不导入，关闭弹窗";
                     break;
                 // 创建
                 case 0:{

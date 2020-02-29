@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<components height="5000" width="5000">
+    <Arrs/>
+    <Items>
+        <ABI id="{b826da22-2e2f-4bdb-b252-57e77985a424}" pos_x="1866" pos_y="2343">
+            <color>#ffffff</color>
+        </ABI>
+        <CFAR id="{bfd0ec1f-cbbe-4618-9cb6-83ae103e9c96}" pos_x="1741" pos_y="2457">
+            <color>#ffffff</color>
+        </CFAR>
+        <CFAR1 id="{bc9fe9a9-414b-438d-a5a0-84853d44c072}" pos_x="2012" pos_y="2524">
+            <color>#ffffff</color>
+        </CFAR1>
+        <FDPC id="{2aecf469-b355-4e66-9149-766013682bb9}" pos_x="2068" pos_y="2392">
+            <color>#ffffff</color>
+        </FDPC>
+        <FDPC2 id="{aea28407-e886-400f-b92e-2d83328fb65b}" pos_x="1893" pos_y="2625">
+            <color>#ffffff</color>
+        </FDPC2>
+        <IAF id="{3d97cd85-fd2f-47b6-afa9-b6e56e5a471f}" pos_x="2177" pos_y="2627">
+            <color>#ffffff</color>
+        </IAF>
+        <INPUT id="{c49ebe6c-8d77-4c01-902b-b9101ed4bf32}" pos_x="2431" pos_y="2509">
+            <color>#ffffff</color>
+        </INPUT>
+        <MAO id="{4ad4698c-b273-4deb-8f77-c8178ed27f07}" pos_x="2473" pos_y="2329">
+            <color>#ffffff</color>
+        </MAO>
+        <MTD id="{eafd07c6-ea01-4f5b-be46-c6b570602b85}" pos_x="2183" pos_y="2369">
+            <color>#ffffff</color>
+        </MTD>
+        <MTD3 id="{c298ff75-5e11-4301-aaa9-a83cfd55aafc}" pos_x="2356" pos_y="2699">
+            <color>#ffffff</color>
+        </MTD3>
+        <OUTPUT id="{7a4dca2c-8d77-4602-93eb-86dbbb6e4abc}" pos_x="2167" pos_y="2748">
+            <color>#ffffff</color>
+        </OUTPUT>
+        <测试 id="{717c3448-d10b-47f2-bf9e-da202a335ddf}" pos_x="2635" pos_y="2571">
+            <color>#ffffff</color>
+        </测试>
+    </Items>
+</components>

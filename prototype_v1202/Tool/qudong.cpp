@@ -39,7 +39,11 @@ void QuDong::startRun(QString fileName, QString outName)
 
     QProcess *p = new QProcess;
     // 修改此处的参数
-    QString workpath = "/home/a913/Qt_project/20191130/prototype_v1202/Projects/test/code/";
+//    QString workpath = "/home/a913/Qt_project/20191130/prototype_v1202/Projects/test/code/";
+    QDir dir(QDir::currentPath());
+    dir.cdUp();
+    dir.cd("prototype_v1202/Projects/test/code");
+    QString workpath = dir.absolutePath();
     p->setWorkingDirectory(workpath);
     qDebug() << p->environment();
     p->start("./radar.o");

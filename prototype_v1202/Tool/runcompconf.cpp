@@ -19,8 +19,12 @@ RunCompConf::RunCompConf(QWidget *parent) :
     ui->run_progressBar->setValue(0);
     ui->btn_stop->setEnabled(false);
     ui->btn_pause->setEnabled(false);
+    QDir dir(QDir::currentPath());
+    dir.cdUp();
+    dir.cd("prototype_v1202/Projects/test/code");
+    QString workpath = dir.absolutePath();
 
-    readFile("/home/a913/Qt_project/20191130/prototype_v0906/Projects/test/code/result.txt");
+    readFile(workpath+"/result.txt");
 }
 
 RunCompConf::~RunCompConf()
@@ -38,8 +42,12 @@ void RunCompConf::On_start()
 //    QTimer::singleShot( 0, this, [=](){
 //        emit rateSignal(10);}
 //    );
+    QDir dir(QDir::currentPath());
+    dir.cdUp();
+    dir.cd("prototype_v1202/Projects/test/code");
+    QString workpath = dir.absolutePath();
     // WARNING 执行指令，这个指令记得及时修改
-    QuDong::startRun("/home/a913/Qt_project/20191130/prototype_v0906/Projects/test/code/radar.c", "/home/a913/Qt_project/20191130/prototype_v0906/Projects/test/code/radar.out");
+    QuDong::startRun(workpath+"/radar.c", workpath+"/radar.out");
 
 //    QTimer::singleShot( 1000, this, [=](){
 //        emit rateSignal(70);}

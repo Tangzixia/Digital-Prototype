@@ -133,8 +133,8 @@ void ParamEditRadarDialog::on_pushButton_OK_clicked()
 
         QString nm = ui->lineEdit_Name->text();
         mp.insert("Name", nm);
+        // 生成在本雷达下的icon图像
         emit sendIconName(nm);
-//        Utils::generateIcon(nm);
 
         // 只有第一次初始化用这个，后面的编辑就不改变了
         if(ac.getFileName().isEmpty() || ac.getFileName().isNull()){

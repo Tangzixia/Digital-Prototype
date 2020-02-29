@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<components height="5000" width="5000">
+    <Arrs/>
+    <Items>
+        <ABI pos_x="1886" pos_y="2390" id="{c1347c50-1dc5-4e46-b204-d52e58494b12}">
+            <color>#ffffff</color>
+        </ABI>
+        <IAF pos_x="1801" pos_y="2596" id="{2f9291a5-1975-4cfa-8e78-7cd17b45a739}">
+            <color>#ffffff</color>
+        </IAF>
+    </Items>
+</components>

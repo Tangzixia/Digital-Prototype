@@ -1,6 +1,6 @@
 #include "compproperty.h"
 #include "ui_compproperty.h"
-
+#include <QDebug>
 #include <QDir>
 #include <QFileDialog>
 
@@ -23,7 +23,11 @@ CompProperty::~CompProperty()
  */
 void CompProperty::on_pushButton_clicked()
 {
-    QString dirpath = "/home/a913/Qt_project/20191130/prototype_v0906/Projects/test/code/";
+//    QString dirpath = "/home/a913/Qt_project/20191130/prototype_v0906/Projects/test/code/";
+    QDir dir(QDir::currentPath());
+    dir.cdUp();
+    dir.cd("prototype_v1202/Projects/test/code");
+    QString dirpath = dir.absolutePath();
 //    QString path = QFileDialog::getExistingDirectory(this, "选择文件夹", QString(dirpath), QFileDialog::ShowDirsOnly);
     QString path = QFileDialog::getOpenFileName(this, tr("选择文件夹"),
                                                     QString(dirpath),

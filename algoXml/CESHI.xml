@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Plugins>
     <Information>
-        <ID>{12c79533-e442-4142-b591-07a13b3683bf}</ID>
-        <Name>ABI</Name>
+        <ID>{e2a22f20-1d9c-4ec7-87d7-28fd951fe038}</ID>
+        <Name>CESHI</Name>
         <Path>E:/FirstSemesterofSeniorYear/LabJob/Project_Digital_Prototype/Code/20200220/build-prototype_v1202-Desktop_Qt_5_9_8_MinGW_32bit-Debug/algoXml</Path>
-        <Time>Sat Feb 29 17:42:01 2020</Time>
+        <Time>Sat Feb 29 17:56:56 2020 GMT</Time>
     </Information>
-    <Description>抗窄脉冲干扰</Description>
+    <Description>测试新建组件是否生成ico</Description>
     <Parameter/>
 </Plugins>

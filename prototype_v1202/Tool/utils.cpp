@@ -425,8 +425,16 @@ bool Utils::generateIcon(QString nm, QString eQuip_id)
     painter.drawText(image.rect(),Qt::AlignCenter, nm);
     //将nmame写在Image的中心
     int n = 100;//这个为图片的压缩度。0/100
-    image.save(QDir::currentPath()+"/radar/"+eQuip_id+"/images/"+nm+".ico", "ico", n);
     //将画好的图片保存起来。
+    // 当为空的时候说明是往算法组件库中添加组件
+    qDebug() << "-------[重要名字]---------" << nm;
+    if(eQuip_id==""){
+        qDebug() << "-------[重要]---------" << "是否遭存在组件库？？？";
+        image.save(QDir::currentPath()+"/images/"+nm+".ico", "ico", n);
+    }else{
+        // WARNING 这容易出bug，保存多次。 往小的雷达项目中添加组件
+        image.save(QDir::currentPath()+"/radar/"+eQuip_id+"/images/"+nm+".ico", "ico", n);
+    }
     return true;
 }
 

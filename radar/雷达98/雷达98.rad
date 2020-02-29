@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<components height="5000" width="5000">
+    <Arrs/>
+    <Items>
+        <CFAR pos_x="1931" pos_y="2352" id="{23cebef4-3d8a-4a0b-862b-de0304e10779}">
+            <color>#ffffff</color>
+        </CFAR>
+        <FDPC pos_x="2085" pos_y="2492" id="{94333ef1-a549-402b-9ae2-c57b40f05eba}">
+            <color>#ffffff</color>
+        </FDPC>
+        <FDPC2 pos_x="2351" pos_y="2634" id="{1508e2e6-0d6e-4950-9729-c36fd7d4c858}">
+            <color>#ffffff</color>
+        </FDPC2>
+        <CESHI pos_x="1878" pos_y="2621" id="{d90be600-cc2c-4635-96d7-5ca75c177da7}">
+            <color>#ffffff</color>
+        </CESHI>
+    </Items>
+</components>

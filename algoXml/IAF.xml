@@ -4,10 +4,10 @@
         <ID>{c687a98a-c6c0-44a0-8a4e-c823b302ff94}</ID>
         <Name>IAF</Name>
         <Path>E:/FirstSemesterofSeniorYear/LabJob/Project_Digital_Prototype/Code/20200220/build-prototype_v1202-Desktop_Qt_5_9_8_MinGW_32bit-Debug/algoXml</Path>
-        <Time>Thu Feb 27 16:04:58 2020 GMT</Time>
+        <Time>Sat Feb 29 17:54:52 2020</Time>
     </Information>
     <Description>抗同频异步干扰 interference asynchronism in the same frequency</Description>
     <Parameter>
-        <参数名 value="参数值" describe="参数描述"/>
+        <参数名 describe="参数描述" value="参数值"/>
     </Parameter>
 </Plugins>

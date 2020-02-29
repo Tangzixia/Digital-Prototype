@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Plugins>
+    <Information>
+        <ID>{aea28407-e886-400f-b92e-2d83328fb65b}</ID>
+        <Name>FDPC2</Name>
+        <Path>E:/FirstSemesterofSeniorYear/LabJob/Project_Digital_Prototype/Code/20200220/build-prototype_v1202-Desktop_Qt_5_9_8_MinGW_32bit-Debug/radar/雷达11/room/algoXml</Path>
+        <Time>Sat Feb 29 17:51:58 2020</Time>
+    </Information>
+    <Description>脉冲压缩：是就撒将数据库的咖啡店</Description>
+    <Parameter>
+        <参数名1 value="参数值" describe="1"/>
+        <参数名2 value="参数值" describe="2"/>
+        <参数名3 value="参数值" describe="3"/>
+        <参数名4 value="参数值" describe="4"/>
+        <参数名6 value="参数值" describe="6"/>
+    </Parameter>
+</Plugins>

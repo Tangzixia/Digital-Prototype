@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Plugins>
+    <Information>
+        <ID>{d90be600-cc2c-4635-96d7-5ca75c177da7}</ID>
+        <Name>CESHI</Name>
+        <Path>E:/FirstSemesterofSeniorYear/LabJob/Project_Digital_Prototype/Code/20200220/build-prototype_v1202-Desktop_Qt_5_9_8_MinGW_32bit-Debug/radar/雷达98/room/algoXml</Path>
+        <Time>Sat Feb 29 18:01:27 2020</Time>
+    </Information>
+    <Description>测试新建组件是否生成ico</Description>
+    <Parameter/>
+</Plugins>
