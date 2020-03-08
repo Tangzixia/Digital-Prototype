@@ -72,7 +72,7 @@ int Utils::saveFile(QWidget *qw, QString dirp, QString filename, RadarScene *sce
     if(isPrompt){
         spath = QFileDialog::getExistingDirectory(
                 qw,
-                "选择文件夹",
+                "根据当前工程名选择要保存入的文件夹",
                 directory,
                 QFileDialog::ShowDirsOnly);
     }
@@ -182,7 +182,7 @@ AlgorithmComp Utils::readPluginXmlFile(QString fileName)
         // 中文时会读取失败，所以转化为utf-8
         QFile file(fileName.toUtf8());
         if(!file.open(QIODevice::ReadOnly)) {
-            qDebug() << "算法组件的xml文件打开出错！";
+            qDebug() << "算法组件fileName的xml文件打开出错！";
             file.close();
             return ac;
         }
@@ -376,8 +376,9 @@ bool Utils::modifyFileName(QString fileName, QString newName)
 }
 
 /**
- * @brief 动态删除场景里产生的xml拷贝算法组件空间的文件
+ * @brief 动态删除场景里产生的xml 拷贝算法组件空间的文件
  * @param dname 文件夹路径
+ * @param id 组件的id
  * @return 是否成功
  */
 bool Utils::deleteXmlFileByName(QString dname, QString id)
@@ -393,6 +394,8 @@ bool Utils::deleteXmlFileByName(QString dname, QString id)
                 qDebug() << "删除文件--->"<<file_list.at(i).absoluteFilePath();
                 file.remove();
                 return true;
+            }else{
+                qDebug() << "!!文件" << dname << "不存在";
             }
         }
     }
@@ -870,6 +873,21 @@ bool Utils::addProject2Pl(QString name, QString ppath)
         return false;
     }
     file.close();
+
+    QDomNode proNode = doc.elementsByTagName("project").at(0);
+    while(!proNode.isNull()){
+        if(proNode.isElement()){
+            // 每个元素project
+            QDomElement e = proNode.toElement();
+            QString x_pname = e.attribute("name");
+            if(x_pname.compare(name)==0){
+                qDebug() << "找到了已有的project记录：" << x_pname << "不向文件添加记录！";
+                return true;
+            }
+        }
+        proNode = proNode.nextSibling();
+    }
+
     // projects
     QDomElement docElem = doc.documentElement();
     QDomElement project = doc.createElement("project");

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-root>
+    <information>
+        <name>pro4</name>
+        <id>{0d188b9f-b470-4d0d-9d43-b92c7f6bba9b}</id>
+    </information>
+    <components>
+        <eccm/>
+        <target/>
+        <radar name="雷达95" id="radardkfkzdfm"/>
+    </components>
+</project-root>

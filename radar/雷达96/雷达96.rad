@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<components height="5000" width="5000">
+    <Arrs>
+        <arrow end_item_id="{169bc696-68c2-45f6-9d6e-adc04325ddc8}" start_item_id="{845f5b9e-6eff-41f0-b174-3141ff104c0e}" id="{1e241eaa-b634-4af7-9520-cf16608dd841}">
+            <color>#000000</color>
+        </arrow>
+        <arrow end_item_id="{ef3da27a-6cec-4f4b-81d1-0896d136152f}" start_item_id="{169bc696-68c2-45f6-9d6e-adc04325ddc8}" id="{44c67b90-aa86-4bbc-ba5c-b2bf19381962}">
+            <color>#000000</color>
+        </arrow>
+    </Arrs>
+    <Items>
+        <ABI pos_y="2360" pos_x="1787" id="{845f5b9e-6eff-41f0-b174-3141ff104c0e}">
+            <color>#ffffff</color>
+        </ABI>
+        <CFAR1 pos_y="2441" pos_x="2002" id="{169bc696-68c2-45f6-9d6e-adc04325ddc8}">
+            <color>#ffffff</color>
+        </CFAR1>
+        <IAF pos_y="2593" pos_x="1782" id="{ef3da27a-6cec-4f4b-81d1-0896d136152f}">
+            <color>#ffffff</color>
+        </IAF>
+    </Items>
+</components>

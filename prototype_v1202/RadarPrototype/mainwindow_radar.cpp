@@ -1525,7 +1525,7 @@ void MainWindow_Radar::on_actionOpenXml_triggered()
     QString dirpath = QDir::currentPath()+"/radar/";
     Utils::openDirOrCreate(dirpath);
     // 打开rad文件读取
-    const QString fileName = QFileDialog::getOpenFileName(this, tr("打开rad"), QString(dirpath), tr("rad files (*.rad)"));
+    const QString fileName = QFileDialog::getOpenFileName(this, tr("选择打开.rad工程文件！"), QString(dirpath), tr("rad files (*.rad)"));
     readXmlConf(fileName);
 }
 
@@ -1560,7 +1560,9 @@ void MainWindow_Radar::readXmlConf(QString xmlname)
         QString id;
         // 子孩子就是标签名为comp_1...
         QDomNode m = itemNode.firstChild();
+        QDomNode temp;
         while(!m.isNull()){
+            temp.clear();
             std::string tagName = m.nodeName().toStdString();
             if(m.isElement()){
                 // 每个元素item
@@ -1574,27 +1576,73 @@ void MainWindow_Radar::readXmlConf(QString xmlname)
                 // 只能先用if/else了，switch也不能用
 //                DiagramItem::DiagramType type;
                 QString compName = QString::fromStdString(tagName);
-                qDebug() << "组件名: " << compName;
-                emit send2AppOutput(QStringLiteral("组件名： ") + compName);
+                qDebug() << "读取到组件名: " << compName;
+                emit send2AppOutput(QStringLiteral("读取到组件名： ") + compName);
                 if(!ui->listWidget->nameList.contains(compName)){
-                    qDebug() << "读取出错，缺少组件，组件" << compName << "已被删除";
-                    Utils::alert(QApplication::desktop()->screen()->rect(),"读取出错，缺少组件，组件"+compName+"已被删除");
-                    for(QGraphicsItem *item: scene->items()){
-                        scene->removeItem(item);
-                        delete item;
+                    qDebug() << "读取中发现组件库中缺少组件，组件" << compName << "已被删除";
+                    // 使用自定义弹窗无法显示
+//                    Utils::alert(QApplication::desktop()->screen()->rect(),"读取出错，缺少组件，组件"+compName+"已被删除");
+                    QMessageBox::warning(this,"提示","组件库中缺少组件\""+compName+"\"，可能已被删除。请修改场景并重新保存以消除此提示！", QMessageBox::Ok);
+                    //    QMessageBox qm;
+                    //    qm.setText(tr("场景保存成功!"));
+                    //    qm.exec();
+
+                    // 将该元素在场景中删除
+                    temp = m.nextSibling();
+                    itemNode.removeChild(m);
+                    QDomNode arrNode = doc.elementsByTagName("Arrs").at(0);
+                    QDomNode a = arrNode.firstChild();
+                    QDomNode tt;
+                    while(!a.isNull()){
+                        tt.clear();
+                        if(a.isElement()){
+                            QDomElement do_ = a.toElement();
+                            if(!do_.attribute("start_item_id").compare(id) ||
+                                    !do_.attribute("end_item_id").compare(id)){
+                                tt = a.nextSibling();
+                                arrNode.removeChild(a);
+                            }
+                        }
+                        if(!tt.isNull()){
+                            a = tt;
+                        }else{
+                            a = a.nextSibling();
+                        }
+
                     }
-                    for(int i=0;i<scene->getArrs()->childNodes().size();i++){
-                        scene->getArrs()->childNodes().item(i).clear();
-                    }
-                    for(int j=0;j<scene->getItems()->childNodes().size();j++){
-                        scene->getItems()->childNodes().item(j).clear();
-                    }
-                    doc.clear();
-                    scene->idList.clear();
-                    qDebug() << "idList" << scene->idList;
-                    ui->actionsave->setEnabled(false);
-                    save2XmlFile();
-                    return;
+//                    for(QGraphicsItem *item: scene->items()){
+//                        if(dynamic_cast<DiagramItem*>(item)->itemSuuid.compare(id) == 0){
+//                            scene->removeItem(item);
+//                            delete item;
+//                        }
+//                    }
+//                    for(int i=0;i<scene->getArrs()->childNodes().size();i++){
+//                        QDomElement el = scene->getArrs()->childNodes().item(i).toElement();
+//                        if(!el.attribute("start_item_id").compare(id) ||
+//                                el.attribute("end_item_id").compare(id) == 0 ){
+//                            qDebug() << "这个箭头id:"<<id<<"和要删除的" << compName << "相连，删除！";
+//                            scene->getArrs()->childNodes().item(i).clear();
+//                            scene->idList.removeOne(el.attribute("id"));
+//                        }
+//                    }
+//                    for(int j=0;j<scene->getItems()->childNodes().size();j++){
+//                        QDomElement el = scene->getItems()->childNodes().item(j).toElement();
+//                        if(!el.attribute("id").compare(id)){
+//                            qDebug() << "这个组件id:"<<id<<"和要删除的" << compName << "相同，删除！";
+//                            scene->getItems()->childNodes().item(j).clear();
+//                            scene->idList.removeOne(id);
+//                        }
+//                    }
+                    // 删除当前雷达组件空间的xml文件
+                    int len = xmlname.split("/").last().length();
+                    QString dir_ = xmlname.mid(0, xmlname.length()-len);;
+                    qDebug() << "自动获取的文件夹路径：" << dir_;
+                    qDebug() << "删除成功?" << Utils::deleteXmlFileByName(dir_+"/room/algoXml/", id.mid(1,id.length()-2));
+                    qDebug() << "idList展示：" << scene->idList;
+//                    ui->actionsave->setEnabled(false);
+//                    save2XmlFile();
+//                    on_actionOpenXml_triggered();
+//                    return;
                 }else{
                     DiagramItem *item_ = new DiagramItem(compName, scene->getItemMenu(), this->getEquip_id());
                     QPointF pos(posx, poxy);
@@ -1645,7 +1693,11 @@ void MainWindow_Radar::readXmlConf(QString xmlname)
                 type = DiagramItem::DiagramType(metaEnum.keysToValue(tagName.c_str()));
 #endif
             }
-            m = m.nextSibling();
+            if(temp.isNull()){
+                m = m.nextSibling();
+            }else{
+                m = temp;
+            }
         }
         // 大的标签是Arrs的时候
         QDomNode arrowNode = doc.elementsByTagName("Arrs").at(0);
@@ -1684,6 +1736,10 @@ void MainWindow_Radar::readXmlConf(QString xmlname)
             }
             m1 = m1.nextSibling();
         }
+        // 更新一下xml文件，当然不执行这一句， 用户编辑之后手动保存也可以
+        // 如果用户打开立即关闭，再打开还是会报xx组件已被删除的提示，影响不大
+//        isSelectPath = true;
+//        save2XmlFile(false);
     }else {
         // 文件名为空，啥也没选，提示
         Utils::alert(QApplication::desktop()->screen()->rect(), "文件名为空！请重新选择！");
@@ -1719,9 +1775,8 @@ void MainWindow_Radar::on_actionsave_triggered()
 
 // 保存为xml文件
 // TODO 新建线程保存文件
-void MainWindow_Radar::save2XmlFile(){
+void MainWindow_Radar::save2XmlFile(bool tip){
     ui->statusbar->showMessage("正在保存场景...", 1000);
-//    qDebug() << tr("to close radar window");
     // 根元素
     QDomElement rootElem = scene->getDoc()->documentElement();
     rootElem.setAttribute("width", scene->width());
@@ -1772,16 +1827,22 @@ void MainWindow_Radar::save2XmlFile(){
     if(isSelectPath){
         switch (Utils::saveFile(this, dirp, getEquip_id()+".rad", scene, false, userSelectPath)) {
             case 1:
-                ui->statusbar->showMessage("保存成功", 1000);
-                Utils::alert(rect, "场景保存成功!");
+                if (tip){
+                    ui->statusbar->showMessage("保存成功", 1000);
+                    Utils::alert(rect, "场景保存成功!");
+                }
                 break;
             case -1:
-                ui->statusbar->showMessage("保存出错", 1000);
-                Utils::alert(rect, tr("场景保存出错，请重新尝试!"));
+                if (tip){
+                    ui->statusbar->showMessage("保存出错", 1000);
+                    Utils::alert(rect, tr("场景保存出错，请重新尝试!"));
+                }
                 break;
             case 0:
-                ui->statusbar->showMessage("保存失败", 1000);
-                Utils::alert(rect, tr("场景保存失败！请选择存储位置后再保存!"));
+                if (tip){
+                    ui->statusbar->showMessage("保存失败", 1000);
+                    Utils::alert(rect, tr("场景保存失败！请选择存储位置后再保存!"));
+                }
                 break;
         }
     }else{

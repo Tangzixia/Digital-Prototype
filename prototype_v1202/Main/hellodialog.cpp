@@ -95,6 +95,7 @@ void HelloDialog::on_pushButton_open_clicked()
         QString title = ppath.split("/").takeAt(ppath.split("/").length()-2);
 //        qDebug() << "打开工程" << ppath.split("/").last();
         this->main = new MainWindow(title, ppath);
+        // 如果之前未打开过，添加到文件中
         Utils::addProject2Pl(title, ppath);
         this->main->show();
         this->close();

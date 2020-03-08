@@ -41,7 +41,8 @@ public:
     QString getEquip_id() const;
     void setEquip_id(const QString &value);
     void readXmlConf(QString xmlname);
-    void save2XmlFile();
+    // tip：true，反馈保存成功与否的信息
+    void save2XmlFile(bool tip=true);
     //默认程序一打开就是已经保存好的状态
     static bool isSave;
     void toggleSaveXml(int flag);

@@ -123,6 +123,8 @@ void MainWindowNew::on_actionexit_triggered()
                     file.close();
                 }else{
                     qDebug() << "工程文件"+pro_name+".dpsp保存" << ((Utils::writeProjectXml(pat, pro_name)==true)?"成功":"失败") << "路径为："+pat;
+                    // 添加到项目列表
+                    Utils::addProject2Pl(pro_name, pat);
                     qApp->closeAllWindows();
                 }
             }

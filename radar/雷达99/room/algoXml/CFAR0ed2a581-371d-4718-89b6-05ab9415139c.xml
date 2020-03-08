@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Plugins>
+    <Information>
+        <ID>{0ed2a581-371d-4718-89b6-05ab9415139c}</ID>
+        <Name>CFAR</Name>
+        <Path>E:/FirstSemesterofSeniorYear/LabJob/Project_Digital_Prototype/Code/20200220/build-prototype_v1202-Desktop_Qt_5_9_8_MinGW_32bit-Debug/radar/雷达99/room/algoXml</Path>
+        <Time>Sun Mar 8 01:31:45 2020</Time>
+    </Information>
+    <Description>恒虚警检测是指雷达系统在保持虚警概率恒定条件下对接收机输出的信号与噪声做判别以确定目标信号是否存在的技术</Description>
+    <Parameter>
+        <NoiseGate describe="噪音门限制" value="a+bi"/>
+        <ProtectNumber describe="保护单元半径大小" value="a"/>
+        <ReferenceNumber describe="涉及区域半径大小" value="b"/>
+        <参数名1 describe="参数描述1" value="参数值1"/>
+    </Parameter>
+</Plugins>
