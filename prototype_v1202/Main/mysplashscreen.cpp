@@ -16,10 +16,12 @@ MySplashScreen::MySplashScreen(QPixmap &pixmap, int time):QSplashScreen (pixmap)
     //用来存放pixmap
     w = new QWidget(this);
     //大小固定为启动图像大小
-    w->setGeometry(0,0, 480, 270);
-//    w->setGeometry(0,0, 512, 256);
+//    w->setGeometry(0,0, 480, 270);
+//    w->setGeometry(0,0, 800, 800);
+    qDebug() << w->geometry();
     progressBar = new QProgressBar(this);
-    progressBar->setGeometry(0, w->height()-14, w->width(), 14);
+//    progressBar->setGeometry(0, w->height()-14, w->width(), 14);
+    progressBar->setGeometry(0, 270-14, 480, 14);
 
     progressBar->setStyleSheet("QProgressBar{color:Gray;background-color:white;font:italic 10pt;text-align:center;}QProgressBar::chunk{background-color:rgb(0,0,0)}");
     progressBar->setRange(0,100);
@@ -35,6 +37,7 @@ MySplashScreen::~MySplashScreen()
 
 void MySplashScreen::setProgress()
 {
+    showProgressMessage("正在读取配置文件，请稍等...");
     int tempTime = elapseTime/100;
     for (int i=0; i<100; i++) {
         QTimer::singleShot(i*tempTime, this, SLOT(updateProgress()));
@@ -59,4 +62,13 @@ void MySplashScreen::updateProgress()
     progressBar->setValue(numberList[num]);
     //qDebug()<< numberList[num];
     num++;
+}
+
+/**
+ * @brief MySplashScreen::showProgressMessage
+ * @param msg 要显示在splash页面的消息
+ */
+void MySplashScreen::showProgressMessage(const QString &msg)
+{
+    showMessage(msg, Qt::BottomRightCorner, Qt::gray);
 }

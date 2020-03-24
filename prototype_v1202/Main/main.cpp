@@ -32,6 +32,7 @@ int main(int argc, char *argv[])
     mv.start();
     splash.show();
     splash.setCursor(Qt::BlankCursor);
+
     for (int i=0; i<100; i++) {
         app.processEvents();
         usleep(30000);

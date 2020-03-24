@@ -30,6 +30,7 @@ private:
 
 private slots:
     void updateProgress();
+    void showProgressMessage(const QString &msg);
 };
 
 #endif // MYSPLASHSCREEN_H

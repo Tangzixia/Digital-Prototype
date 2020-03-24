@@ -29,7 +29,7 @@ ProjectList::ProjectList(QWidget *parent):
                 "QListWidget::item:hover {background: #ddd;}"
                 "QListWidget::item:selected {background: #eee;color: #000;}"
                 "QListWidget::item:selected:active{background:#00FFFFFF;color:#FFFFFF;border-width:0;}");
-    this->setSpacing(5);
+    this->setSpacing(0);
 }
 
 /**
@@ -111,7 +111,7 @@ void ProjectList::initMenu(){
     // 打开某个项目的时候，需要先判断路径是否存在，如果不存在则删除掉列表中的一条，并提示返回此页面
     QMap<QString, QString> plist = Utils::readProjectList();
     for(auto item : plist){
-       qDebug() << item << plist.key(item);
+//       qDebug() << item << plist.key(item);
        createListWidgetItem(plist.key(item), item);
     }
 }
