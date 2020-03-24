@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<components width="5000" height="5000">
+<components height="5000" width="5000">
     <Arrs>
         <arrow id="{b5d450a9-05d9-4e01-bfe9-4aca53b62e9e}" start_item_id="{23cebef4-3d8a-4a0b-862b-de0304e10779}" end_item_id="{94333ef1-a549-402b-9ae2-c57b40f05eba}">
             <color>#000000</color>
         </arrow>
     </Arrs>
     <Items>
-        <CFAR pos_y="2584" id="{23cebef4-3d8a-4a0b-862b-de0304e10779}" pos_x="1952">
+        <CFAR id="{23cebef4-3d8a-4a0b-862b-de0304e10779}" pos_x="1933" pos_y="2420">
             <color>#ffffff</color>
         </CFAR>
-        <FDPC pos_y="2348" id="{94333ef1-a549-402b-9ae2-c57b40f05eba}" pos_x="2274">
+        <FDPC id="{94333ef1-a549-402b-9ae2-c57b40f05eba}" pos_x="2274" pos_y="2348">
             <color>#ffffff</color>
         </FDPC>
     </Items>
