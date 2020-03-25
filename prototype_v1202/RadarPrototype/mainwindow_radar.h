@@ -112,6 +112,10 @@ private slots:
      void on_tabWidget_2_tabCloseRequested(int index);
      void on_actiongene_triggered();
 
+     void on_actionGeneData_triggered();
+
+     void on_action_test_run_triggered();
+
 public slots:
      void itemInserted(DiagramItem *item);
      // 接收信息
@@ -127,6 +131,8 @@ public slots:
      void codeEditSlot();
 
 private:
+    QString code_template_start = "/*symbol*/\n#include<stdio.h>\nint main(void){\n/*codes*/\n";
+    QString code_template_end = "return 0;\n}\n";
     QPushButton *openConsole;
     // 名字
     QString equip_id;

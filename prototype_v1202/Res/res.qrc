@@ -99,5 +99,6 @@
         <file>img/ECM.png</file>
         <file>img/fullscreen.png</file>
         <file>img/object.png</file>
+        <file>img/data.png</file>
     </qresource>
 </RCC>

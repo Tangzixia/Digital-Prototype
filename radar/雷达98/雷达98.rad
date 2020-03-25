@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<components height="5000" width="5000">
+<components width="5000" height="5000">
     <Arrs>
         <arrow id="{b5d450a9-05d9-4e01-bfe9-4aca53b62e9e}" start_item_id="{23cebef4-3d8a-4a0b-862b-de0304e10779}" end_item_id="{94333ef1-a549-402b-9ae2-c57b40f05eba}">
             <color>#000000</color>
         </arrow>
+        <arrow id="{13045ddf-639f-4d4d-8385-5a0592afea1f}" start_item_id="{94333ef1-a549-402b-9ae2-c57b40f05eba}" end_item_id="{bb7e02ec-1568-4e8d-b6c9-5f50b05c0715}">
+            <color>#000000</color>
+        </arrow>
     </Arrs>
     <Items>
-        <CFAR id="{23cebef4-3d8a-4a0b-862b-de0304e10779}" pos_x="1933" pos_y="2420">
+        <CFAR id="{23cebef4-3d8a-4a0b-862b-de0304e10779}" pos_y="2287" pos_x="2271">
             <color>#ffffff</color>
         </CFAR>
-        <FDPC id="{94333ef1-a549-402b-9ae2-c57b40f05eba}" pos_x="2274" pos_y="2348">
+        <FDPC id="{94333ef1-a549-402b-9ae2-c57b40f05eba}" pos_y="2429" pos_x="2533">
             <color>#ffffff</color>
         </FDPC>
+        <OUTPUT id="{bb7e02ec-1568-4e8d-b6c9-5f50b05c0715}" pos_y="2451" pos_x="2112">
+            <color>#ffffff</color>
+        </OUTPUT>
     </Items>
 </components>

@@ -46,7 +46,7 @@ void QuDong::startRun(QString fileName, QString outName)
     QString workpath = dir.absolutePath();
     p->setWorkingDirectory(workpath);
     qDebug() << p->environment();
-    p->start("./radar.o");
+    p->start("./radar.out");
     p->waitForStarted();
     p->waitForFinished();
 
@@ -60,5 +60,41 @@ void QuDong::startRun(QString fileName, QString outName)
     qDebug() << "输出信息： " << strTemp << ";" << strError;
     QMessageBox testMassage;
     testMassage.setText(strTemp+strError);
+    testMassage.exec();
+}
+
+void QuDong::startRunCpp(QString fileName, QString outName, QString radar_name)
+{
+    QStringList args;
+    args.append(fileName);
+    args.append("-o");
+    args.append(outName);
+
+    QProcess *p1 = new QProcess;
+    p1->start("gcc", args);
+    p1->waitForStarted();
+    p1->waitForFinished();
+    p1->close();
+    p1->kill();
+
+    QProcess *p = new QProcess;
+    QString workpath = QDir::currentPath()+"/radar/"+radar_name+"/room/";
+//    p->setWorkingDirectory(workpath);
+//    qDebug() << "环境是" << p->environment();
+    p->start(workpath+"/test.exe");
+    p->waitForStarted();
+    p->waitForFinished();
+
+    QString strTemp=QString::fromLocal8Bit(p->readAllStandardOutput());
+    QString strError=QString::fromLocal8Bit(p->readAllStandardError());
+
+    p->close();
+    p->kill();
+
+    // 输出控制台信息
+    qDebug() << "输出信息： " << strTemp << ";" << strError;
+    QMessageBox testMassage;
+    testMassage.setText(strTemp+strError);
+    testMassage.setWindowTitle("输出");
     testMassage.exec();
 }

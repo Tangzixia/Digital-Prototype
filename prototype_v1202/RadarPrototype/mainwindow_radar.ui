@@ -356,7 +356,9 @@ border:1px solid gray;
    </attribute>
    <addaction name="actionsave"/>
    <addaction name="actionRunRadar"/>
+   <addaction name="actionGeneData"/>
    <addaction name="actiongene"/>
+   <addaction name="action_test_run"/>
   </widget>
   <widget class="QDockWidget" name="dockWidget">
    <property name="sizePolicy">
@@ -592,10 +594,37 @@ border:1px solid gray;
   <action name="actiongene">
    <property name="icon">
     <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/data.png</normaloff>:/img/data.png</iconset>
+   </property>
+   <property name="text">
+    <string>生成数据</string>
+   </property>
+   <property name="toolTip">
+    <string>生成数据</string>
+   </property>
+  </action>
+  <action name="actionGeneData">
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
      <normaloff>:/img/generateCode.png</normaloff>:/img/generateCode.png</iconset>
    </property>
    <property name="text">
     <string>生成代码</string>
+   </property>
+   <property name="toolTip">
+    <string>生成代码</string>
+   </property>
+  </action>
+  <action name="action_test_run">
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/path.png</normaloff>:/img/path.png</iconset>
+   </property>
+   <property name="text">
+    <string>测试运行</string>
+   </property>
+   <property name="toolTip">
+    <string>测试运行</string>
    </property>
   </action>
   <zorder>dockCompList</zorder>

@@ -39,5 +39,7 @@ public:
     static QMap<QString, QString> readProjectList();
     static bool delete1Project(QString pname);
     static bool addProject2Pl(QString name, QString ppath);
+    static bool codeGenerate(QList<DiagramItem *> *dlist, QString radar_code_file, QString code_template_start, QString code_template_end);
+    static void deleteCppFileByName(QString path, QString cppName);
 };
 #endif // UTILS_H

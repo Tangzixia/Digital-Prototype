@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Plugins>
+    <Information>
+        <ID>{bb68ccbc-c945-4807-9e8f-1237e09ad3e5}</ID>
+        <Name>ABI</Name>
+        <Path>E:/FirstSemesterofSeniorYear/LabJob/Project_Digital_Prototype/Code/20200323/build-prototype_v1202-Qt5_9_8-Debug/radar/雷达97/room/algoXml</Path>
+        <Time>Wed Mar 25 16:50:03 2020</Time>
+    </Information>
+    <Description>抗窄脉冲干扰</Description>
+    <Parameter/>
+</Plugins>

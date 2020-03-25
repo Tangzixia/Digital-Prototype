@@ -18,6 +18,7 @@ class DiagramItem : public QObject, public QGraphicsPolygonItem
 {
     Q_OBJECT
 public:
+    int index = -1; // 排序时的重要索引
     enum { Type = UserType + 15 };
 
 //    enum DiagramType { Comp1, Comp2, Comp3, Comp4, Comp5};

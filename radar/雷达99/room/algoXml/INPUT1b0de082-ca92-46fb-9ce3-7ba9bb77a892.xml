@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Plugins>
+    <Information>
+        <ID>{1b0de082-ca92-46fb-9ce3-7ba9bb77a892}</ID>
+        <Name>INPUT</Name>
+        <Path>E:/FirstSemesterofSeniorYear/LabJob/Project_Digital_Prototype/Code/20200323/build-prototype_v1202-Qt5_9_8-Debug/radar/雷达99/room/algoXml</Path>
+        <Time>Wed Mar 25 11:20:35 2020</Time>
+    </Information>
+    <Description>输入组件</Description>
+    <Parameter>
+        <input value="20" describe="输入参数"/>
+    </Parameter>
+</Plugins>

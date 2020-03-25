@@ -919,3 +919,89 @@ bool Utils::addProject2Pl(QString name, QString ppath)
     }
 }
 
+
+/**
+ * @brief Utils::codeGenerate 代码文件生成，每次都是重新覆盖文件中的代码
+ * @param dlist 算法组件列表，目前算法执行顺序没有确定
+ * @param radar_code_file 当前雷达的代码文件的保存路径
+ * @param code_template_start 代码模板的开头
+ * @param code_template_end 代码模板的结尾
+ * @return bool
+ */
+bool Utils::codeGenerate(QList<DiagramItem *> *dlist, QString radar_code_file, QString code_template_start, QString code_template_end)
+{
+
+//    QString radar_code_file = QDir::currentPath()+"/radar/"+di->getRadar_id()+"/room/"+di->getRadar_id()+".cpp";
+
+//    QFile openrf(radar_code_file);
+//    if(!openrf.open(QIODevice::ReadOnly))
+//    {
+//        qDebug() << "Open failed, Check what's wrong2.";
+//        return false;
+//    }
+//    QTextStream readts(&openrf);
+//    // 读取数据
+//    QString all_code = readts.readAll();
+//    qDebug() << "全部数据" << all_code;
+//    openrf.close();
+
+    QFile writerf(radar_code_file);
+    // 流读取文件
+    QTextStream tscode(&writerf);
+    if(!writerf.open(QIODevice::Append | QIODevice::Truncate))
+    {
+        qDebug() << "Open failed, Check what's wrong1.";
+        return false;
+    }
+    tscode << code_template_start << endl;
+    for(auto *item: *dlist){
+//        qDebug() << item->iconName;
+        // 暂时先将这样的函数写入代码文件
+        tscode << item->iconName+"();" << endl;
+    }
+//    if(all_code.contains("/*symbol*/")){
+//        if(all_code.contains("/*codes*/")){
+//            // TODO 目前只是替换文本数据
+//            all_code.replace("/*codes*/", QString("hello"));
+//            // 截断
+//            all_code.truncate(all_code.indexOf("/*codes*/")+1);
+//        }
+//        tscode << code_template_start << all_code << endl << "hello";;
+//    }
+//    else{
+        // 加入代码模板
+//        tscode << code_template_start << endl;
+//        tscode << code_template_end << endl;
+//    }
+    tscode << code_template_end << endl;
+    writerf.close();
+    return true;
+}
+
+/**
+ * @brief Utils::deleteCppFileByName
+ * @param path 文件所在的路径
+ * @param cppName 代码文件名
+ */
+void Utils::deleteCppFileByName(QString path, QString cppName)
+{
+    QDir dir(path);
+    QFileInfoList file_list = dir.entryInfoList(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
+    for(int i = 0; i < file_list.size(); ++i){
+        QString fName = file_list.at(i).fileName();
+        qDebug() << "[Utils::deleteCppFileByName]--文件名" << fName;
+        if(fName.compare(cppName) == 0){
+            QFile file(file_list.at(i).absoluteFilePath());
+            qDebug() << "finfo.absoluteFilePath()： " << file_list.at(i).absoluteFilePath();
+            if (file.exists())
+            {
+                qDebug() << "也要删除代码文件--->"<<file_list.at(i).absoluteFilePath();
+                file.remove();
+                return;
+            }else{
+                qDebug() << "代码文件" << path+cppName << "不存在!!!";
+            }
+        }
+    }
+}
+

@@ -317,7 +317,7 @@ void RadarScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 //            item->(myItemColor);
             item->setBrush(myItemColor);
             QString sid = QUuid::createUuid().toString();
-            qDebug() << "新生成的sid: " << sid;
+            qDebug() << "为组件新生成的sid: " << sid;
             // 生成唯一id
 //            item->itemId = generateUniqueid();
             item->itemSuuid = sid;

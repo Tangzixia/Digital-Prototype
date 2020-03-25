@@ -22,8 +22,10 @@
 #include <QFormLayout>
 #include <QInputDialog>
 #include <QPlainTextEdit>
+#include <QProgressDialog>
 #include <QSizePolicy>
 #include <codewindow.h>
+#include <qudong.h>
 #include <simdatagenwidget.h>
 #include "leftnavi.h"
 //const int InsertTextButton = 10;
@@ -556,8 +558,9 @@ void MainWindow_Radar::loadAllComps()
 /**
  * @brief 组件添加事件处理
  */
-void MainWindow_Radar::itemInserted(DiagramItem *)
+void MainWindow_Radar::itemInserted(DiagramItem *di)
 {
+    // 场景中新增组件，保存按钮状态打开，待保存
     isSave = false;
     toggleSaveXml(1);
     qDebug() << "xml由于组件添加而改变";
@@ -567,6 +570,23 @@ void MainWindow_Radar::itemInserted(DiagramItem *)
     scene->setMode(RadarScene::Mode(pointerTypeGroup->checkedId()));
     //取消原按钮的选中状态
     //buttonGroup->button(int(item->diagramType()))->setChecked(false);
+
+
+    // 将组件库的代码复制一份进来
+    QString d_name = di->getIconName();
+    qDebug() << "将场景中"<< d_name <<"的代码提取出来";
+    QString code_dir_name = QDir::currentPath()+"/radar/"+di->getRadar_id()+"/room/codes/";
+    QDir dir = Utils::openDirOrCreate(code_dir_name);
+    // 当前组件的代码文件
+    QString code_fname = code_dir_name + d_name +".cpp";
+    // 将组件库的代码文件复制过来
+    QFileInfo fi(code_fname);//newreportpath 将要复制到的新文件完整路径
+    QString name = fi.fileName();  //获取文件名
+    qDebug() << "文件名" << name;
+    if(QFile::copy(QDir::currentPath()+"/codes/"+di->getIconName()+".cpp", code_fname)){  //将文件复制到新的文件路径下
+        qDebug()<<QStringLiteral("复制成功");
+    }else
+        qDebug()<<QStringLiteral("复制失败");
 }
 
 
@@ -603,7 +623,12 @@ void MainWindow_Radar::deleteItemArrowById(QString id)
                 emit send2AppOutput(QStringLiteral("找到图形项，已删除,id=")+id);
                 QString id_split = id.mid(1,id.length()-2);
                 qDebug() << "id_split: " << id_split;
+                // 删除room/algoXml/下的临时xml
                 Utils::deleteXmlFileByName(QDir::currentPath()+"/radar/"+getEquip_id()+"/room/algoXml/", id_split);
+                // 删除代码文件
+                QString codeName = scene->getScene_comps().value(id).getFileName();
+                qDebug() << "代码文件名是(加后缀)："<< codeName+".cpp";
+                Utils::deleteCppFileByName(QDir::currentPath()+"/radar/"+getEquip_id()+"/room/codes/", codeName+".cpp");
                 qDebug() << "删除之前的algorithm的MAP： " << scene->getScene_comps().keys();
                 scene->deleteScene_comps(id);
                 qDebug() << "删除之后的algorithm的MAP： " << scene->getScene_comps().keys();
@@ -621,7 +646,7 @@ void MainWindow_Radar::deleteItemArrowById(QString id)
         if(arrowNode.childNodes().at(j).isElement()){
             QDomElement elem2 = arrowNode.childNodes().at(j).toElement();
             QString arrowId = elem2.attribute("id");
-            qDebug() << "start_item_id: " << elem2.attribute("start_item_id") << "end_item_id" << elem2.attribute("end_item_id");
+//            qDebug() << "start_item_id: " << elem2.attribute("start_item_id") << "end_item_id" << elem2.attribute("end_item_id");
 //            emit send2AppOutput("start_item_id: " + elem2.attribute("start_item_id")+ "end_item_id" + elem2.attribute("end_item_id"));
             if(elem2.attribute("start_item_id") == id || elem2.attribute("end_item_id") == id){
                 arrowNode.removeChild(arrowNode.childNodes().at(j));
@@ -2111,6 +2136,7 @@ void MainWindow_Radar::generateIcon(QString icon_name)
  */
 void MainWindow_Radar::codeEditSlot()
 {
+    // 将当前场景中的组件传入，编辑它的代码
     CodeWindow *cw = new CodeWindow(this, nullptr, scene->selectedItems().first());
     cw->show();
 }
@@ -2137,8 +2163,108 @@ void MainWindow_Radar::on_tabWidget_2_tabCloseRequested(int index)
  */
 void MainWindow_Radar::on_actiongene_triggered()
 {
-    qDebug() << "正在生成代码...";
+    qDebug() << "正在生成数据...";
     SimDataGenWidget *sdgw = new SimDataGenWidget;
     sdgw->setWindowModality(Qt::WindowModal);
     sdgw->show();
+}
+
+/**
+ * @brief MainWindow_Radar::on_actionGeneData_triggered
+ * 当用户点击生成代码之后会根据场景中的算法组件列表去向文件中添加函数
+ */
+void MainWindow_Radar::on_actionGeneData_triggered()
+{
+//    QProgressDialog progressDialog(this);
+//    progressDialog.setCancelButtonText(tr("&Cancel"));
+//    progressDialog.setRange(0, 100);
+//    progressDialog.setWindowTitle(tr("生成代码"));
+//    progressDialog.setMinimumDuration(5);
+//    progressDialog.setValue(0);
+//    progressDialog.setLabelText(tr("正在生成代码，进度（0%）..."));
+//    QCoreApplication::processEvents();
+
+    // 当前雷达代码文件
+    QString radar_code_file = QDir::currentPath()+"/radar/"+this->getEquip_id()+"/room/"+this->getEquip_id()+".cpp";
+    QList<DiagramItem*> diagramlist;
+    // 这里写死了 FIXME ，由于分支的数量不同，循环次数也得增加，这里共3次循环，因为自己测试的图中分支数不多
+    for(int j=0;j<30;j++){
+//        progressDialog.setValue(j);
+//        progressDialog.setLabelText("正在生成代码，进度（"+QString::number(j)+"%）...");
+//        int k=0;
+        for (auto i: this->scene->items()) {
+            Arrow *arrow_temp;
+            // 每个箭头只遍历一遍
+            if((arrow_temp = dynamic_cast<Arrow*>(i))){
+                if(arrow_temp->startItem()->index == -1){
+                    arrow_temp->startItem()->index = 1;
+                    if(arrow_temp->endItem()->index < 2){
+                        arrow_temp->endItem()->index = 2;
+                    }
+
+                }else{
+                    if(arrow_temp->startItem()->index+1 > arrow_temp->endItem()->index){
+                        arrow_temp->endItem()->index = arrow_temp->startItem()->index+1;
+                    }
+
+                }
+    //            qDebug() << "是箭头" << arrow_temp->itemId << arrow_temp->startItem()->index << arrow_temp->endItem()->index;
+            }
+//            k++;
+//            progressDialog.setValue(j+k);
+//            progressDialog.setLabelText("正在生成代码，进度（"+QString::number(j+k)+"%）...");
+        }
+    }
+//    progressDialog.setValue(60);
+//    progressDialog.setLabelText("正在生成代码，进度（60%）...");
+    // 第三次计算即可保证顺序
+//    int k=0;
+    for (auto i: this->scene->items()) {
+//        progressDialog.setValue(60+(k>=30?30:k%30));
+//        progressDialog.setLabelText("正在生成代码，进度（"+QString::number(60+(k>=30?30:k%30))+"%）...");
+        DiagramItem *temp;
+        // TODO 要按照箭头的顺序来插入列表
+        Arrow *arrow_temp;
+        // 每个箭头只遍历一遍
+        if((arrow_temp = dynamic_cast<Arrow*>(i))){
+            if(arrow_temp->startItem()->index == -1){
+                arrow_temp->startItem()->index = 1;
+                if(arrow_temp->endItem()->index < 2){
+                    arrow_temp->endItem()->index = 2;
+                }
+            }else{
+                if(arrow_temp->startItem()->index+1 > arrow_temp->endItem()->index){
+                    arrow_temp->endItem()->index = arrow_temp->startItem()->index+1;
+                }
+            }
+            qDebug() << "是箭头" << arrow_temp->startItem()->getIconName() << arrow_temp->startItem()->index << arrow_temp->endItem()->getIconName() << arrow_temp->endItem()->index;
+        }else{
+            temp = dynamic_cast<DiagramItem*>(i);
+            diagramlist.append(temp);
+//            qDebug() << "是算法组件，略过" << temp->iconName << temp->index;
+        }
+    }
+//    progressDialog.setValue(93);
+//    progressDialog.setLabelText("正在生成代码，进度（93%）...");
+    // 自定义排序算法，按照每个DiagramItem的index索引的大小将list中的对象进行从小到大排序
+    qSort(diagramlist.begin(), diagramlist.end(), [](const DiagramItem *d1, const DiagramItem *d2){
+        return d1->index < d2->index;
+    });
+//    progressDialog.setValue(96);
+//    progressDialog.setLabelText("正在生成代码，进度（60%）...");
+    // 使用工具类的方法生成代码文件
+    Utils::codeGenerate(&diagramlist, radar_code_file, this->code_template_start, this->code_template_end);
+//    progressDialog.setValue(100);
+//    progressDialog.setLabelText("正在生成代码，进度（100%）...");
+    QMessageBox::information(nullptr, "提示", "代码生成完成");
+}
+
+/**
+ * @brief MainWindow_Radar::on_action_test_run_triggered
+ * 测试运行简单的代码cpp文件
+ */
+void MainWindow_Radar::on_action_test_run_triggered()
+{
+    QString workpath = QDir::currentPath()+"/radar/"+this->getEquip_id()+"/room/";
+    QuDong::startRunCpp(workpath+this->getEquip_id()+".cpp", workpath+"/test", this->getEquip_id());
 }
