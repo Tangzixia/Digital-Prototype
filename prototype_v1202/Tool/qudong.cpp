@@ -63,6 +63,12 @@ void QuDong::startRun(QString fileName, QString outName)
     testMassage.exec();
 }
 
+/**
+ * @brief QuDong::startRunCpp
+ * @param fileName 执行代码的完整文件名
+ * @param outName 输出文件名，一般是.o
+ * @param radar_name 雷达ID，即雷达名字
+ */
 void QuDong::startRunCpp(QString fileName, QString outName, QString radar_name)
 {
     QStringList args;

@@ -2163,7 +2163,7 @@ void MainWindow_Radar::on_tabWidget_2_tabCloseRequested(int index)
  */
 void MainWindow_Radar::on_actiongene_triggered()
 {
-    qDebug() << "正在生成数据...";
+    qDebug() << "正在生成雷达仿真数据...";
     SimDataGenWidget *sdgw = new SimDataGenWidget;
     sdgw->setWindowModality(Qt::WindowModal);
     sdgw->show();
@@ -2171,7 +2171,8 @@ void MainWindow_Radar::on_actiongene_triggered()
 
 /**
  * @brief MainWindow_Radar::on_actionGeneData_triggered
- * 当用户点击生成代码之后会根据场景中的算法组件列表去向文件中添加函数
+ * 当用户点击生成代码之后会根据场景中的算法组件列表向文件中按照箭头的顺序
+ * 添加算法组件的函数调用
  */
 void MainWindow_Radar::on_actionGeneData_triggered()
 {
@@ -2262,9 +2263,38 @@ void MainWindow_Radar::on_actionGeneData_triggered()
 /**
  * @brief MainWindow_Radar::on_action_test_run_triggered
  * 测试运行简单的代码cpp文件
+ * 可以改为就绪后的运行代码，DDS服务器和算法进程之间通过共享内存和消息队列进行通信，后续
+ * 执行过程中的输出数据的反馈和保存以及运算进程监控还没有思路
  */
 void MainWindow_Radar::on_action_test_run_triggered()
 {
     QString workpath = QDir::currentPath()+"/radar/"+this->getEquip_id()+"/room/";
     QuDong::startRunCpp(workpath+this->getEquip_id()+".cpp", workpath+"/test", this->getEquip_id());
+}
+
+/**
+ * @brief MainWindow_Radar::on_action_sendCode_triggered
+ * 点击分发代码，向服务器进行分发，关于分发的顺序还有待商讨，应该是系统自动判别服务器的状态，进行自适应分配
+ * 或者是根据算法组件的数量循环依次分配
+ */
+void MainWindow_Radar::on_action_sendCode_triggered()
+{
+    // TODO 检测服务器的可用状态，根据可用状态提供服务器的地址，这些暂时默认服务器都是正常状态的
+    // 数量也是固定的，所以只需要读取服务器的IP地址列表，然后将已有的算法组件循环顺次往下传
+    // 传完后返回一个map，就是服务器和算法组件的映射（算法组件数量大于服务器的数量怎么办），那就
+    // map类型为map<server,list<AlgoComp>>，每个服务器对应一个列表，将这个列表中的所有
+    // 组件并行运算。
+//    QMap<QString, QList<QString>> server_comp_map = detectAvailableServer();
+    // 按照上述的映射，使用system启动RPC，将代码分发，返回一个状态信息，如果分发成功则返回true
+//    bool tof = despatchCode(server_comp_map);
+//    if(tof){
+    // 这个方法是使用system启动DDS，建立服务器上的算法组件的订阅发布关系
+//        bool status = buildDdsPublishSubscribeRelation(server_comp_map, algoCompOrder);
+//        if(status){
+    // 提示用户一切就绪，可以点击执行代码
+//            showReadyStatus();
+//        }
+//    }else{
+//        alert("代码分发错误！");
+//    }
 }

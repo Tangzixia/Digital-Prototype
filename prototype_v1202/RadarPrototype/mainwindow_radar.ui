@@ -356,8 +356,9 @@ border:1px solid gray;
    </attribute>
    <addaction name="actionsave"/>
    <addaction name="actionRunRadar"/>
-   <addaction name="actionGeneData"/>
    <addaction name="actiongene"/>
+   <addaction name="actionGeneData"/>
+   <addaction name="action_sendCode"/>
    <addaction name="action_test_run"/>
   </widget>
   <widget class="QDockWidget" name="dockWidget">
@@ -621,10 +622,22 @@ border:1px solid gray;
      <normaloff>:/img/path.png</normaloff>:/img/path.png</iconset>
    </property>
    <property name="text">
-    <string>测试运行</string>
+    <string>运测试行代码</string>
    </property>
    <property name="toolTip">
-    <string>测试运行</string>
+    <string>运行测试代码</string>
+   </property>
+  </action>
+  <action name="action_sendCode">
+   <property name="icon">
+    <iconset resource="../Res/res.qrc">
+     <normaloff>:/img/send.png</normaloff>:/img/send.png</iconset>
+   </property>
+   <property name="text">
+    <string>分发代码</string>
+   </property>
+   <property name="toolTip">
+    <string>分发代码</string>
    </property>
   </action>
   <zorder>dockCompList</zorder>

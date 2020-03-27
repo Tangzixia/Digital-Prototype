@@ -100,5 +100,6 @@
         <file>img/fullscreen.png</file>
         <file>img/object.png</file>
         <file>img/data.png</file>
+        <file>img/send.png</file>
     </qresource>
 </RCC>
